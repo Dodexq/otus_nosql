@@ -8,3 +8,22 @@
 {"_id":8,"title":"The Karate Kid, Part III","year":1989,"cast":["Ralph Macchio","Pat Morita","Thomas Ian Griffith"],"genres":["Action"]}
 {"_id":9,"title":"Kickboxer","year":1989,"cast":["Jean-Claude Van Damme"],"genres":["Action"]}
 {"_id":10,"title":"Son in Law","year":1993,"cast":["Pauly Shore","Carla Gugino","Lane Smith"],"genres":["Comedy"]}
+{"_id":11,"title":"Die Hard 2","year":1990,"cast":["Bruce Willis","Bonnie Bedelia","William Atherton"],"genres":["Action"]}
+{"_id":12,"title":"Days of Thunder","year":1990,"cast":["Tom Cruise","Nicole Kidman","Robert Duvall"],"genres":["Drama"]}
+{"_id":13,"title":"Goodfellas","year":1990,"cast":["Robert De Niro","Ray Liotta","Joe Pesci"],"genres":["Crime","Drama"]}
+{"_id":14,"title":"Home Alone","year":1990,"cast":["Macaulay Culkin","Joe Pesci","Daniel Stern"],"genres":["Comedy","Family"]}
+{"_id":15,"title":"Pretty Woman","year":1990,"cast":["Richard Gere","Julia Roberts"],"genres":["Romance"]}
+{"_id":16,"title":"Terminator 2: Judgment Day","year":1991,"cast":["Arnold Schwarzenegger","Linda Hamilton","Edward Furlong"],"genres":["Action","Sci-Fi"]}
+{"_id":17,"title":"The Silence of the Lambs","year":1991,"cast":["Jodie Foster","Anthony Hopkins"],"genres":["Crime","Drama","Thriller"]}
+{"_id":18,"title":"Aladdin","year":1992,"cast":["Scott Weinger","Robin Williams","Linda Larkin"],"genres":["Animation","Adventure","Comedy"]}
+{"_id":19,"title":"Batman Returns","year":1992,"cast":["Michael Keaton","Danny DeVito","Michelle Pfeiffer"],"genres":["Action"]}
+{"_id":20,"title":"The Bodyguard","year":1992,"cast":["Kevin Costner","Whitney Houston"],"genres":["Drama","Romance"]}
+{"_id":21,"title":"Dazed and Confused","year":1993,"cast":["Jason London","Ben Affleck","Matthew McConaughey"],"genres":["Comedy"]}
+{"_id":22,"title":"Groundhog Day","year":1993,"cast":["Bill Murray","Andie MacDowell"],"genres":["Comedy","Fantasy"]}
+{"_id":23,"title":"Jurassic Park","year":1993,"cast":["Sam Neill","Laura Dern","Jeff Goldblum"],"genres":["Action","Adventure","Sci-Fi"]}
+{"_id":24,"title":"The Nightmare Before Christmas","year":1993,"cast":["Danny Elfman","Chris Sarandon","Catherine O'Hara"],"genres":["Animation","Family","Fantasy"]}
+{"_id":25,"title":"Schindler's List","year":1993,"cast":["Liam Neeson","Ben Kingsley","Ralph Fiennes"],"genres":["Biography","Drama","History"]}
+{"_id":26,"title":"The Shawshank Redemption","year":1994,"cast":["Tim Robbins","Morgan Freeman"],"genres":["Drama"]}
+{"_id":27,"title":"Pulp Fiction","year":1994,"cast":["John Travolta","Uma Thurman","Samuel L. Jackson"],"genres":["Crime","Drama"]}
+{"_id":28,"title":"Forrest Gump","year":1994,"cast":["Tom Hanks","Robin Wright","Gary Sinise"],"genres":["Drama","Romance"]}
+{"_id":29,"title":"The Lion King","year":1994,"cast":["Matthew Broderick","James Earl Jones","Jeremy Irons"],"genres":["Animation","Adventure","Drama"]}
