@@ -9,22 +9,22 @@ Vagrant.configure("2") do |config|
     server.vm.hostname = "mongodb-1"
     server.vm.network "public_network", ip: "192.168.0.10"
     server.vm.provider "virtualbox" do |vb|
-      vb.memory = "4096"
+      vb.memory = "3096"
       vb.name = "mongodb-1"
-      vb.cpus = "4"
-	end
+      vb.cpus = "3"
+  	end
   server.vm.provision "shell", path: "./provision.sh"
-	end
+  end
 
   config.vm.define "mongodb-2" do |server|
     server.vm.box = "geerlingguy/ubuntu2004"
     server.vm.hostname = "mongodb-2"
     server.vm.network "public_network", ip: "192.168.0.11"
     server.vm.provider "virtualbox" do |vb|
-      vb.memory = "4096"
+      vb.memory = "3096"
       vb.name = "mongodb-2"
-      vb.cpus = "4"
-  end
+      vb.cpus = "3"
+  	end
   server.vm.provision "shell", path: "./provision.sh"
   end
 
@@ -33,13 +33,24 @@ Vagrant.configure("2") do |config|
     server.vm.hostname = "mongodb-3"
     server.vm.network "public_network", ip: "192.168.0.12"
     server.vm.provider "virtualbox" do |vb|
-      vb.memory = "4096"
+      vb.memory = "3096"
       vb.name = "mongodb-3"
-      vb.cpus = "4"
-  end
+      vb.cpus = "3"
+  	end
   server.vm.provision "shell", path: "./provision.sh"
   end
 
+  config.vm.define "mongodb-4" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-4"
+    server.vm.network "public_network", ip: "192.168.0.13"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "3096"
+      vb.name = "mongodb-4"
+      vb.cpus = "3"
+  	end
+  server.vm.provision "shell", path: "./provision.sh"
+  end
 
 
 end
