@@ -1,0 +1,116 @@
+Vagrant.configure("2") do |config|
+  
+  #config.hostmanager.enabled = true 
+  #config.hostmanager.manage_host = true
+  #config.vm.boot_timeout = 900
+
+  # ReplicaSet Mongo Primary + Secondary + Arbiter + Sharde
+
+  config.vm.define "mongodb-a1" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-a1"
+    server.vm.network "public_network", ip: "192.168.0.241"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-a1"
+      vb.cpus = "1"
+  	end
+  server.vm.provision "shell", path: "./provision/provision-a.sh"
+  end
+
+  config.vm.define "mongodb-a2" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-a2"
+    server.vm.network "public_network", ip: "192.168.0.242"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-a2"
+      vb.cpus = "1"
+  	end
+  server.vm.provision "shell", path: "./provision/provision-a.sh"
+  end
+
+  config.vm.define "mongodb-aa" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-aa"
+    server.vm.network "public_network", ip: "192.168.0.243"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-aa"
+      vb.cpus = "1"
+  	end
+  server.vm.provision "shell", path: "./provision/provision-a.sh"
+  end
+
+  config.vm.define "mongodb-b1" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-b1"
+    server.vm.network "public_network", ip: "192.168.0.244"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-b1"
+      vb.cpus = "1"
+  	end
+  server.vm.provision "shell", path: "./provision/provision-b.sh"
+  end
+
+    config.vm.define "mongodb-b2" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-b2"
+    server.vm.network "public_network", ip: "192.168.0.245"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-b2"
+      vb.cpus = "1"
+  	end
+  server.vm.provision "shell", path: "./provision/provision-b.sh"
+  end
+
+    config.vm.define "mongodb-ba" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-ba"
+    server.vm.network "public_network", ip: "192.168.0.246"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-ba"
+      vb.cpus = "1"
+    end
+  server.vm.provision "shell", path: "./provision/provision-b.sh"
+  end
+
+    config.vm.define "mongodb-c1" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-c1"
+    server.vm.network "public_network", ip: "192.168.0.247"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-c1"
+      vb.cpus = "1"
+    end
+  server.vm.provision "shell", path: "./provision/provision-c.sh"
+  end
+
+    config.vm.define "mongodb-c2" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-c2"
+    server.vm.network "public_network", ip: "192.168.0.248"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-c2"
+      vb.cpus = "1"
+    end
+  server.vm.provision "shell", path: "./provision/provision-c.sh"
+  end
+
+    config.vm.define "mongodb-c3" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "mongodb-c3"
+    server.vm.network "public_network", ip: "192.168.0.249"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "mongodb-c3"
+      vb.cpus = "1"
+    end
+  server.vm.provision "shell", path: "./provision/provision-c.sh"
+  end
+end
