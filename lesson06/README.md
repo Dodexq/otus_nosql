@@ -52,11 +52,13 @@ mongodb-c3.dodex.home:27000
 
 Provision для всех VW: `./provision`
 
-Конфиги mongodb `./etc`
+Конфиги mongodb `./etc` включены: 
+ * `bindIpAll: true`, 
+ * `replSetName: Shard*`, 
+ * `authorization: enabled`,
+ * `clusterRole: shardsvr (configsvr)` 
+ * keyfile `./mongodb-keyfile`
 
-keyfile `./mongodb-keyfile` 
-
-На всех VM включен `net.bind_ip_all: true`, `replication.replSetName: Shard(*)`, `sharding.clusterRole: shardsvr` (configsvr на RScfg)
 
 
 Создание пользователя и ролей
@@ -65,9 +67,10 @@ keyfile `./mongodb-keyfile`
 use admin
 db.createUser(
     {
-      user: "dodex",
+      user: "python",
       pwd: "passwd",
-      roles: [ "userAdminAnyDatabase", "dbAdminAnyDatabase", "readWriteAnyDatabase" ]
+      roles: [ { role: "readWrite", db: "test" },
+             { role: "read", db: "otus" } ]
     }
 )
 ```
@@ -86,7 +89,7 @@ db.createRole(
 )
 ```
 
-Создание superuser
+Создание user к созданной роли
 
 ```
 db.createUser({      
@@ -99,6 +102,8 @@ db.createUser({
 
 #
 
+### ShardA
+
 ```
 rs.initiate({"_id" : "ShardA", members : [{"_id" : 0, priority : 3, host : "mongodb-a1.dodex.home:27017"},
 {"_id" : 1, host : "mongodb-a2.dodex.home:27017"},
@@ -108,6 +113,8 @@ rs.initiate({"_id" : "ShardA", members : [{"_id" : 0, priority : 3, host : "mong
 <a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/1.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/1.png" alt="" width="500" /></a>
 </p>
 
+### ShardB
+
 ```
 rs.initiate({"_id" : "ShardB", members : [{"_id" : 0, priority : 3, host : "mongodb-b1.dodex.home:27017"},
 {"_id" : 1, host : "mongodb-b2.dodex.home:27017"},
@@ -116,6 +123,8 @@ rs.initiate({"_id" : "ShardB", members : [{"_id" : 0, priority : 3, host : "mong
 <p align="center"> 
 <a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/2.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/2.png" alt="" width="500" /></a>
 </p>
+
+### RScfg
 
 ```
 rs.initiate({"_id" : "RScfg", configsvr: true, members : [{"_id" : 0, priority : 3, host : "mongodb-c1.dodex.home:27017"},
@@ -135,7 +144,7 @@ rs.initiate({"_id" : "RScfg", configsvr: true, members : [{"_id" : 0, priority :
 sudo mongos --configdb RScfg/mongodb-c1.dodex.home:27017,mongodb-c2.dodex.home:27017,mongodb-c3.dodex.home:27017 --port 27000 --fork --logpath /home/vagrant/dbs/dbs.log --pidfilepath /home/vagrant/dbsdbs.pid --keyFile /home/vagrant/mongodb-keyfile --bind_ip_all
 ```
 
-Логинимся `mongosh --port 27017 -u "dodex" -p "passwd" --authenticationDatabase "admin"`, убеждаемся, что шардирование настроено
+Логинимся `mongos --port 27000 -u "root" -p "passwd" --authenticationDatabase "admin"`, убеждаемся, что шардирование настроено
 
 
 <p align="center"> 
@@ -163,10 +172,63 @@ db.settings.updateOne(
 <a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/5.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/5.png" alt="" width="500" /></a>
 </p>
 
-Выбираем наиболее уникальный индекс `email`, создаем и указываем как ключ шардирования `db.users_dataset.createIndex({email: 1})`
+Выбираем наиболее уникальный индекс `email`, создаем и указываем как ключ шардирования `db.usersdataset.createIndex({email: 1})`
 
-db.runCommand({shardCollection: "otus.users_dataset", key: {email: 1}})
-sh.balancerCollectionStatus("otus.users_dataset")
+Далее шардирование
+`db.adminCommand({shardCollection: "otus.usersdataset", key: {email: 1}})`
 
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/6.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/6.png" alt="" width="500" /></a>
+</p>
 
-db.users_dataset.aggregate([ { $match: { state: "TX", gender: "Female", age: { $gt: 25 } } }, { $group: { _id: 0, avgDollar: { $avg: "$dollar" } } }])
+#
+## Задания "*" - использование индексов при джойнах $lookup
+
+1. Добавим датасет `./states.csv` (будем джойнить по полю state)
+
+* Джойним по полю state, создаем поле fullState, вытягивая полное название штата из второй таблицы:
+
+```
+db.getCollection("usersdataset").aggregate(
+    [
+        {
+            "$lookup" : {
+                "from" : "states",
+                "localField" : "state",
+                "foreignField" : "state",
+                "as" : "joined"
+            }
+        }, 
+        {
+            "$addFields" : {
+                "fullState" : {
+                    "$arrayElemAt" : [
+                        "$joined.OfficialStateName",
+                        NumberInt(0)
+                    ]
+                }
+            }
+        }, 
+        {
+            "$project" : {
+                "joined" : NumberInt(0)
+            }
+        }
+    ],
+);
+```
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/7.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/7.png" alt="" width="500" /></a>
+</p>
+
+* Время выполнения 1.706 сек. Создаем индекс в 2 случаях на state
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/8.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/8.png" alt="" width="500" /></a>
+</p>
+
+* время выполнения 0.360 сек.
+
+#
+
