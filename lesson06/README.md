@@ -182,7 +182,7 @@ db.settings.updateOne(
 </p>
 
 #
-## Задания "*" - использование индексов при джойнах $lookup
+## Задание "*" - использование индексов при джойнах $lookup
 
 1. Добавим датасет `./states.csv` (будем джойнить по полю state)
 
@@ -232,3 +232,20 @@ db.getCollection("usersdataset").aggregate(
 
 #
 
+## Задание "*" - блокировка update во время инициированной транзакции
+
+Во время транзакции можно инсертить значение (блокировки нет), однако на апдейт с разных сессий будет ругаться.
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/9.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/9.png" alt="" width="500" /></a>
+</p>
+
+## Задание "*" из предыдущего ДЗ. Сравнить скорость обрабоки запроса с индексом и без (более наглядно)
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/10.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/10.png" alt="" width="500" /></a>
+</p>
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/11.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson06/screenshots/11.png" alt="" width="500" /></a>
+</p>
