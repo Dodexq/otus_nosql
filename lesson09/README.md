@@ -106,9 +106,63 @@ OPTIMIZE TABLE taxi.taxi_trips FINAL
 * После того, как прошла оптимизация, повторный запрос оценки времени (скорость кратно возрасла)
 
 <p align="center"> 
-<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/3.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/3.png" alt="" width="500" /></a>
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/4.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/4.png" alt="" width="500" /></a>
 </p>
 
 #
 
 ### ClickHouse Cluster на VM
+
+* Архитектура
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/5.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/5.png" alt="" width="500" /></a>
+</p>
+
+Машины:
+
+`zookeeper1.dodex.home`
+
+`click1.dodex.home`
+
+`click2.dodex.home`
+
+`click3.dodex.home`
+#
+
+### Установка ZooKeeper на `zookeeper1.dodex.home` 
+
+1. `sudo apt-get install zookeeper netcat` 
+2. Добавить в `/etc/zookeeper/conf/myid` значение 1
+3. В конфиг `/etc/zookeeper/conf/zoo.cfg` добавить:
+
+```
+autopurge.purgeInterval=1
+autopurge.snapRetainCount=5
+```
+Раскоментить `server.1=zookeeper1.dodex.home`, указав hostname сервера zookeeper
+
+4. Старт zookeeper `sudo -u zookeeper /usr/share/zookeeper/bin/zkServer.sh start`
+
+5. Установка Altinity репо 
+```
+sudo sh -c 'mkdir -p /usr/share/keyrings && curl -s https://builds.altinity.cloud/apt-repo/pubkey.gpg | gpg --dearmor > /usr/share/keyrings/altinity-dev-archive-keyring.gpg'
+
+sudo sh -c 'echo "deb [signed-by=/usr/share/keyrings/altinity-dev-archive-keyring.gpg] https://builds.altinity.cloud/apt-repo stable main" > /etc/apt/sources.list.d/altinity-dev.list'
+
+sudo apt update
+```
+
+6. Установка ClickHouse
+```
+version=21.8.13.1.altinitystable
+
+sudo apt-get install clickhouse-common-static=$version clickhouse-client=$version clickhouse-server=$version
+```
+
+7. Для простоты примера, удалим пароль default user с каждой ClickHouse VM и запустим 
+```
+sudo rm /etc/clickhouse-server/users.d/default-password.xml
+
+sudo systemctl start clickhouse-server
+```
