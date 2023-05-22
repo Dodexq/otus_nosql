@@ -1,3 +1,4 @@
 .vagrant/
 key.json
 mongodb-keyfile
+taxi_data
