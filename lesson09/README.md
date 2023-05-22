@@ -1,4 +1,4 @@
-## Домашнее задание к уроку 06
+## Домашнее задание к уроку 09
 
 
 ### Цели занятия
@@ -166,3 +166,141 @@ sudo rm /etc/clickhouse-server/users.d/default-password.xml
 
 sudo systemctl start clickhouse-server
 ```
+
+8. На каждой из нод создать дирректорию и файл конфигурации `/etc/clickhouse-server/config.d/zookeeper.xml` заполнив:
+
+```
+<yandex>
+    <zookeeper>
+        <node>
+            <host>zookeeper1.dodex.home</host>
+            <port>2181</port>
+        </node>
+        <session_timeout_ms>30000</session_timeout_ms>
+        <operation_timeout_ms>10000</operation_timeout_ms>
+        <!-- Optional. Chroot suffix. Should exist. -->
+        <!-- <root>/path/to/zookeeper/node</root> -->
+        <!-- Optional. ZooKeeper digest ACL string. -->
+        <!-- <identity>user:password</identity> -->
+    </zookeeper>
+    <!-- Allow to execute distributed DDL queries (CREATE, DROP, ALTER, RENAME) on cluster. -->
+    <!-- Works only if ZooKeeper is enabled. Comment it out if such functionality isn't required. -->
+    <distributed_ddl>
+        <!-- Path in ZooKeeper to queue with DDL queries -->
+        <path>/clickhouse/task_queue/ddl</path>
+
+        <!-- Settings from this profile will be used to execute DDL queries -->
+        <!-- <profile>default</profile> -->
+    </distributed_ddl>
+</yandex>
+```
+
+9. Так же, для каждой из нод, `/etc/clickhouse-server/config.d/macros.xml` для примера 1 нода:
+
+```
+<yandex>
+    <macros>
+        <cluster>clickcluster</cluster>
+        <shard>1</shard>
+        <replica>click1.dodex.home</replica>
+    </macros>
+</yandex>
+```
+
+10. Настройка кластера `/etc/clickhouse-server/config.d/clusters.xml`
+```
+<yandex>
+    <remote_servers>
+        <clickcluster>
+            <shard>
+                <replica>
+                    <host>click1.dodex.home</host>
+                    <port>9000</port>
+                </replica>
+                <replica>
+                    <host>click2.dodex.home</host>
+                    <port>9000</port>
+                </replica>
+                <replica>
+                    <host>click3.dodex.home</host>
+                    <port>9000</port>
+                </replica>
+            </shard>
+        </clickcluster>
+    </remote_servers>
+</yandex>
+```
+11. Слушать всех IP `/etc/clickhouse-server/users.d/listen.xml`
+```
+<yandex>
+    <listen_host>::</listen_host>
+</yandex>
+```
+
+12. Рестарт на 3 нодах `systemctl restart clickhouse-server`
+
+13. Проверяем состояние кластера
+```
+clickhouse-client -q "SELECT * FROM system.clusters WHERE cluster='altinitydemo' FORMAT Vertical;"
+```
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/6.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/6.png" alt="" width="500" /></a>
+</p>
+
+#
+
+14. Создадим тестовую таблицу
+```
+CREATE TABLE replicatest ON CLUSTER '{cluster}'
+(
+    timestamp DateTime,
+    contractid UInt32,
+    userid UInt32
+) ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/default/replicatest', '{replica}')
+PARTITION BY toYYYYMM(timestamp)
+ORDER BY (contractid, toDate(timestamp), userid)
+SAMPLE BY userid;
+```
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/7.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/7.png" alt="" width="500" /></a>
+</p>
+
+15. Заливаем в кластер данные taxi.taxi_trips
+
+
+```
+CREATE DATABASE taxi ON CLUSTER '{cluster}'
+CREATE TABLE taxi.taxi_trips ON CLUSTER '{cluster}'
+(
+    `unique_key` String,
+    `taxi_id` String,
+    `trip_start_timestamp` DateTime,
+    `trip_end_timestamp` DateTime,
+    `trip_seconds` Int64,
+    `trip_miles` Decimal(10, 4),
+    `pickup_census_tract` String,
+    `dropoff_census_tract` String,
+    `pickup_community_area` String,
+    `dropoff_community_area` String,
+    `fare` Decimal(10, 4),
+    `tips` Decimal(10, 4),
+    `tolls` Decimal(10, 4),
+    `extras` Decimal(10, 4),
+    `trip_total` Decimal(10, 4),
+    `payment_type` String,
+    `company` String,
+    `pickup_latitude` Decimal(10, 4),
+    `pickup_longitude` Decimal(10, 4),
+    `pickup_location` String,
+    `dropoff_latitude` Decimal(10, 4),
+    `dropoff_longitude` Decimal(10, 4),
+    `dropoff_location` String
+)
+ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/taxi/taxi_trips', '{replica}')
+PARTITION BY toYYYYMM(trip_start_timestamp)
+ORDER BY (payment_type, tips, tolls)
+```
+Проверяем
+

@@ -1,0 +1,20 @@
+<yandex>
+    <remote_servers>
+        <clickcluster>
+            <shard>
+                <replica>
+                    <host>click1.dodex.home</host>
+                    <port>9000</port>
+                </replica>
+                <replica>
+                    <host>click2.dodex.home</host>
+                    <port>9000</port>
+                </replica>
+                <replica>
+                    <host>click3.dodex.home</host>
+                    <port>9000</port>
+                </replica>
+            </shard>
+        </clickcluster>
+    </remote_servers>
+</yandex>
