@@ -1,7 +1,7 @@
 <yandex>
     <macros>
-        <cluster>clickcluster</cluster>
+        <cluster>demo_cluster</cluster>
         <shard>1</shard>
-        <replica>click1.dodex.home</replica>
+        <replica>click1.test</replica>
     </macros>
 </yandex>

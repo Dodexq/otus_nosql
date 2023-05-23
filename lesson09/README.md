@@ -144,7 +144,7 @@ autopurge.snapRetainCount=5
 
 4. Старт zookeeper `sudo -u zookeeper /usr/share/zookeeper/bin/zkServer.sh start`
 
-5. Установка Altinity репо 
+5. Установка Altinity репо на click1-click3
 ```
 sudo sh -c 'mkdir -p /usr/share/keyrings && curl -s https://builds.altinity.cloud/apt-repo/pubkey.gpg | gpg --dearmor > /usr/share/keyrings/altinity-dev-archive-keyring.gpg'
 
@@ -178,19 +178,10 @@ sudo systemctl start clickhouse-server
         </node>
         <session_timeout_ms>30000</session_timeout_ms>
         <operation_timeout_ms>10000</operation_timeout_ms>
-        <!-- Optional. Chroot suffix. Should exist. -->
-        <!-- <root>/path/to/zookeeper/node</root> -->
-        <!-- Optional. ZooKeeper digest ACL string. -->
-        <!-- <identity>user:password</identity> -->
     </zookeeper>
-    <!-- Allow to execute distributed DDL queries (CREATE, DROP, ALTER, RENAME) on cluster. -->
-    <!-- Works only if ZooKeeper is enabled. Comment it out if such functionality isn't required. -->
-    <distributed_ddl>
-        <!-- Path in ZooKeeper to queue with DDL queries -->
-        <path>/clickhouse/task_queue/ddl</path>
 
-        <!-- Settings from this profile will be used to execute DDL queries -->
-        <!-- <profile>default</profile> -->
+    <distributed_ddl>
+        <path>/clickhouse/task_queue/ddl</path>
     </distributed_ddl>
 </yandex>
 ```
@@ -267,40 +258,41 @@ SAMPLE BY userid;
 <a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/7.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/7.png" alt="" width="500" /></a>
 </p>
 
-15. Заливаем в кластер данные taxi.taxi_trips
 
+15. Инсертим данные, проверим, как работает репликация
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/8.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/8.png" alt="" width="500" /></a>
+</p>
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/9.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/9.png" alt="" width="500" /></a>
+</p>
+
+
+
+16. Заливаем в кластер данные cell_tower https://clickhouse.com/docs/en/getting-started/example-datasets/cell-towers
 
 ```
-CREATE DATABASE taxi ON CLUSTER '{cluster}'
-CREATE TABLE taxi.taxi_trips ON CLUSTER '{cluster}'
+CREATE DATABASE otus ON CLUSTER '{cluster}'
+CREATE TABLE cell_towers
 (
-    `unique_key` String,
-    `taxi_id` String,
-    `trip_start_timestamp` DateTime,
-    `trip_end_timestamp` DateTime,
-    `trip_seconds` Int64,
-    `trip_miles` Decimal(10, 4),
-    `pickup_census_tract` String,
-    `dropoff_census_tract` String,
-    `pickup_community_area` String,
-    `dropoff_community_area` String,
-    `fare` Decimal(10, 4),
-    `tips` Decimal(10, 4),
-    `tolls` Decimal(10, 4),
-    `extras` Decimal(10, 4),
-    `trip_total` Decimal(10, 4),
-    `payment_type` String,
-    `company` String,
-    `pickup_latitude` Decimal(10, 4),
-    `pickup_longitude` Decimal(10, 4),
-    `pickup_location` String,
-    `dropoff_latitude` Decimal(10, 4),
-    `dropoff_longitude` Decimal(10, 4),
-    `dropoff_location` String
+    radio Enum8('' = 0, 'CDMA' = 1, 'GSM' = 2, 'LTE' = 3, 'NR' = 4, 'UMTS' = 5),
+    mcc UInt16,
+    net UInt16,
+    area UInt16,
+    cell UInt64,
+    unit Int16,
+    lon Float64,
+    lat Float64,
+    range UInt32,
+    samples UInt32,
+    changeable UInt8,
+    created DateTime,
+    updated DateTime,
+    averageSignal UInt8
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/taxi/taxi_trips', '{replica}')
-PARTITION BY toYYYYMM(trip_start_timestamp)
-ORDER BY (payment_type, tips, tolls)
+ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/otus/cell_towers', '{replica}')
+ORDER BY (radio, mcc, net, created);
 ```
-Проверяем
 
