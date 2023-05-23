@@ -275,7 +275,7 @@ SAMPLE BY userid;
 
 ```
 CREATE DATABASE otus ON CLUSTER '{cluster}'
-CREATE TABLE cell_towers
+CREATE TABLE democell_towers ON CLUSTER '{cluster}'
 (
     radio Enum8('' = 0, 'CDMA' = 1, 'GSM' = 2, 'LTE' = 3, 'NR' = 4, 'UMTS' = 5),
     mcc UInt16,
@@ -292,7 +292,49 @@ CREATE TABLE cell_towers
     updated DateTime,
     averageSignal UInt8
 )
-ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/otus/cell_towers', '{replica}')
+ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/otus/democell_towers', '{replica}')
 ORDER BY (radio, mcc, net, created);
 ```
 
+17. Вставляем
+```
+clickhouse-client --query "INSERT INTO otus.democell_towers FORMAT CSVWithNames" < cell_towers.csv
+```
+
+18. После заливки на ноду click1, проверяем, появились ли данные на других
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/10.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson09/screenshots/10.png" alt="" width="500" /></a>
+</p>
+
+```
+CREATE TABLE taxi.taxi_trips ON CLUSTER '{cluster}'
+(
+    `unique_key` String,
+    `taxi_id` String,
+    `trip_start_timestamp` DateTime,
+    `trip_end_timestamp` DateTime,
+    `trip_seconds` Int64,
+    `trip_miles` Decimal(10, 4),
+    `pickup_census_tract` String,
+    `dropoff_census_tract` String,
+    `pickup_community_area` String,
+    `dropoff_community_area` String,
+    `fare` Decimal(10, 4),
+    `tips` Decimal(10, 4),
+    `tolls` Decimal(10, 4),
+    `extras` Decimal(10, 4),
+    `trip_total` Decimal(10, 4),
+    `payment_type` String,
+    `company` String,
+    `pickup_latitude` Decimal(10, 4),
+    `pickup_longitude` Decimal(10, 4),
+    `pickup_location` String,
+    `dropoff_latitude` Decimal(10, 4),
+    `dropoff_longitude` Decimal(10, 4),
+    `dropoff_location` String
+)
+ENGINE = ReplicatedMergeTree('/clickhouse/tables/{cluster}/{shard}/taxi/taxi_trips', '{replica}')
+PARTITION BY toYYYYMM(trip_start_timestamp)
+ORDER BY (payment_type, tips, tolls)
+```
