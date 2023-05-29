@@ -1,0 +1,39 @@
+version: '2.4'
+networks:
+  cassandra:
+services:
+  cass1:
+    image: cassandra:4.1.1
+    restart: always
+    container_name: cass1
+    hostname: cass1
+    mem_limit: 2g
+    networks:
+      - cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - ./data/cass1:/var/lib/cassandra
+      - ./etc/cass1/:/etc/cassandra
+    environment: &environment
+      CASSANDRA_SEEDS: "cass1"
+      CASSANDRA_CLUSTER_NAME: SolarSystem
+      CASSANDRA_DC: Mars
+      CASSANDRA_RACK: West
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_NUM_TOKENS: 128
+      
+  cass2:
+    image: cassandra:4.1.1
+    restart: always
+    container_name: cass2
+    hostname: cass2
+    mem_limit: 2g
+    networks:
+      - cassandra
+    ports:
+      - "9043:9042"
+    volumes:
+      - ./data/cass2:/var/lib/cassandra
+      - ./etc/cass2/:/etc/cassandra
+    environment: *environment
