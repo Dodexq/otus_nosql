@@ -1,0 +1,9 @@
+apiVersion: stork.libopenstorage.org/v1alpha1
+kind: GroupVolumeSnapshot
+metadata:
+  name: cassandra-group-snapshot
+spec:
+  preExecRule: cassandra-presnap-rule
+  pvcSelector:
+    matchLabels:
+      app: cassandra
