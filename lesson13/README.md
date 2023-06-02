@@ -89,6 +89,12 @@ nodetool flush otus shopping_cart2
 ```
 nodetool import otus shopping_cart2 /var/lib/cassandra/data/otus/shopping_cart2-288dc700fe1211ed9575ede754538f2f/snapshots/otus-snap/
 ```
+* Далее после восстановления данных или переноса на новый кластер необходимо выполнить nodetool repair:
+
+```
+nodetool repair otus
+```
+
 <p align="center"> 
 <a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/4.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/4.png" alt="" width="500" /></a>
 </p>
@@ -99,6 +105,67 @@ nodetool import otus shopping_cart2 /var/lib/cassandra/data/otus/shopping_cart2-
 * `incremental_backups` -  механизм резервного копирования данных в Cassandra, который позволяет создавать инкрементальные копии измененных данных с момента предыдущего резервного копирования. 
 * Создание снапшота `nodetool snapshot --tag example-tag catalogkeyspace`
 
+#
+
+### Задание со (*) Установка Cassandra в кластер Kubernetes (Rancher) с бекабированием 3DSnap
+
 <p align="center"> 
-<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/1.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/1.png" alt="" width="500" /></a>
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/5.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/5.png" alt="" width="500" /></a>
 </p>
+
+
+1. Добавление /dev/sdb на все ноды под portworx, и развертывание portworx
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/6.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/6.png" alt="" width="500" /></a>
+</p>
+
+2. Установка cassandra и проверка кластера
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/7.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/7.png" alt="" width="500" /></a>
+</p>
+
+3. Заливка тех же данных, что и в примере выше
+
+4. Проверим, на каких нодах лежат данные `kubectl exec -it cassandra-0 -- nodetool getendpoints otus shopping_cart2 userid` фактор репликации - 2
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/8.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/8.png" alt="" width="500" /></a>
+</p>
+
+5. Добавляем групповой снапшот и правило для Cassandra `./3dSnap`, проверяем `kubectl get volumesnapshot.volumesnapshot.external-storage.k8s.io`, из них и будем восстанавливаться
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/9.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/9.png" alt="" width="500" /></a>
+</p>
+
+```
+cassandra-group-snapshot-cassandra-data-cassandra-0-9e01f2bd-230b-4666-bd49-7e63662138a2
+cassandra-group-snapshot-cassandra-data-cassandra-1-9e01f2bd-230b-4666-bd49-7e63662138a2
+cassandra-group-snapshot-cassandra-data-cassandra-2-9e01f2bd-230b-4666-bd49-7e63662138a2
+```
+
+6. Пример PVC для рестора снапшота
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cassandra-data-cassandra-0
+  annotations:
+    snapshot.alpha.kubernetes.io/snapshot: "cassandra-group-snapshot-cassandra-data-cassandra-0-9e01f2bd-230b-4666-bd49-7e63662138a2"
+spec:
+  accessModes:
+     - ReadWriteOnce
+  storageClassName: stork-snapshot-sc
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+7. Снес Cassandra и PVC, восстановил PVC из `./cassandra/px-cassandra-restore-pvc.yaml` данные восстановились.
+
+<p align="center"> 
+<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/10.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson13/screenshots/10.png" alt="" width="500" /></a>
+</p>
+
