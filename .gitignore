@@ -4,3 +4,4 @@ mongodb-keyfile
 taxi_data
 cell_towers
 http_ca.crt
+redisinsight
