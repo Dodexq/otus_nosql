@@ -1,0 +1,28 @@
+Vagrant.configure("2") do |config|
+  
+  config.vm.define "redis-master" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "redis-master"
+    server.vm.network "public_network", ip: "192.168.0.210"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"
+      vb.name = "redis-master"
+      vb.cpus = "4"
+  	end
+  server.vm.provision "shell", path: "./provision-master.sh"
+  end
+
+  (1..2).each do |i|
+    config.vm.define "redis-slave-#{i}" do |server|
+      server.vm.box = "geerlingguy/ubuntu2004"
+      server.vm.hostname = "redis-slave-#{i}"
+      server.vm.network "public_network", ip: "192.168.0.21#{i}"
+      server.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"
+        vb.name = "redis-slave-#{i}"
+        vb.cpus = "2"
+      end
+    server.vm.provision "shell", path: "./provision-slave.sh"
+    end
+  end
+end
