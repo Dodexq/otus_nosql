@@ -8,4 +8,4 @@
 * [Cassandra: CQL and Java, Scala API](https://github.com/Dodexq/otus_nosql/tree/main/lesson11)
 * [Elasticsearch](https://github.com/Dodexq/otus_nosql/tree/main/lesson12)
 * [Cassandra: monitoring and problem solving](https://github.com/Dodexq/otus_nosql/tree/main/lesson13)
-
+* [Redis](https://github.com/Dodexq/otus_nosql/tree/main/lesson16)
