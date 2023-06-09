@@ -1,6 +1,6 @@
 Vagrant.configure("2") do |config|
   
-  (1..3).each do |i|
+  (1..4).each do |i|
     config.vm.define "etcd-#{i}" do |server|
       server.vm.box = "geerlingguy/ubuntu2004"
       server.vm.hostname = "etcd-#{i}"
