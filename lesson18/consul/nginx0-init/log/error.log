@@ -1,0 +1,60 @@
+2022/12/17 11:29:26 [notice] 1#1: using the "epoll" event method
+2022/12/17 11:29:26 [notice] 1#1: nginx/1.23.3
+2022/12/17 11:29:26 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2022/12/17 11:29:26 [notice] 1#1: OS: Linux 5.15.49-linuxkit
+2022/12/17 11:29:26 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2022/12/17 11:29:26 [notice] 1#1: start worker processes
+2022/12/17 11:29:26 [notice] 1#1: start worker process 29
+2022/12/17 11:29:26 [notice] 1#1: start worker process 30
+2022/12/17 11:30:04 [error] 29#29: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.20.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
+2022/12/17 11:30:25 [error] 29#29: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.20.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
+2022/12/17 11:33:42 [notice] 1#1: signal 15 (SIGTERM) received from 2134, exiting
+2022/12/17 11:33:42 [notice] 30#30: exiting
+2022/12/17 11:33:42 [notice] 29#29: exiting
+2022/12/17 11:33:42 [notice] 30#30: exit
+2022/12/17 11:33:42 [notice] 29#29: exit
+2022/12/17 11:33:42 [notice] 1#1: signal 17 (SIGCHLD) received from 30
+2022/12/17 11:33:42 [notice] 1#1: worker process 30 exited with code 0
+2022/12/17 11:33:42 [notice] 1#1: signal 29 (SIGIO) received
+2022/12/17 11:33:42 [notice] 1#1: signal 17 (SIGCHLD) received from 29
+2022/12/17 11:33:42 [notice] 1#1: worker process 29 exited with code 0
+2022/12/17 11:33:42 [notice] 1#1: exit
+2022/12/17 11:33:43 [notice] 1#1: using the "epoll" event method
+2022/12/17 11:33:43 [notice] 1#1: nginx/1.23.3
+2022/12/17 11:33:43 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2022/12/17 11:33:43 [notice] 1#1: OS: Linux 5.15.49-linuxkit
+2022/12/17 11:33:43 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2022/12/17 11:33:43 [notice] 1#1: start worker processes
+2022/12/17 11:33:43 [notice] 1#1: start worker process 22
+2022/12/17 11:33:43 [notice] 1#1: start worker process 23
+2022/12/17 11:35:35 [notice] 1#1: signal 17 (SIGCHLD) received from 34
+2022/12/17 11:35:35 [alert] 1#1: unknown process 34 exited on signal 1
+2022/12/17 11:36:37 [notice] 1#1: signal 17 (SIGCHLD) received from 84
+2022/12/17 11:36:37 [alert] 1#1: unknown process 84 exited on signal 1
+2022/12/17 11:37:40 [notice] 1#1: using the "epoll" event method
+2022/12/17 11:37:40 [notice] 1#1: nginx/1.23.3
+2022/12/17 11:37:40 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2022/12/17 11:37:40 [notice] 1#1: OS: Linux 5.15.49-linuxkit
+2022/12/17 11:37:40 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2022/12/17 11:37:40 [notice] 1#1: start worker processes
+2022/12/17 11:37:40 [notice] 1#1: start worker process 22
+2022/12/17 11:37:40 [notice] 1#1: start worker process 23
+2022/12/17 11:37:59 [notice] 1#1: signal 17 (SIGCHLD) received from 33
+2022/12/17 11:37:59 [notice] 1#1: unknown process 33 exited with code 0
+2022/12/17 11:39:20 [error] 23#23: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.20.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
+2022/12/17 11:40:47 [notice] 1#1: signal 17 (SIGCHLD) received from 233
+2022/12/17 11:40:47 [notice] 1#1: unknown process 233 exited with code 0
+2022/12/17 11:42:01 [notice] 1#1: signal 17 (SIGCHLD) received from 961
+2022/12/17 11:42:01 [alert] 1#1: unknown process 961 exited on signal 1
+2022/12/18 12:53:50 [notice] 1#1: using the "epoll" event method
+2022/12/18 12:53:50 [notice] 1#1: nginx/1.23.3
+2022/12/18 12:53:50 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6) 
+2022/12/18 12:53:50 [notice] 1#1: OS: Linux 5.10.47-linuxkit
+2022/12/18 12:53:50 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2022/12/18 12:53:50 [notice] 1#1: start worker processes
+2022/12/18 12:53:50 [notice] 1#1: start worker process 32
+2022/12/18 12:53:50 [notice] 1#1: start worker process 33
+2022/12/18 12:58:43 [error] 38#0: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.20.0.1, server: _, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
+2022/12/18 13:00:15 [error] 81#0: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.20.0.1, server: _, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
+2022/12/18 13:03:27 [error] 39#0: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.21.0.1, server: _, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
+2022/12/18 13:53:07 [error] 38#0: *1 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.22.0.1, server: _, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"

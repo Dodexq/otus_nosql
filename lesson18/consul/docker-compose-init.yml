@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+
+  nginx0-init:
+    image: jrei/systemd-debian:10
+    # image: consul-nginx:latest
+    container_name: nginx0-init
+    hostname: nginx0-init
+    restart: always
+    tmpfs:
+      - /run
+      - /tmp
+      - /run/lock    
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro

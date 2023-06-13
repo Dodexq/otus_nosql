@@ -1,0 +1,14 @@
+Vagrant.configure("2") do |config|
+  
+  config.vm.define "consul" do |server|
+    server.vm.box = "geerlingguy/ubuntu2004"
+    server.vm.hostname = "consul"
+    server.vm.network "public_network", ip: "192.168.0.124"
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "8192"
+      vb.name = "consul"
+      vb.cpus = "8"
+  	end
+  server.vm.provision "shell", path: "./provision.sh"
+  end
+end
