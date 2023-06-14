@@ -1,0 +1,17 @@
+{
+    "service": {
+        "id": "web",
+        "name": "web",
+        "tags": [ "nginx" ],
+        "Address": "192.168.0.212",
+        "port": 80,
+        "enable_tag_override": false,
+        "check": {
+            "id": "web_up",
+            "name": "nginx healthcheck",
+            "args": ["curl", "localhost"],
+            "interval": "10s",
+            "timeout": "2s"
+        }
+    }
+}
