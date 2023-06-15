@@ -1,0 +1,58 @@
+---
+- name: Check and install certificate.
+  tags: 
+    - install
+  block:
+  - name: Check if certificate already exists.
+    stat:
+      path: /etc/letsencrypt/live/{{ cert_domain }}/cert.pem
+    register: letsencrypt_cert
+
+  - name: Certbot create Cert
+    command: "{{ cert_create_command }}"
+    when: not letsencrypt_cert.stat.exists
+
+- name: Copy and deploy balancer config
+  tags:
+    - configure
+  block:
+  - name: Copy sites-available config
+    copy:
+      src: files/nginx/sites-available/{{ cert_domain }}
+      dest: /etc/nginx/sites-available/
+      owner: root
+      group: root
+      mode: '0644'
+  - name: Creating a symlink
+    file:
+      src: /etc/nginx/sites-available/{{ cert_domain }}
+      dest: /etc/nginx/sites-enabled/{{ cert_domain }}
+      state: link
+  - name: Remove default config
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+  - name: Nginx reload
+    service:
+      name: nginx
+      state: reloaded
+
+- name: Create systemd Unit & Enable Certbot timer
+  tags:
+    - autorun
+  block:
+  - name: Copy systemd Unit
+    copy:
+      src: "{{ item }}"
+      dest: /etc/systemd/system/
+      owner: root
+      group: root
+      mode: '0644'
+    loop:
+      - files/systemd_unit/certbot-renewal.service
+      - files/systemd_unit/certbot-renewal.timer
+  - name: Enable systemctl timer
+    service:
+      name: certbot-renewal.timer
+      state: started
+      enabled: yes

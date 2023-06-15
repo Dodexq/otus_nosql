@@ -1,0 +1,7 @@
+- name: First Install + Web-Project
+  hosts: host01
+  gather_facts: yes
+  become: yes
+  roles:
+    - first_setup
+    - web-project

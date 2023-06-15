@@ -1,0 +1,34 @@
+- name: Messages
+  hosts: test
+  become: yes
+
+  vars:
+    w1: Home
+    w2: in
+    w3: Russian
+
+  tasks:
+
+  - name: Print vars
+    debug:
+      var: w1
+
+  - debug:
+      msg: "My {{w1}} {{w2}} {{w3}}"
+
+  - set_fact:
+      message: "My {{w1}} {{w2}} {{w3}}"
+
+  - debug:
+      var: message
+
+  - debug:
+      var: ansible_distribution_version
+  - debug:
+      msg: "Linux: {{ansible_distribution}} Version: {{ansible_distribution_version}} Uptime: {{(ansible_uptime_seconds/60)/60}}"
+
+  - shell: id client1
+    register: client_groups
+
+  - debug:
+      msg: "client1 in groups: {{client_groups}}"

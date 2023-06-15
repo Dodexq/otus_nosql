@@ -22,3 +22,4 @@
 <p align="center"> 
 <a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson18/screenshots/3.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson18/screenshots/3.png" alt="" width="500" /></a>
 </p>
+

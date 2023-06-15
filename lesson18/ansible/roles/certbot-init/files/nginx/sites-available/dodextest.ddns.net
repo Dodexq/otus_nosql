@@ -1,0 +1,38 @@
+upstream backend {
+  server 192.168.56.71; #host01
+  server 192.168.56.72; #host02
+  server 192.168.56.73; #host03
+}
+
+server {
+       server_name dodextest.ddns.net www.dodextest.ddns.net;
+
+       location / {
+               proxy_redirect       off;
+               proxy_set_header     X-Real-IP $remote_addr;
+               proxy_set_header     X-Forwarded-For $proxy_add_x_forwarded_for;
+               proxy_set_header     Host $http_host;
+               proxy_pass           http://backend;
+       }
+
+    listen 443 ssl http2;
+    listen [::]:443 ssl ipv6only=on;
+    ssl_certificate /etc/letsencrypt/live/dodextest.ddns.net/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/dodextest.ddns.net/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+}
+server {
+    if ($host = dodextest.ddns.net) {
+        return 301 https://$host$request_uri;
+    }
+
+
+       listen 80;
+       listen [::]:80;
+       server_name dodextest.ddns.net www.dodextest.ddns.net;
+    return 404;
+
+
+}

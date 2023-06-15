@@ -1,0 +1,24 @@
+---
+- name: Install nginx
+  tags:
+    - Install
+  block:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+
+- name: Deploy html page by Template
+  tags:
+    - template
+  block:
+    - name: Push html page /var/www by Template
+      template:
+        src: templates/index.nginx-debian.j2
+        dest: /var/www/html/index.nginx-debian.html
+    - name: Nginx reload
+      service:
+        name: nginx
+        state: reloaded
+
+
