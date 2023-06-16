@@ -6,3 +6,4 @@ cell_towers
 http_ca.crt
 redisinsight
 *.pem
+ansible.log

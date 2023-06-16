@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
         vb.name = "consul#{i}"
         vb.cpus = "2"
       end
-    server.vm.provision "shell", path: "./provision/provision-server-#{i}.sh"
+    server.vm.provision "shell", path: "./provision/provision-root-ssh.sh"
     end
   end
 
@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
         vb.name = "nginx#{i}"
         vb.cpus = "1"
       end
-    server.vm.provision "shell", path: "./provision/provision-nginx-#{i}.sh"
+    server.vm.provision "shell", path: "./provision/provision-root-ssh.sh"
     end
   end
 end
