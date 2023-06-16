@@ -1,4 +1,0 @@
----
-cert_domain: dodextest.ddns.net
-cert_email: dodexpwnz@gmail.com
-cert_create_command: "certbot run -n --nginx --agree-tos -d {{ cert_domain }} -m {{ cert_email }} --redirect"

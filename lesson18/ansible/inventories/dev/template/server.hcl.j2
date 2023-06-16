@@ -9,4 +9,4 @@ performance {
   raft_multiplier = 1
 }
 
-test = "{{ host_ips | reject('equalto', ansible_enp0s8.ipv4.address) | list }}"
+retry_join  = "{{ host_ips_consul_server | reject('equalto', ansible_enp0s8.ipv4.address) | list }}"

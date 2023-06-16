@@ -3,7 +3,6 @@
   hosts: consul_servers
 
   tasks:
-
     - name: HashiCorp Key import
       get_url:
         url: "https://apt.releases.hashicorp.com/gpg"
@@ -26,7 +25,7 @@
         state: present
         update_cache: yes
 
-    - name: copy cert dir
+    - name: Copy cert dir
       copy:
         src: ./files/certs
         dest: '{{ consul_config_dir }}'
@@ -38,27 +37,27 @@
     - name: Create Consul config
       template:
         src: ./template/consul.hcl.j2
-        dest: '{{  consul_config_dir  }}/consul.hcl'
+        dest: '{{ consul_config_dir }}/consul.hcl'
         owner: consul
         group: consul
         mode: '0640'
-    
+      
     - name: Set Facts
       set_fact:
-        host_ips: "{{ host_ips | default([]) + [hostvars[item].ansible_host] }}"
+        host_ips_consul_server: "{{ host_ips_consul_server | default([]) + [hostvars[item].ansible_host] }}"
+      when: item is match('^consul.*$')
       loop: "{{ ansible_play_hosts_all }}"
-      tags: test_tmp
-
-    - name: Debug
-      debug:
-        var: host_ips
-      tags: test_tmp
 
     - name: Create Consul Server config
       template:
         src: ./template/server.hcl.j2
-        dest: '{{  consul_config_dir  }}/server.hcl'
+        dest: '{{ consul_config_dir }}/server.hcl'
         owner: consul
         group: consul
         mode: '0640'
-      tags: test_tmp
+
+    - name: Enable & Start Consul consul_servers
+      service:
+        name: consul
+        state: started
+        enabled: yes
