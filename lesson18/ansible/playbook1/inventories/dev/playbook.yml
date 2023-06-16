@@ -3,6 +3,7 @@
   hosts: consul_servers
 
   tasks:
+
     - name: HashiCorp Key import
       get_url:
         url: "https://apt.releases.hashicorp.com/gpg"
@@ -41,6 +42,17 @@
         owner: consul
         group: consul
         mode: '0640'
+    
+    - name: Set Facts
+      set_fact:
+        host_ips: "{{ host_ips | default([]) + [hostvars[item].ansible_host] }}"
+      loop: "{{ ansible_play_hosts_all }}"
+      tags: test_tmp
+
+    - name: Debug
+      debug:
+        var: host_ips
+      tags: test_tmp
 
     - name: Create Consul Server config
       template:
@@ -49,3 +61,4 @@
         owner: consul
         group: consul
         mode: '0640'
+      tags: test_tmp
