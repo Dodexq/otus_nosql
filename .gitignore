@@ -7,3 +7,4 @@ http_ca.crt
 redisinsight
 *.pem
 ansible.log
+.vscode

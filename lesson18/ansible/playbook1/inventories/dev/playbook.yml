@@ -1,26 +1,51 @@
 ---
-- name: Установка Consul
+- name: Install Consul
   hosts: consul_servers
 
   tasks:
-    - name: Импортирование ключа HashiCorp
+    - name: HashiCorp Key import
       get_url:
         url: "https://apt.releases.hashicorp.com/gpg"
         dest: /etc/apt/trusted.gpg.d/hashicorp.asc
 
-    - name: Добавление репозитория HashiCorp
+    - name: Add repo HashiCorp
       apt_repository:
         repo: "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
         state: present
         filename: hashicorp
         update_cache: yes
 
-    - name: Обновление списка пакетов
+    - name: Update apt
       apt:
         update_cache: yes
 
-    - name: Установка Consul
+    - name: Install Consul
       apt:
         name: consul
         state: present
         update_cache: yes
+
+    - name: copy cert dir
+      copy:
+        src: ./files/certs
+        dest: '{{ consul_config_dir }}'
+        owner: consul
+        group: consul
+        mode: '0640'
+        directory_mode:
+
+    - name: Create Consul config
+      template:
+        src: ./template/consul.hcl.j2
+        dest: '{{  consul_config_dir  }}/consul.hcl'
+        owner: consul
+        group: consul
+        mode: '0640'
+
+    - name: Create Consul Server config
+      template:
+        src: ./template/server.hcl.j2
+        dest: '{{  consul_config_dir  }}/server.hcl'
+        owner: consul
+        group: consul
+        mode: '0640'

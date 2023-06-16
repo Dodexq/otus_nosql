@@ -1,0 +1,4 @@
+consul_datacenter_name: dc1
+consul_data_dir: /opt/consul
+consul_gossip_encrypt: j/odW94x5WTPr+LfiZJd7w==
+consul_config_dir: /etc/consul.d
