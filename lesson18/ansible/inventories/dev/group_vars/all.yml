@@ -1,1 +1,0 @@
-retry_join_server: "{{ host_ips }}"
