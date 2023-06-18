@@ -1,0 +1,63 @@
+---
+- name: Install Consul
+  hosts: consul_agents
+
+  tasks:
+    - name: HashiCorp Key import
+      get_url:
+        url: "https://apt.releases.hashicorp.com/gpg"
+        dest: /etc/apt/trusted.gpg.d/hashicorp.asc
+
+    - name: Add repo HashiCorp
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+        state: present
+        filename: hashicorp
+        update_cache: yes
+
+    - name: Update apt
+      apt:
+        update_cache: yes
+
+    - name: Install Consul
+      apt:
+        name: consul
+        state: present
+        update_cache: yes
+
+    - name: Copy cert dir
+      copy:
+        src: ./files/certs
+        dest: '{{ consul_config_dir }}'
+        owner: consul
+        group: consul
+        mode: '0640'
+        directory_mode:
+
+    - name: Create Consul config
+      template:
+        src: ./template/consul.hcl.j2
+        dest: '{{ consul_config_dir }}/consul.hcl'
+        owner: consul
+        group: consul
+        mode: '0640'
+      
+    - name: Set Facts
+      set_fact:
+        host_ips_consul_server: "{{ host_ips_consul_server | default([]) + [hostvars[item].ansible_host] }}"
+      when: item is match("^consul.*$")
+      loop: "{{ hostvars.keys() }}"
+
+    - name: Create Consul Server config
+      template:
+        src: ./template/client.hcl.j2
+        dest: '{{ consul_config_dir }}/client.hcl'
+        owner: consul
+        group: consul
+        mode: '0640'
+
+    - name: Enable & Start Consul consul_client
+      service:
+        name: consul
+        state: started
+        enabled: yes
