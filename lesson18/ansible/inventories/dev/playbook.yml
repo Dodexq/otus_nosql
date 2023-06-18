@@ -45,8 +45,9 @@
     - name: Set Facts
       set_fact:
         host_ips_consul_server: "{{ host_ips_consul_server | default([]) + [hostvars[item].ansible_host] }}"
-      when: item is match('^consul.*$')
+      when: item is match("^consul.*$")
       loop: "{{ ansible_play_hosts_all }}"
+      tags: "test"
 
     - name: Create Consul Server config
       template:
@@ -55,6 +56,7 @@
         owner: consul
         group: consul
         mode: '0640'
+      tags: "test"
 
     - name: Enable & Start Consul consul_servers
       service:

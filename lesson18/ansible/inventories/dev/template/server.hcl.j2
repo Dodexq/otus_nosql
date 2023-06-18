@@ -9,4 +9,11 @@ performance {
   raft_multiplier = 1
 }
 
-retry_join  = "{{ host_ips_consul_server | reject('equalto', ansible_enp0s8.ipv4.address) | list }}"
+{% set quoted_list = [] %}
+{% for item in host_ips_consul_server %}
+  {% if item != ansible_enp0s8.ipv4.address %}
+    {% set _ = quoted_list.append('\'' + item + '\'') %}
+  {% endif %}
+{% endfor %}
+
+retry_join  = {{ quoted_list | replace("'", '') }}
