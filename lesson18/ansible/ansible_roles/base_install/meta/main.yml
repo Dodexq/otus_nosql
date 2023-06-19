@@ -1,6 +1,6 @@
 galaxy_info:
   author: your name
-  namespace: test
+  namespace: consul
   description: your role description
   company: your company (optional)
 

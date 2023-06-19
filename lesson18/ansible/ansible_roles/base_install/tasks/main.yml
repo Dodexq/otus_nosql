@@ -1,0 +1,39 @@
+---
+  - name: HashiCorp Key import
+    get_url:
+      url: "https://apt.releases.hashicorp.com/gpg"
+      dest: /etc/apt/trusted.gpg.d/hashicorp.asc
+
+  - name: Add repo HashiCorp
+    apt_repository:
+      repo: "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+      state: present
+      filename: hashicorp
+      update_cache: yes
+
+  - name: Update apt
+    apt:
+      update_cache: yes
+
+  - name: Install Consul
+    apt:
+      name: consul
+      state: present
+      update_cache: yes
+
+  - name: Copy cert dir
+    copy:
+      src: ./files/certs
+      dest: "{{ consul_cert_path }}"
+      owner: consul
+      group: consul
+      mode: '0640'
+      directory_mode:
+
+  - name: Create Consul config
+    template:
+      src: "{{ consul_template_path }}/consul.hcl.j2"
+      dest: '{{ consul_config_dir }}/consul.hcl'
+      owner: consul
+      group: consul
+      mode: '0640'

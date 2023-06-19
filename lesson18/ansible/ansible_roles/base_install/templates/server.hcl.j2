@@ -1,0 +1,19 @@
+server = true
+bootstrap_expect = 3
+
+bind_addr = "{{ ansible_enp0s8.ipv4.address }}"
+client_addr = "0.0.0.0"
+ui = true
+
+performance {
+  raft_multiplier = 1
+}
+
+{% set quoted_list = [] %}
+{% for item in host_ips_consul_server %}
+  {% if item != ansible_enp0s8.ipv4.address %}
+    {% set _ = quoted_list.append('\'' + item + '\'') %}
+  {% endif %}
+{% endfor %}
+
+retry_join  = {{ quoted_list | replace("'", '') }}

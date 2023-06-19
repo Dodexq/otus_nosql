@@ -3,6 +3,6 @@
   hosts: all
   gather_facts: false
   tasks:
-    - name: "Include test.test"
+    - name: "Include consul.base_install"
       ansible.builtin.include_role:
-        name: "test.test"
+        name: "consul.base_install"

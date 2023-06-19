@@ -1,8 +1,0 @@
----
-- name: Converge
-  hosts: all
-  gather_facts: false
-  tasks:
-    - name: "Include test.test_molecule"
-      ansible.builtin.include_role:
-        name: "test.test_molecule"
