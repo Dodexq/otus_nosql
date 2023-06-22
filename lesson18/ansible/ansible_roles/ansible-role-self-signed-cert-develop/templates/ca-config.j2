@@ -1,0 +1,19 @@
+{
+  "signing": {
+    "default": {
+      "expiry": "168h"
+    },
+    "profiles": {
+    {% for profile in self_signed_cert_profiles -%}
+      "{{- profile.name }}": {
+        "expiry": "{{- profile.expirity }}",
+        "usages": [
+        {%- for usage in profile.usages -%}
+          "{{- usage }}"{% if not loop.last %},{{ '\n' -}}{% endif -%}
+        {%- endfor -%}
+        ]
+      }{% if not loop.last %},{% endif %}{{ '\n' -}}
+  {% endfor -%}
+    }
+  }
+}

@@ -1,0 +1,28 @@
+---
+
+- name: Ensure cert folders exists
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ self_signed_cert_dir }}csr"
+
+- name: Ensure 'ca-config.json' file was generated
+  template:
+    src: ca-config.j2
+    dest: "{{ self_signed_cert_dir }}csr/ca-config.json"
+  register: ca_config_result
+
+- name: Ensure ca csr files was generated
+  template:
+    src: ca-csr.j2
+    dest: "{{ self_signed_cert_dir }}csr/{{ item.name }}-csr.json"
+  with_items: "{{ self_signed_cert_ca_certs }}"
+  register: ca_csr_result
+
+- name: Ensure certs csr files was generated
+  template:
+    src: certs-csr.j2
+    dest: "{{ self_signed_cert_dir }}csr/{{ item.name }}-csr.json"
+  with_items: "{{ self_signed_cert_certs }}"
+  register: ca_cert_result

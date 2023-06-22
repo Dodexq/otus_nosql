@@ -1,0 +1,5 @@
+certs/
+*.lic
+*.pem
+*.csr
+*.pfx

@@ -1,0 +1,33 @@
+- hosts: consul1
+  gather_facts: yes
+  
+  # First install directory_check if exists
+  tasks:
+    - name: Check if directory exists
+      stat:
+        path: "{{ consul_tls_out_dir }}"
+      register: directory_check
+
+    - name: Create TLS Certificate
+      include_role:
+        name: ansible-role-self-signed-cert-develop
+      when: directory_check.stat.exists
+
+- hosts: all
+  tasks:
+    - name: Set Facts
+      set_fact:
+        host_ips_consul_server: "{{ host_ips_consul_server | default([]) + [hostvars[item].ansible_host] }}"
+      when: item is match("^consul.*$")
+      loop: "{{ ansible_play_hosts_all }}"
+  roles:
+    - ansible-role-consul-base-install
+
+- hosts: consul_servers
+  roles:
+    - ansible-role-consul-server-install
+
+- hosts: consul_agents
+  roles:
+    - ansible-role-consul-agent-install
+    - ansible-role-consul-service-nginx-install

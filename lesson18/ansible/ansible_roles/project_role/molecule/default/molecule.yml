@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+lint: |
+  yamllint .
+  ansible-lint .
+platforms:
+  - name: molecule_tests
+    box: geerlingguy/ubuntu2004
+    instance_raw_config_args:
+      - "vm.synced_folder '/home/dodex/git/ansible_molecule_installer/', '/vagrant'"
+provisioner:
+  name: ansible
+  lint: |
+    ansible-lint
+verifier:
+  name: testinfra
+  lint: |
+    yamllint

@@ -1,0 +1,27 @@
+---
+
+- name: "Create certificates with keys"
+  shell: |
+    set -euxo pipefail
+    cfssl gencert \
+      -ca={{ item.ca_name }}.pem \
+      -ca-key={{ item.ca_name }}-key.pem \
+      -config={{ self_signed_cert_dir }}csr/ca-config.json \
+      -profile={{ item.profile }} {{ self_signed_cert_dir }}csr/{{ item.name }}-csr.json | cfssljson -bare {{ item.name }} -
+  args:
+    chdir: "{{ self_signed_cert_dir }}"
+    executable: /bin/bash
+  with_items: "{{ self_signed_cert_certs }}"
+  when: ca_changed[item.ca_name]
+
+- name: "Export to pfx file"
+  command: "openssl pkcs12 -export \
+    -out {{ item.name }}.pfx \
+    -inkey {{ item.name }}-key.pem \
+    -in {{ item.name }}.pem \
+    -certfile {{ item.ca_name }}.pem \
+    -passout pass:"
+  args:
+    chdir: "{{ self_signed_cert_dir }}"
+  when: ca_changed[item.ca_name] and item.export_to_pfx
+  with_items: "{{ self_signed_cert_certs }}"

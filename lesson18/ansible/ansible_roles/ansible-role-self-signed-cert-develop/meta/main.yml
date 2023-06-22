@@ -1,0 +1,19 @@
+---
+
+galaxy_info:
+  role_name: self_signed_cert
+  author: Przemysław Pogorzelec
+  description: This ansible role allows generating a self-signed certificates.
+  company: Pogosoftware
+
+  issue_tracker_url: https://github.com/pogosoftware/ansible-role-self-signed-cert/issues
+  license: MIT
+  min_ansible_version: 2.4
+
+  # https://galaxy.ansible.com/api/v1/platforms/
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags: ['cfssl', 'self', 'signed', 'cert', 'certificate', 'pogosoftware']

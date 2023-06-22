@@ -1,9 +1,10 @@
+---
+consul_template_path: "{{ role_path }}/templates"
 consul_datacenter_name: dc1
 consul_data_dir: /opt/consul
 consul_gossip_encrypt: j/odW94x5WTPr+LfiZJd7w==
 consul_config_dir: /etc/consul.d
 consul_cert_path: "{{ consul_config_dir }}"
-
 ansible_workdir: /home/dodex/git/ansible_molecule_installer/ansible
-ANSIBLE_CONFIG: "{{ ansible_workdir }}/ansible.cfg"
+ansible_config: "{{ ansible_workdir }}/ansible.cfg"
 consul_tls_out_dir: /vagrant/ansible/certs

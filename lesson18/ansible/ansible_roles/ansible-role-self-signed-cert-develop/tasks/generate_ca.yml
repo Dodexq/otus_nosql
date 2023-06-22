@@ -1,0 +1,25 @@
+---
+- name: Create directory if not exists
+  file:
+    path: "{{ self_signed_cert_dir }}"
+    state: directory
+
+- name: Create CA Certificate
+  shell: |
+    set -euxo pipefail
+    cfssl gencert -initca {{ self_signed_cert_dir }}csr/{{ item.csr_file_name }} | cfssljson -bare {{ item.cert_file_name }} -
+  args:
+    chdir: "{{ self_signed_cert_dir }}"
+    executable: /bin/bash
+  with_items: "{{ ca_certs }}"
+  register: ca_result
+  when: item.csr_file_changed or not item.cert_file_exists or not item.cert_key_file_exists
+
+- name: Trust CA Certificates
+  copy:
+    src: "{{ self_signed_cert_dir }}/{{ item.cert_file_name }}.pem"
+    dest: /usr/local/share/ca-certificates/{{ item.cert_file_name }}.crt
+  with_items: "{{ ca_certs }}"
+  notify:
+    - update ca certificates
+  when: item.cert_ca_trust

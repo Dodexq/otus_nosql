@@ -1,0 +1,41 @@
+---
+- name: HashiCorp Key import
+  ansible.legacy.get_url:
+    url: "https://apt.releases.hashicorp.com/gpg"
+    dest: /etc/apt/trusted.gpg.d/hashicorp.asc
+
+- name: Add repo HashiCorp
+  ansible.legacy.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp.asc] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+    state: present
+    filename: hashicorp
+    update_cache: true
+
+- name: Update apt
+  ansible.legacy.apt:
+    update_cache: true
+
+- name: Install Consul
+  ansible.legacy.apt:
+    name: consul
+    state: present
+    update_cache: true
+
+- name: Copy cert dir
+  ansible.legacy.copy:
+    src: "{{ consul_tls_out_dir }}"
+    dest: "{{ consul_cert_path }}"
+    owner: consul
+    group: consul
+    mode: '0740'
+    directory_mode:
+    remote_src: true
+  tags: test
+
+- name: Create Consul config
+  ansible.legacy.template:
+    src: "{{ consul_template_path }}/consul.hcl.j2"
+    dest: '{{ consul_config_dir }}/consul.hcl'
+    owner: consul
+    group: consul
+    mode: '0740'

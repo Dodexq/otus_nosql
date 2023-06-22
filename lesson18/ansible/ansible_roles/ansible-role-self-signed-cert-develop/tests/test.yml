@@ -1,0 +1,82 @@
+---
+
+- hosts: localhost
+  become: yes
+  roles:
+    - self-signed-cert
+  vars:
+    self_signed_cert_cfssl_url: https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssl_1.4.1_linux_amd64
+    self_signed_cert_cfssl_json_url: https://github.com/cloudflare/cfssl/releases/download/v1.4.1/cfssljson_1.4.1_linux_amd64
+
+    self_signed_cert_dir: /etc/certs/
+
+    self_signed_cert_profiles:
+      - name: server
+        expirity: 8760h
+        usages:
+          - signing
+          - key encipherment
+          - server auth
+          - client auth
+      - name: client
+        expirity: 8760h
+        usages:
+          - signing
+          - key encipherment
+          - client auth
+
+    self_signed_cert_ca_certs:
+      - name: example-ca
+        cn: example.com
+        key_algo: rsa
+        key_size: 2048
+        country: EU
+        location: Internet
+        organisation: Example
+        organisation_unit: IT
+        state: internet
+        trust_ca_cert: false
+
+    self_signed_cert_certs:
+      - name: server
+        profile: server
+        ca_name: example-ca
+        export_to_pfx: true
+        cn: example.com
+        hosts:
+          - example.com
+          - www.example.com
+        key_algo: rsa
+        key_size: 2048
+        country: EU
+        location: Internet
+        organisation: Example
+        organisation_unit: IT
+        state: internet
+      - name: server-without-hosts
+        profile: server
+        ca_name: example-ca
+        export_to_pfx: true
+        cn: example.com
+        key_algo: rsa
+        key_size: 2048
+        country: EU
+        location: Internet
+        organisation: Example
+        organisation_unit: IT
+        state: internet
+      - name: client
+        profile: client
+        ca_name: example-ca
+        export_to_pfx: true
+        cn: example.com
+        hosts:
+          - example.com
+          - www.example.com
+        key_algo: rsa
+        key_size: 2048
+        country: EU
+        location: Internet
+        organisation: Example
+        organisation_unit: IT
+        state: internet

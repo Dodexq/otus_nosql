@@ -1,0 +1,14 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Create Consul Service nginx
+  template:
+    src: '{{ consul_template_path }}/web.json.j2'
+    dest: '{{ consul_config_dir }}/web.json'
+    owner: consul
+    group: consul
+    mode: '0740'
+  notify: Restart consul service

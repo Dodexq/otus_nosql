@@ -1,0 +1,14 @@
+---
+- name: Create Consul Client config
+  template:
+    src: '{{ consul_template_path }}/client.hcl.j2'
+    dest: '{{ consul_config_dir }}/client.hcl'
+    owner: consul
+    group: consul
+    mode: '0740'
+
+- name: Enable & Start Consul consul_agent
+  service:
+    name: consul
+    state: started
+    enabled: yes

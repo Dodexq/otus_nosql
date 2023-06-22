@@ -1,0 +1,18 @@
+{
+  "CN": "server.dc1.consul",
+    "hosts": [
+      "server.dc1.consul"    ],
+    "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "EU",
+      "L": "Internet",
+      "O": "Example",
+      "OU": "IT",
+      "ST": "internet"
+    }
+  ]
+}

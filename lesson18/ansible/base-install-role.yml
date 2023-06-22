@@ -1,8 +1,0 @@
-- name: Config Vim with plugins
-  hosts: consul_servers
-  gather_facts: yes
-
-  tasks:
-    - name: role install
-      import_role:
-        name: base_install

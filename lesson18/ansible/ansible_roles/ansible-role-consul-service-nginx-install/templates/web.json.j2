@@ -1,0 +1,17 @@
+{
+    "service": {
+        "id": "{{ consul_service_nginx_id }}",
+        "name": "{{ consul_service_nginx_name }}",
+        "tags": [ "{{ consul_service_nginx_tags }}" ],
+        "Address": "{{ ansible_enp0s8.ipv4.address }}",
+        "port": 80,
+        "enable_tag_override": false,
+        "check": {
+            "id": "web_up",
+            "name": "nginx healthcheck",
+            "args": ["curl", "localhost"],
+            "interval": "10s",
+            "timeout": "2s"
+        }
+    }
+}

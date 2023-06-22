@@ -1,0 +1,16 @@
+{
+  "CN": "{{ item.cn }}",
+  "key": {
+    "algo": "{{ item.key_algo }}",
+    "size": {{ item.key_size }}
+  },
+  "names": [
+    {
+      "C": "{{ item.country }}",
+      "L": "{{ item.location }}",
+      "O": "{{ item.organisation }}",
+      "OU": "{{ item.organisation_unit }}",
+      "ST": "{{ item.state }}"
+    }
+  ]
+}

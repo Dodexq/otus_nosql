@@ -1,0 +1,6 @@
+---
+# path to template
+consul_template_path: "{{ role_path }}/templates"
+consul_service_nginx_id: "web"
+consul_service_nginx_name: "web"
+consul_service_nginx_tags: "nginx"

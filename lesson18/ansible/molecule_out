@@ -1,0 +1,149 @@
+INFO     default scenario test matrix: dependency, lint, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy
+INFO     Performing prerun...
+INFO     Set ANSIBLE_LIBRARY=/home/dodex/.cache/ansible-compat/dac5e8/modules:/home/dodex/.ansible/plugins/modules:/usr/share/ansible/plugins/modules
+INFO     Set ANSIBLE_COLLECTIONS_PATH=/home/dodex/.cache/ansible-compat/dac5e8/collections:/home/dodex/.ansible/collections:/usr/share/ansible/collections
+INFO     Set ANSIBLE_ROLES_PATH=/home/dodex/.cache/ansible-compat/dac5e8/roles:/home/dodex/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
+INFO     Running default > dependency
+WARNING  Skipping, missing the requirements file.
+WARNING  Skipping, missing the requirements file.
+INFO     Running default > lint
+
+Passed with production profile: 0 failure(s), 0 warning(s) on 6 files.
+A new release of ansible-lint is available: 6.16.2 → 6.17.1 Upgrade by running: pip install --upgrade ansible-lint
+INFO     Running default > cleanup
+WARNING  Skipping, cleanup playbook not configured.
+INFO     Running default > destroy
+
+PLAY [Destroy] *****************************************************************
+
+TASK [Destroy molecule instance(s)] ********************************************
+ok: [localhost]
+
+TASK [Populate instance config] ************************************************
+ok: [localhost]
+
+TASK [Dump instance config] ****************************************************
+skipping: [localhost]
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+INFO     Running default > syntax
+
+playbook: /home/dodex/git/ansible_molecule_installer/ansible/ansible_roles/project_role/molecule/default/converge.yml
+INFO     Running default > create
+
+PLAY [Create] ******************************************************************
+
+TASK [Create molecule instance(s)] *********************************************
+changed: [localhost]
+
+TASK [Populate instance config dict] *******************************************
+ok: [localhost] => (item={'Host': 'new-project-server', 'HostName': '127.0.0.1', 'User': 'vagrant', 'Port': '2222', 'UserKnownHostsFile': '/dev/null', 'StrictHostKeyChecking': 'no', 'PasswordAuthentication': 'no', 'IdentityFile': '/home/dodex/.cache/molecule/project_role/default/.vagrant/machines/new-project-server/virtualbox/private_key', 'IdentitiesOnly': 'yes', 'LogLevel': 'FATAL'})
+
+TASK [Convert instance config dict to a list] **********************************
+ok: [localhost]
+
+TASK [Dump instance config] ****************************************************
+changed: [localhost]
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=4    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+INFO     Running default > prepare
+
+PLAY [Prepare] *****************************************************************
+
+TASK [Gather system info] ******************************************************
+ok: [new-project-server]
+
+TASK [Bootstrap python for Ansible] ********************************************
+ok: [new-project-server]
+
+PLAY RECAP *********************************************************************
+new-project-server         : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+INFO     Running default > converge
+
+PLAY [Converge] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [new-project-server]
+
+TASK [Include project_role] ****************************************************
+
+TASK [project_role : HashiCorp Key import] *************************************
+changed: [new-project-server]
+
+TASK [project_role : Add repo HashiCorp] ***************************************
+changed: [new-project-server]
+
+TASK [project_role : Update apt] ***********************************************
+ok: [new-project-server]
+
+TASK [project_role : Install Consul] *******************************************
+changed: [new-project-server]
+
+TASK [project_role : Copy cert dir] ********************************************
+changed: [new-project-server]
+
+TASK [project_role : Create Consul config] *************************************
+changed: [new-project-server]
+
+PLAY RECAP *********************************************************************
+new-project-server         : ok=7    changed=5    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+INFO     Running default > idempotence
+
+PLAY [Converge] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [new-project-server]
+
+TASK [Include project_role] ****************************************************
+
+TASK [project_role : HashiCorp Key import] *************************************
+ok: [new-project-server]
+
+TASK [project_role : Add repo HashiCorp] ***************************************
+ok: [new-project-server]
+
+TASK [project_role : Update apt] ***********************************************
+ok: [new-project-server]
+
+TASK [project_role : Install Consul] *******************************************
+ok: [new-project-server]
+
+TASK [project_role : Copy cert dir] ********************************************
+ok: [new-project-server]
+
+TASK [project_role : Create Consul config] *************************************
+ok: [new-project-server]
+
+PLAY RECAP *********************************************************************
+new-project-server         : ok=7    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+INFO     Idempotence completed successfully.
+INFO     Running default > side_effect
+WARNING  Skipping, side effect playbook not configured.
+INFO     Running default > verify
+WARNING  Skipping, no tests found.
+INFO     Running default > cleanup
+WARNING  Skipping, cleanup playbook not configured.
+INFO     Running default > destroy
+
+PLAY [Destroy] *****************************************************************
+
+TASK [Destroy molecule instance(s)] ********************************************
+changed: [localhost]
+
+TASK [Populate instance config] ************************************************
+ok: [localhost]
+
+TASK [Dump instance config] ****************************************************
+changed: [localhost]
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=3    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+INFO     Pruning extra files from scenario ephemeral directory

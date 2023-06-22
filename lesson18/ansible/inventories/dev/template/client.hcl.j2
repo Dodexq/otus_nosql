@@ -1,8 +1,0 @@
-{% set quoted_list = [] %}
-{% for item in host_ips_consul_server %}
-  {% set _ = quoted_list.append('\'' + item + '\'') %}
-{% endfor %}
-
-retry_join  = {{ quoted_list | replace("'", '') }}
-bind_addr = "{{ ansible_enp0s8.ipv4.address }}"
-enable_script_checks = true

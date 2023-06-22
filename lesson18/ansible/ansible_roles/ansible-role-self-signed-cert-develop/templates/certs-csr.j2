@@ -1,0 +1,23 @@
+{
+  "CN": "{{ item.cn }}",
+  {% if item.hosts is defined %}
+  "hosts": [
+  {% for host in item.hosts %}
+    "{{ host }}"{% if not loop.last %},{% endif %}
+  {% endfor %}
+  ],
+  {% endif %}
+  "key": {
+    "algo": "{{ item.key_algo }}",
+    "size": {{ item.key_size }}
+  },
+  "names": [
+    {
+      "C": "{{ item.country }}",
+      "L": "{{ item.location }}",
+      "O": "{{ item.organisation }}",
+      "OU": "{{ item.organisation_unit }}",
+      "ST": "{{ item.state }}"
+    }
+  ]
+}

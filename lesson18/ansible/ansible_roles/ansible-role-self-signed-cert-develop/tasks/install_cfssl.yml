@@ -1,0 +1,13 @@
+---
+
+- name: Ensure cfssl executable is installed
+  get_url:
+    url: "{{ self_signed_cert_cfssl_url }}"
+    dest: "/usr/local/bin/cfssl"
+    mode: 0755
+
+- name: Ensure cfssl executable is installed
+  get_url:
+    url: "{{ self_signed_cert_cfssl_json_url }}"
+    dest: "/usr/local/bin/cfssljson"
+    mode: 0755
