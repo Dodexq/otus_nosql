@@ -8,3 +8,4 @@ redisinsight
 *.pem
 ansible.log
 .vscode
+__pycache__
