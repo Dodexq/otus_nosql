@@ -9,3 +9,4 @@
 * [Elasticsearch](https://github.com/Dodexq/otus_nosql/tree/main/lesson12)
 * [Cassandra: monitoring and problem solving](https://github.com/Dodexq/otus_nosql/tree/main/lesson13)
 * [Redis](https://github.com/Dodexq/otus_nosql/tree/main/lesson16)
+* [Consul + etcd](https://github.com/Dodexq/otus_nosql/tree/main/lesson18)
