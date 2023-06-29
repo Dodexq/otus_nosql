@@ -1,0 +1,56 @@
+Vagrant.configure("2") do |config|
+
+FDB_CLUSTER_PATH = "/etc/foundationdb/fdb.cluster"
+FDB_CLUSTER_PATH_TO_COPY = "/vagrant/fdb.cluster"
+  
+    config.vm.define "fdb-master" do |server|
+      server.vbguest.auto_update = false if Vagrant.has_plugin?('vagrant-vbguest')
+      server.vm.box = "geerlingguy/ubuntu2004"
+      server.vm.hostname = "fdb-master"
+      server.vm.network "public_network", ip: "192.168.0.200", bridge: "wlo1"
+      server.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"
+        vb.name = "fdb-master"
+        vb.cpus = "2"
+      end
+      server.vm.provision "shell", inline: <<-SHELL
+      wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-clients_6.3.23-1_amd64.deb
+      wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-server_6.3.23-1_amd64.deb
+      sudo dpkg -i foundationdb-clients_6.3.23-1_amd64.deb \
+        foundationdb-server_6.3.23-1_amd64.deb
+      sudo apt update
+      sudo apt install python3-pip -y && sudo apt install net-tools -y
+      sudo route add default gw 192.168.0.1
+      sudo python3 /usr/lib/foundationdb/make_public.py
+      sudo cp #{FDB_CLUSTER_PATH} #{FDB_CLUSTER_PATH_TO_COPY}
+      sudo systemctl restart foundationdb
+      pip install foundationdb==6.3.23
+      SHELL
+    end
+  
+    (1..2).each do |i|
+      config.vm.define "fdb-replica#{i}" do |server|
+        server.vbguest.auto_update = false if Vagrant.has_plugin?('vagrant-vbguest')
+        server.vm.box = "geerlingguy/ubuntu2004"
+        server.vm.hostname = "fdb-replica#{i}"
+        server.vm.network "public_network", ip: "192.168.0.20#{i}", bridge: "wlo1"
+        server.vm.provider "virtualbox" do |vb|
+          vb.memory = "2048"
+          vb.name = "fdb-replica#{i}"
+          vb.cpus = "2"
+        end
+        server.vm.provision "shell", inline: <<-SHELL
+        wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-clients_6.3.23-1_amd64.deb
+        wget https://github.com/apple/foundationdb/releases/download/6.3.23/foundationdb-server_6.3.23-1_amd64.deb
+        sudo dpkg -i foundationdb-clients_6.3.23-1_amd64.deb \
+          foundationdb-server_6.3.23-1_amd64.deb
+        sudo apt update
+        sudo apt install python3-pip -y && sudo apt install net-tools -y
+        sudo route add default gw 192.168.0.1
+        sudo cp #{FDB_CLUSTER_PATH_TO_COPY} #{FDB_CLUSTER_PATH}
+        sudo systemctl restart foundationdb
+        pip install foundationdb==6.3.23
+        SHELL
+      end
+    end
+  end
