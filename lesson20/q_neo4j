@@ -1,0 +1,37 @@
+create (:Director {name:'Joel Coen'}) -[:CREATED]->
+(blood:Movie {title:'Blood Simple', year:1983}) <-[:PLAYED_IN
+{character: 'Abby'}]- (:Actor {name: 'Frances McDormand'})
+create (:Director {name:'Ethan Coen', born:1957})
+-[:CREATED]-> (blood)
+
+
+create (:Director {name:'Martin Scorsese'})
+create (:Movie {title:'Shutter Island'})
+
+match (d:Director {name:'Martin Scorsese'})
+match (m:Movie {title:'Shutter Island'})
+create (d) -[:CREATED]-> (m)
+
+create (:Actor {name: 'Leonardo DiCaprio'})
+create (:Actor {name: 'Mark Ruffalo'})
+
+match (ld:Actor {name: 'Leonardo DiCaprio'})
+match (m:Movie {title:'Shutter Island'})
+create (ld) -[:PLAYED_IN]-> (m)
+
+match (mr:Actor {name: 'Mark Ruffalo'})
+match (m:Movie {title:'Shutter Island'})
+create (mr) -[:PLAYED_IN]-> (m)
+
+# Compact
+
+CREATE (d:Director {name:'Martin Scorsese'})
+CREATE (m:Movie {title: 'Shutter Island'})
+MERGE (a:Actor {name: 'Mark Ruffalo'})
+MERGE (a2:Actor {name: 'Leonardo DiCaprio'})
+MERGE (d)-[:CREATED]->(m)
+FOREACH (actor IN [a, a2] | MERGE (actor)-[:PLAYED_IN]->(m))
+
+create (:Director {name:'Martin Scorsese'}) -[:CREATED]-> 
+(sh:Movie {title: 'Shutter Island'}) <-[:PLAYED_IN]- (:Actor {name: 'Mark Ruffalo'})
+create (:Actor {name:'Leonardo DiCaprio'}) -[:PLAYED_IN]-> (sh)
