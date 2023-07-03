@@ -1,5 +1,3 @@
--- create tables
-
 CREATE TABLE Director (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255)
@@ -8,18 +6,17 @@ CREATE TABLE Director (
 CREATE TABLE Movie (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255),
-    director_id INTEGER REFERENCES Director(id)
+    director_id INTEGER NOT NULL REFERENCES Director(id)
 );
 
 CREATE TABLE Actor (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255),
-    movie_id INTEGER REFERENCES Movie(id)
+    name VARCHAR(255)
 );
 
 CREATE TABLE MovieActor (
-    movie_id INTEGER REFERENCES Movie(id),
-    actor_id INTEGER REFERENCES Actor(id),
+    movie_id INTEGER NOT NULL REFERENCES Movie(id),
+    actor_id INTEGER NOT NULL REFERENCES Actor(id),
     PRIMARY KEY (movie_id, actor_id)
 );
 
@@ -30,14 +27,4 @@ INSERT INTO Movie (title, director_id) VALUES ('Shutter Island', 1);
 
 INSERT INTO Actor (name) VALUES ('Mark Ruffalo'), ('Leonardo DiCaprio');
 
-
-
-ALTER TABLE Movie
-ADD CONSTRAINT movie_director_fk
-FOREIGN KEY (director_id) REFERENCES Director(id);
-
-ALTER TABLE Actor
-ADD CONSTRAINT actor_movie_fk
-FOREIGN KEY (movie_id) REFERENCES Movie(id);
-
-
+INSERT INTO MovieActor (movie_id, actor_id) VALUES (1, 1), (1, 2);
