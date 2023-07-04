@@ -1,0 +1,101 @@
+version: '3'
+
+networks:
+  cluster_net:
+
+services:
+
+  srv1:
+    hostname: srv1
+    image: neo4j:5.2-enterprise
+    networks:
+      - cluster_net
+    ports:
+      - "7474:7474"
+      - "6477:6477"
+      - "7687:7687"
+    volumes:
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv1/data:/data
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv1/logs:/logs
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv1/metrics:/metrics
+    environment:
+      - NEO4J_AUTH=neo4j/changeme
+      - NEO4J_server_cluster_system__database__mode=PRIMARY
+      - NEO4J_initial_server_mode__constraint=PRIMARY
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server_default__listen__address=0.0.0.0
+      - NEO4J_server_default__advertised__address=srv1
+      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
+      - NEO4J_initial_dbms_default__primaries__count=3
+      - NEO4J_PLUGINS=["apoc"]
+
+  srv2:
+    hostname: srv2
+    image: neo4j:5.2-enterprise
+    networks:
+      - cluster_net
+    ports:
+      - ":7474"
+      - ":6477"
+      - ":7687"
+    volumes:
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv2/data:/data
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv2/logs:/logs
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv2/metrics:/metrics
+    environment:
+      - NEO4J_AUTH=neo4j/changeme
+      - NEO4J_server_cluster_system__database__mode=PRIMARY
+      - NEO4J_initial_server_mode__constraint=PRIMARY
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server_default__listen__address=0.0.0.0
+      - NEO4J_server_default__advertised__address=srv2
+      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
+      - NEO4J_initial_dbms_default__primaries__count=3
+      - NEO4J_PLUGINS=["apoc"]
+
+  srv3:
+    hostname: srv3
+    image: neo4j:5.2-enterprise
+    networks:
+      - cluster_net
+    ports:
+      - ":7474"
+      - ":6477"
+      - ":7687"
+    volumes:
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv3/data:/data
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv3/logs:/logs
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv3/metrics:/metrics
+    environment:
+      - NEO4J_AUTH=neo4j/changeme
+      - NEO4J_server_cluster_system__database__mode=PRIMARY
+      - NEO4J_initial_server_mode__constraint=PRIMARY
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server_default__listen__address=0.0.0.0
+      - NEO4J_server_default__advertised__address=srv3
+      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
+      - NEO4J_initial_dbms_default__primaries__count=3
+      - NEO4J_PLUGINS=["apoc"]
+
+  srv4:
+    hostname: srv4
+    image: neo4j:5.2-enterprise
+    networks:
+      - cluster_net
+    ports:
+      - ":7474"
+      - ":6477"
+      - ":7687"
+    volumes:
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv4/data:/data
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv4/logs:/logs
+      - $HOME/tmp/docker/cluster-simple/neo4j-srv4/metrics:/metrics
+    environment:
+      - NEO4J_AUTH=neo4j/changeme
+      - NEO4J_server_cluster_system__database__mode=PRIMARY
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server_default__listen__address=0.0.0.0
+      - NEO4J_server_default__advertised__address=srv4
+      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
+      - NEO4J_initial_dbms_default__primaries__count=3
+      - NEO4J_PLUGINS=["apoc"]
