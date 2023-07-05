@@ -1,101 +1,97 @@
 version: '3'
 
 networks:
-  cluster_net:
+  neo4j_network:
 
 services:
-
-  srv1:
-    hostname: srv1
-    image: neo4j:5.2-enterprise
+  leader:
+    image: neo4j:5.6-enterprise
     networks:
-      - cluster_net
+      - neo4j_network
     ports:
-      - "7474:7474"
-      - "6477:6477"
-      - "7687:7687"
+      - '7474:7474'
+      - '7687:7687'
+      - '2004:2004'
     volumes:
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv1/data:/data
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv1/logs:/logs
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv1/metrics:/metrics
+      - ./neo4j_data/leader/data:/data
+      - ./neo4j_data/leader/logs:/logs
+      - ./neo4j_data/leader/metrics:/metrics
     environment:
-      - NEO4J_AUTH=neo4j/changeme
-      - NEO4J_server_cluster_system__database__mode=PRIMARY
-      - NEO4J_initial_server_mode__constraint=PRIMARY
-      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_AUTH=neo4j/neo4jtest
       - NEO4J_server_default__listen__address=0.0.0.0
-      - NEO4J_server_default__advertised__address=srv1
-      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
-      - NEO4J_initial_dbms_default__primaries__count=3
       - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server.cluster.system_database_mode=PRIMARY
+      - NEO4J_initial.server.mode_constraint=PRIMARY
+      - NEO4J_causal.clustering.expected_core_cluster_size=4
+      - NEO4J_causal.clustering.initial_discovery_members=leader:5000,follower1:5000,follower2:5000,replica:5000
+      - NEO4J_causal.clustering.discovery_advertised_address=leader:5000
+      - NEO4J_server.metrics.enabled=true
+      - NEO4J_server.metrics.prometheus.enabled=true
+      - NEO4J_server.metrics.prometheus.endpoint=0.0.0.0:2004
 
-  srv2:
-    hostname: srv2
-    image: neo4j:5.2-enterprise
+  follower1:
+    image: neo4j:5.6-enterprise
     networks:
-      - cluster_net
+      - neo4j_network
     ports:
-      - ":7474"
-      - ":6477"
-      - ":7687"
+      - '7475:7474'
+      - '7688:7687'
     volumes:
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv2/data:/data
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv2/logs:/logs
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv2/metrics:/metrics
+      - ./neo4j_data/follower1/data:/data
+      - ./neo4j_data/follower1/logs:/logs
+      - ./neo4j_data/leader/metrics:/metrics
     environment:
-      - NEO4J_AUTH=neo4j/changeme
-      - NEO4J_server_cluster_system__database__mode=PRIMARY
-      - NEO4J_initial_server_mode__constraint=PRIMARY
-      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_AUTH=neo4j/neo4jtest
       - NEO4J_server_default__listen__address=0.0.0.0
-      - NEO4J_server_default__advertised__address=srv2
-      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
-      - NEO4J_initial_dbms_default__primaries__count=3
       - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server.cluster.system_database_mode=FOLLOWER
+      - NEO4J_initial.server.mode_constraint=FOLLOWER
+      - NEO4J_causal.clustering.expected_core_cluster_size=4
+      - NEO4J_causal.clustering.initial_discovery_members=leader:5000,follower1:5000,follower2:5000,replica:5000
+      - NEO4J_causal.clustering.discovery_advertised_address=follower1:5000
 
-  srv3:
-    hostname: srv3
-    image: neo4j:5.2-enterprise
+  follower2:
+    image: neo4j:5.6-enterprise
     networks:
-      - cluster_net
+      - neo4j_network
     ports:
-      - ":7474"
-      - ":6477"
-      - ":7687"
+      - '7476:7474'
+      - '7689:7687'
     volumes:
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv3/data:/data
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv3/logs:/logs
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv3/metrics:/metrics
+      - ./neo4j_data/follower2/data:/data
+      - ./neo4j_data/follower2/logs:/logs
+      - ./neo4j_data/leader/metrics:/metrics
     environment:
-      - NEO4J_AUTH=neo4j/changeme
-      - NEO4J_server_cluster_system__database__mode=PRIMARY
-      - NEO4J_initial_server_mode__constraint=PRIMARY
-      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_AUTH=neo4j/neo4jtest
       - NEO4J_server_default__listen__address=0.0.0.0
-      - NEO4J_server_default__advertised__address=srv3
-      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
-      - NEO4J_initial_dbms_default__primaries__count=3
       - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server.cluster.system_database_mode=FOLLOWER
+      - NEO4J_initial.server.mode_constraint=FOLLOWER
+      - NEO4J_causal.clustering.expected_core_cluster_size=4
+      - NEO4J_causal.clustering.initial_discovery_members=leader:5000,follower1:5000,follower2:5000,replica:5000
+      - NEO4J_causal.clustering.discovery_advertised_address=follower2:5000
 
-  srv4:
-    hostname: srv4
-    image: neo4j:5.2-enterprise
+  replica:
+    image: neo4j:5.6-enterprise
     networks:
-      - cluster_net
+      - neo4j_network
     ports:
-      - ":7474"
-      - ":6477"
-      - ":7687"
+      - '7477:7474'
+      - '7690:7687'
     volumes:
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv4/data:/data
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv4/logs:/logs
-      - $HOME/tmp/docker/cluster-simple/neo4j-srv4/metrics:/metrics
+      - ./neo4j_data/replica/data:/data
+      - ./neo4j_data/replica/logs:/logs
+      - ./neo4j_data/leader/metrics:/metrics
     environment:
-      - NEO4J_AUTH=neo4j/changeme
-      - NEO4J_server_cluster_system__database__mode=PRIMARY
-      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_AUTH=neo4j/neo4jtest
       - NEO4J_server_default__listen__address=0.0.0.0
-      - NEO4J_server_default__advertised__address=srv4
-      - NEO4J_dbms_cluster_discovery_endpoints=srv1:5000,srv2:5000,srv3:5000,srv4:5000
-      - NEO4J_initial_dbms_default__primaries__count=3
       - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_server.cluster.system_database_mode=READ_REPLICA
+      - NEO4J_initial.server.mode_constraint=READ_REPLICA
+      - NEO4J_causal.clustering.expected_core_cluster_size=4
+      - NEO4J_causal.clustering.initial_discovery_members=leader:5000,follower1:5000,follower2:5000,replica:5000
+      - NEO4J_causal.clustering.discovery_advertised_address=replica:5000
