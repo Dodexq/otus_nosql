@@ -1,31 +1,90 @@
-from neomodel import config, StructuredNode, StringProperty, RelationshipTo, RelationshipFrom
+from neo4j import GraphDatabase
 
-# Установка конфигурации подключения к базе данных Neo4j
-config.DATABASE_URL = 'bolt://neo4j:neo4jtest@localhost:7687'
+touroperators = ["Пегас Туристик"]
+pegas_country = ["Абхазия"]
+abh_city = ["Гагра", "Гудаута", "Пицунда", "Цандрипш", "Новый Афон"]
+ga_city_air = ["Бабушара", "Гали", "Бабушара", "Дранда", "Зугдиди"]
+ga_city_train = ["Бабушара", "Дранда", "Зугдиди"]
 
-# Определение моделей данных
-class TourOperator(StructuredNode):
-    name = StringProperty()
+driver = GraphDatabase.driver("neo4j://localhost:7687", auth=("neo4j", "neo4jtest"))
 
-class Destination(StructuredNode):
-    name = StringProperty()
+def add_touroperators(tx, toperator):
+    tx.run("MERGE (operator:TourOperator {name: $toperator})",
+           toperator=toperator)
+    
+def add_rship_tour_to_dest(tx, toperator, country):
+    tx.run("MATCH (operator:TourOperator {name: $toperator})"
+           "MERGE (operator)-[:TO_DESTINATION]->(:Destination {name: $country})", 
+           toperator=toperator, country=country)
 
-class City(StructuredNode):
-    name = StringProperty()
-    belongs_to = RelationshipTo("Person", 'BELONGS_TO')
+def add_rship_dest_to_city(tx, country, city):
+    tx.run("MATCH (dest:Destination {name: $country})"
+           "MERGE (dest)-[:BELONGS_TO]->(:City {name: $city})",
+            country=country, city=city)
+    
+def add_connect_city_air(tx, city, air_to):
+    tx.run("MATCH (city:City {name: $city})"
+           "MERGE (city)-[:CONNECT_BY {transport: 'Airplane'}]->(:City {name: $air_to})",
+           city=city, air_to=air_to)
 
-class Dog(StructuredNode):
-    name = StringProperty(unique_index=True)
-    owner = RelationshipTo('Person', 'owner')
 
-class Person(StructuredNode):
-    name = StringProperty(unique_index=True)
-    pets = RelationshipFrom('Dog', 'owner')
+def print_tour(tx, name):
+    for record in tx.run("MATCH (a:City)"
+                         "RETURN a", name=name):
+        print(record[0].id)
+        print(record[0]._properties['name'])
 
-bob = Person.get_or_create({"name": "Bob"})[0]
-bobs_gizmo = Dog.get_or_create({"name": "Gizmo"}, relationship=bob.pets)
+def test(tx, city, air_to):
+    cid = tx.run("MATCH (a:City {name: $city}) RETURN a", city=city).value()
+    aid = tx.run("MATCH (a:City {name: $air_to}) RETURN a", air_to=air_to).value()
+    try:
+        if cid[0]._properties['name'] == city:
+            tx.run("MATCH (city:City {name: $city}) WHERE id(city) = $cid "
+                "MERGE (:City {name: $city})-[:CONNECT_BY {transport: 'Airplane'}]->(at)",
+                 city=city, cid=cid[0].id, air_to=air_to)
+            
+    except IndexError:
+        print("Нет такого элемента", air_to)
 
-tim = Person.get_or_create({"name": "Tim"})[0]
-tims_gizmo = Dog.get_or_create({"name": "Gizmo"}, relationship=tim.pets)
 
-assert bobs_gizmo[0] != tims_gizmo[0]
+def test2(tx, city, air_to):
+    tx.run("CREATE (at:City {name: $city}) -[:CONNECT_BY]-> (:City {id: 1, name: $air_to})",
+           city=city, air_to=air_to)
+    
+    
+    # try:
+    #     if rid[0]._properties['name'] in air_to:
+    #         tx.run("MATCH (at:City {name: $air_to}) WHERE id(at) = $rid "
+    #                "MERGE (:City {name: $city})-[:CONNECT_BY {transport: 'Airplane'}]->(at)",
+    #                 city=city, rid=rid[0].id, air_to=air_to)
+    #     print("Просто коннект")
+    # except IndexError:
+    #         tx.run("MERGE (:City {name: $city})-[:CONNECT_BY {transport: 'Airplane'}]->(:City {name: $air_to})",
+    #         city=city, air_to=air_to)
+    #         print("ЕХЕПТ")
+
+
+    #     print(rid)
+    #     print(rid[0].id, "YO")
+    #     tx.run("MATCH (at:City {name: $air_to}) WHERE id(at) = $rid "
+    #     "MERGE (:City {name: $city})-[:CONNECT_BY {transport: 'Airplane'}]->(at)",
+    #     city=city, rid=rid[0].id, air_to=air_to)
+    # else:
+    #     print(rid, "NOYO")
+    #     tx.run("MERGE (:City {name: $city})-[:CONNECT_BY {transport: 'Airplane'}]->(:City {name: $air_to})",
+    #     city=city, air_to=air_to)
+
+with driver.session() as session:
+    session.write_transaction(test2, "Гагра", "Веталь")
+
+
+    # for x in touroperators:
+    #     session.write_transaction(add_touroperators, x)
+    #     for y in pegas_country:
+    #         session.write_transaction(add_rship_tour_to_dest, x, y)
+    #         for z in abh_city:
+    #             session.write_transaction(add_rship_dest_to_city, y, z)
+    #             for a in ga_city_air:
+    #                 session.write_transaction(test, z, a)
+
+driver.close()
