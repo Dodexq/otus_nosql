@@ -11,3 +11,4 @@
 * [Redis](https://github.com/Dodexq/otus_nosql/tree/main/lesson16)
 * [Consul + etcd](https://github.com/Dodexq/otus_nosql/tree/main/lesson18)
 * [neo4j #1](https://github.com/Dodexq/otus_nosql/tree/main/lesson20)
+* [neo4j #2](https://github.com/Dodexq/otus_nosql/tree/main/lesson21)
