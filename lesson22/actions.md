@@ -1,27 +1,8 @@
-## Теоретическое занятие 22
-
-### Цели занятия
-* Объяснить архитектуру kafka, плюсы и минусы;
-* Сравнить в другими брокерами;
-* Познакомиться с Kafka APIs;
-
-### Краткое содержание
-* kafka - обзор и архитектура;
-* kafka Топики. Партишены и Реплики;
-* основные операции на кластере;
-* понимание кластерных метрик и того как их интерпретировать;
-* понимание Producer API Kafka;
-* понимание Consumer API Kafka;
-* понимание Streams API Kafka;
-* возможность интеграции Kafka с внешними системами данных с использованием Kafka Connect.
-
-#
-
-<p align="center"> 
-<a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson22/screenshots/1.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson22/screenshots/1.png" alt="" width="500" /></a>
-</p>
-
-#
+Запуск контейнера
+```shell
+cd kafka
+docker compose start
+```
 
 Получить список топиков
 ```shell
@@ -32,6 +13,7 @@ docker exec -ti kafka-otuskafka /usr/bin/kafka-topics --list --bootstrap-server 
 ```shell
 docker exec -ti kafka-otuskafka /usr/bin/kafka-console-producer --topic topic1 --bootstrap-server localhost:9091
 ```
+Каждая строка - одно сообщение. Прервать - Ctrl+Z
 
 Получить сообщения
 ```shell
