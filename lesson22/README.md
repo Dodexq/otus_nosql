@@ -16,7 +16,7 @@
 * возможность интеграции Kafka с внешними системами данных с использованием Kafka Connect.
 
 #
-
+* Собран `docker-compose.replica.yml`
 <p align="center"> 
 <a href="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson22/screenshots/1.png" rel="some text"><img src="https://raw.githubusercontent.com/Dodexq/otus_nosql/main/lesson22/screenshots/1.png" alt="" width="500" /></a>
 </p>
