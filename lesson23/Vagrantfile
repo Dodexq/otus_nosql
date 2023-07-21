@@ -1,0 +1,21 @@
+Vagrant.configure("2") do |config|
+    
+    (1..2).each do |i|
+        config.vm.define "rabbit-#{i}" do |server|
+            server.vbguest.auto_update = false if Vagrant.has_plugin?('vagrant-vbguest')
+            server.vm.box = "geerlingguy/ubuntu2004"
+            server.vm.hostname = "rabbit-#{i}"
+            server.vm.network "public_network", ip: "192.168.0.15#{i}", bridge: "wlo1"
+            server.vm.provider "virtualbox" do |vb|
+                vb.memory = "8096"
+                vb.name = "rabbit-#{i}"
+                vb.cpus = "8"
+            end
+            server.vm.provision "shell", inline: <<-SHELL
+            sudo /vagrant/rabbit_install.sh
+            sudo apt install pip -y
+            sudo pip3 install pika
+            SHELL
+        end
+    end
+end
