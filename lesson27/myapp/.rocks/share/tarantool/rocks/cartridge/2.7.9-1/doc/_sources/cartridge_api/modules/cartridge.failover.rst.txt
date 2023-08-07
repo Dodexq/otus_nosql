@@ -1,0 +1,356 @@
+.. _cartridge.failover:
+
+===============================================================================
+Module *cartridge.failover*
+===============================================================================
+
+Gather information regarding instances leadership.
+
+
+
+Failover can operate in two modes:
+
+* In `disabled` mode the leader is the first server configured in
+  ``topology.replicasets[].master``  array.
+* In  ``eventual``  mode the leader isn't elected consistently.
+  Instead, every instance in cluster thinks the leader is the
+  first **healthy** server in replicaset, while instance health is
+  determined according to membership status (the SWIM protocol).
+* In `stateful` mode leaders appointments are polled from the
+  external storage. (**Added** in v2.0.2-2)
+
+
+This module behavior depends on the instance state.
+
+From the very beginning it reports `is_rw() == false`,
+``is_leader() == false`` ,  ``get_active_leaders() == {}`` .
+
+The module is configured when the instance enters `ConfiguringRoles`
+state for the first time. From that moment it reports actual values
+according to the mode set in clusterwide config.
+
+(**Added** in v1.2.0-17)
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.failover.get_coordinator:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_coordinator ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get current stateful failover coordinator
+
+
+
+**Returns**:
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) coordinator
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.failover.schedule_clear:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+schedule_clear ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Cancel all pending reconfigure_all tasks.
+
+
+
+
+.. _cartridge.failover.schedule_add:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+schedule_add ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Schedule new reconfigure_all task.
+
+
+
+
+.. _cartridge.failover._get_appointments_disabled_mode:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_get_appointments_disabled_mode ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Generate appointments according to clusterwide configuration. 
+Used in 'disabled' failover mode.
+
+
+
+
+.. _cartridge.failover._get_appointments_eventual_mode:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_get_appointments_eventual_mode ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Generate appointments according to membership status. 
+Used in 'eventual' failover mode.
+
+
+
+
+.. _cartridge.failover._get_appointments_stateful_mode:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_get_appointments_stateful_mode ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get appointments from external storage. 
+Used in 'stateful' failover mode.
+
+
+
+
+.. _cartridge.failover.accept_appointments:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+accept_appointments (replicaset_uuid)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Accept new appointments. 
+
+Get appointments wherever they come from and put them into cache.
+Cached active_leaders table is never modified, but overriden by it's
+modified copy (if necessary).
+
+
+
+**Parameters:**
+
+- *replicaset_uuid:* (`{[string]=string} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) to leader_uuid map  
+
+**Returns**:
+
+(**boolean**) Whether leadership map has changed
+
+
+.. _cartridge.failover.fencing_check:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+fencing_check ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Perform the fencing healthcheck. 
+
+Fencing is actuated when the instance disconnects from both
+the state provider and a replica, i.e. the check returns false.
+
+
+
+
+**Returns**:
+
+(**boolean**) true / false
+
+
+.. _cartridge.failover.check_suppressing_lock:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+check_suppressing_lock ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Lock failover if failover suppressing is on.
+
+
+
+
+.. _cartridge.failover.failover_loop:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+failover_loop ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Repeatedly fetch new appointments and reconfigure roles.
+
+
+
+
+.. _cartridge.failover.cfg:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cfg ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Initialize the failover module.
+
+
+
+
+.. _cartridge.failover.get_active_leaders:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_active_leaders ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get map of replicaset leaders.
+
+
+
+**Returns**:
+
+{[replicaset_uuid] = instance_uuid,...}
+
+
+.. _cartridge.failover.is_leader:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+is_leader ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check current instance leadership.
+
+
+
+**Returns**:
+
+(**boolean**) true / false
+
+
+.. _cartridge.failover.is_rw:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+is_rw ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check current instance writability.
+
+
+
+**Returns**:
+
+(**boolean**) true / false
+
+
+.. _cartridge.failover.is_vclockkeeper:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+is_vclockkeeper ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check if current instance has persisted his vclock.
+
+
+
+**Returns**:
+
+(**boolean**) true / false
+
+
+.. _cartridge.failover.is_paused:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+is_paused ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check if failover paused on current instance.
+
+
+
+**Returns**:
+
+(**boolean**) true / false
+
+
+.. _cartridge.failover.failover_suppressed:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+failover_suppressed ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check if failover suppressed on current instance.
+
+
+
+**Returns**:
+
+(**boolean**) true / false
+
+
+.. _cartridge.failover.consistency_needed:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+consistency_needed ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Check if current configuration implies consistent switchover.
+
+
+
+**Returns**:
+
+(**boolean**) true / false
+
+
+.. _cartridge.failover.force_inconsistency:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+force_inconsistency (replicaset_uuid)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Force inconsistent leader switching. 
+Do it by resetting vclockkeepers in state provider.
+
+
+
+**Parameters:**
+
+- *replicaset_uuid:* (`{[string]=string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) to leader_uuid mapping  
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.failover.wait_consistency:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+wait_consistency (replicaset_uuid)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Wait when promoted instances become vclockkeepers.
+
+
+**Parameters:**
+
+- *replicaset_uuid:* (`{[string]=string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) to leader_uuid mapping  
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.issues &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.argparse" href="cartridge.argparse.html" />
+    <link rel="prev" title="Module cartridge.roles" href="cartridge.roles.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-issues">
+<span id="cartridge-issues"></span><h1>Module <em>cartridge.issues</em><a class="headerlink" href="#module-cartridge-issues" title="Permalink to this headline">¶</a></h1>
+<p>Monitor issues across cluster instances.</p>
+<p>Cartridge detects the following problems:</p>
+<p>Replication:</p>
+<ul class="simple">
+<li><p>critical: “Replication from … to … isn’t running” -
+when  <code class="docutils literal notranslate"><span class="pre">box.info.replication.upstream</span> <span class="pre">==</span> <span class="pre">nil</span></code> ;</p></li>
+<li><p>critical: “Replication from … to … state “stopped”/”orphan”/etc. (…)”;</p></li>
+<li><p>warning: “Replication from … to …: high lag” -
+when  <code class="docutils literal notranslate"><span class="pre">upstream.lag</span> <span class="pre">&gt;</span> <span class="pre">box.cfg.replication_sync_lag</span></code> ;</p></li>
+<li><p>warning: “Replication from … to …: long idle” -
+when  <code class="docutils literal notranslate"><span class="pre">upstream.idle</span> <span class="pre">&gt;</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">box.cfg.replication_timeout</span></code> ;</p></li>
+</ul>
+<p>Failover:</p>
+<ul class="simple">
+<li><p>warning: “Can’t obtain failover coordinator (…)”;</p></li>
+<li><p>warning: “There is no active failover coordinator”;</p></li>
+<li><p>warning: “Failover is stuck on …: Error fetching appointments (…)”;</p></li>
+<li><p>warning: “Failover is stuck on …: Failover fiber is dead” -
+this is likely a bug;</p></li>
+</ul>
+<p>Switchover:</p>
+<ul class="simple">
+<li><p>warning: “Consistency on … isn’t reached yet”;</p></li>
+</ul>
+<p>Clock:</p>
+<ul class="simple">
+<li><p>warning: “Clock difference between … and … exceed threshold”
+<code class="docutils literal notranslate"><span class="pre">limits.clock_delta_threshold_warning</span></code> ;</p></li>
+</ul>
+<p>Memory:</p>
+<ul class="simple">
+<li><p>critical: “Running out of memory on …” - when all 3 metrics
+<cite>items_used_ratio</cite>, <cite>arena_used_ratio</cite>, <cite>quota_used_ratio</cite> from
+<code class="docutils literal notranslate"><span class="pre">box.slab.info()</span></code>  exceed  <code class="docutils literal notranslate"><span class="pre">limits.fragmentation_threshold_critical</span></code> ;</p></li>
+<li><p>warning: “Memory is highly fragmented on …” - when
+<code class="docutils literal notranslate"><span class="pre">items_used_ratio</span> <span class="pre">&gt;</span> <span class="pre">limits.fragmentation_threshold_warning</span></code>  and
+both <cite>arena_used_ratio</cite>, <cite>quota_used_ratio</cite> exceed critical limit;</p></li>
+</ul>
+<p>Configuration:</p>
+<ul class="simple">
+<li><p>warning: “Configuration checksum mismatch on …”;</p></li>
+<li><p>warning: “Configuration is prepared and locked on …”;</p></li>
+<li><p>warning: “Advertise URI (…) differs from clusterwide config (…)”;</p></li>
+<li><p>warning: “Configuring roles is stuck on … and hangs for … so far”;</p></li>
+</ul>
+<p>Alien members:</p>
+<ul class="simple">
+<li><p>warning: “Instance … with alien uuid is in the membership” -
+when two separate clusters share the same cluster cookie;</p></li>
+</ul>
+<p>Deprecated space format:</p>
+<ul class="simple">
+<li><p>warning: “Instance … has spaces with deprecated format: space1, …”</p></li>
+</ul>
+<p>Custom issues (defined by user):</p>
+<ul class="simple">
+<li><p>Custom roles can announce more issues with their own level, topic
+and message. See <a class="reference internal" href="custom-role.html#custom-role-get-issues"><span class="std std-ref">custom-role.get_issues</span></a>.</p></li>
+</ul>
+<p>GraphQL request:</p>
+<p>You can get info about cluster issues using the following GrapQL request:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="n">cluster</span> <span class="p">{</span>
+        <span class="n">issues</span> <span class="p">{</span>
+            <span class="n">level</span>
+            <span class="n">message</span>
+            <span class="n">replicaset_uuid</span>
+            <span class="n">instance_uuid</span>
+            <span class="n">topic</span>
+         <span class="p">}</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="tables">
+<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="limits">
+<span id="cartridge-issues-limits"></span><h3>limits<a class="headerlink" href="#limits" title="Permalink to this headline">¶</a></h3>
+<p>Thresholds for issuing warnings.
+All settings are local, not clusterwide. They can be changed with
+corresponding environment variables ( <code class="docutils literal notranslate"><span class="pre">TARANTOOL_*</span></code> ) or command-line
+arguments. See <a class="reference internal" href="cartridge.argparse.html#cartridge-argparse"><span class="std std-ref">cartridge.argparse</span></a> module for details.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>fragmentation_threshold_critical:</em> (<strong>number</strong>) <em>default</em>: 0.85.</p></li>
+<li><p><em>fragmentation_threshold_full:</em> (<strong>number</strong>) <em>default</em>: 1.0.</p></li>
+<li><p><em>fragmentation_threshold_warning:</em> (<strong>number</strong>) <em>default</em>: 0.6.</p></li>
+<li><p><em>clock_delta_threshold_warning:</em> (<strong>number</strong>) <em>default</em>: 5.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="local-functions">
+<h2>Local Functions<a class="headerlink" href="#local-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="validate-limits-limits">
+<span id="cartridge-issues-validate-limits"></span><h3>validate_limits (limits)<a class="headerlink" href="#validate-limits-limits" title="Permalink to this headline">¶</a></h3>
+<p>Validate limits configuration.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>limits:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="set-limits-limits">
+<span id="cartridge-issues-set-limits"></span><h3>set_limits (limits)<a class="headerlink" href="#set-limits-limits" title="Permalink to this headline">¶</a></h3>
+<p>Update limits configuration.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>limits:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.roles.html" title="previous chapter">Module <em>cartridge.roles</em></a></li>
+      <li>Next: <a href="cartridge.argparse.html" title="next chapter">Module <em>cartridge.argparse</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.issues.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

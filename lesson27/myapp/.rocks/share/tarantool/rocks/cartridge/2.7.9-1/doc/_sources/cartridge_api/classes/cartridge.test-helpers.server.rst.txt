@@ -1,0 +1,190 @@
+.. _cartridge.test-helpers.server:
+
+===============================================================================
+Class *cartridge.test-helpers.server*
+===============================================================================
+
+Extended luatest.Server class to run a cartridge instance.
+
+
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.test-helpers.server.Server:build_env:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:build_env ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Generates environment to run process with. 
+The result is merged into os.environ().
+
+
+
+**Returns**:
+
+map
+
+
+.. _cartridge.test-helpers.server.Server:start:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:start ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Start the server.
+
+
+
+
+.. _cartridge.test-helpers.server.Server:stop:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:stop ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Stop server process.
+
+
+
+
+.. _cartridge.test-helpers.server.Server:graphql:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:graphql (request, http_options)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Perform GraphQL request.
+
+
+**Parameters:**
+
+- *request:* 
+
+  - *query:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) grapqhl query  
+  - *variables:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) variables for graphql query  
+  - *raise:* (optional **boolean**) raise if response contains an error(default: **true**)  
+
+- *http_options:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) passed to  ``http_request``  options. (optional) 
+
+**Returns**:
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) parsed response JSON.
+
+
+**Raises:**
+
+
+* HTTPRequest error
+* GraphQL error
+
+
+
+.. _cartridge.test-helpers.server.Server:join_cluster:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:join_cluster (main_server[, options])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Advertise this server to the cluster.
+
+
+**Parameters:**
+
+- *main_server:*  Server to perform GraphQL request on.  
+- *options:* 
+
+  - *timeout:*  request timeout  
+
+
+
+.. _cartridge.test-helpers.server.Server:setup_replicaset:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:setup_replicaset (config)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Update server's replicaset config.
+
+
+**Parameters:**
+
+- *config:* 
+
+  - *uuid:*  replicaset uuid  
+  - *roles:*  list of roles  
+  - *master:*    
+  - *weight:*    
+
+
+
+.. _cartridge.test-helpers.server.Server:upload_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:upload_config (config, table)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Upload application config.
+
+
+**Parameters:**
+
+- *config:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_ or `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) * table will be encoded as yaml and posted to /admin/config.  
+- *table:*  opts - http request options  
+
+
+.. _cartridge.test-helpers.server.Server:download_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Server:download_config ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Download application config.
+
+
+
+
+-------------------------------------------------------------------------------
+Methods
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.test-helpers.server.cartridge.test-helpers.server:new:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cartridge.test-helpers.server:new (object)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Build server object.
+
+
+**Parameters:**
+
+- *object:* 
+
+  - *command:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Command to start server process.  
+  - *workdir:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Value to be passed in  ``TARANTOOL_WORKDIR`` .  
+  - *chdir:* (**bool**) Path to cwd before starting a process. (optional) 
+  - *env:* (**tab**) Table to pass as env variables to process. (optional) 
+  - *args:* (**tab**) Args to run command with. (optional) 
+  - *http_port:* (**int**) Value to be passed in  ``TARANTOOL_HTTP_PORT``  and used to perform HTTP requests. (optional) 
+  - *advertise_port:* (**int**) Value to generate  ``TARANTOOL_ADVERTISE_URI``  and used for net_box connection.  
+  - *net_box_port:* (**int**) Alias for  ``advertise_port`` . (optional) 
+  - *net_box_credentials:* (**tab**) Override default net_box credentials. (optional) 
+  - *alias:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Instance alias.  
+  - *cluster_cookie:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Value to be passed in  ``TARANTOOL_CLUSTER_COOKIE``  and used as default net_box password.  
+  - *instance_uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Server identifier. (optional) 
+  - *replicaset_uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Replicaset identifier. (optional) 
+  - *zone:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Vshard zone. (optional) 
+  - *swim_period:* (**number**) SWIM protocol period in seconds. (optional) 
+
+
+**Returns**:
+
+input object
+
+

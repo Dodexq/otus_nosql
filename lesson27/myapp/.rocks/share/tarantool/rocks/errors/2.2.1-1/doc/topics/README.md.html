@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Example">Example </a></li>
+<li><a href="#Uniform_error_handling">Uniform error handling </a></li>
+<li><a href="#Uniform_API_for_net_box_stuff">Uniform API for net.box stuff </a></li>
+<li><a href="#Naming_conventions">Naming conventions </a></li>
+</ul>
+
+
+<h2>Topics</h2>
+<ul class="">
+  <li><strong>README</strong></li>
+  <li><a href="../topics/CHANGELOG.md.html">CHANGELOG</a></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../index.html">errors</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+
+<h1>Convenient error handling in tarantool</h1>
+
+<p>Because Lua code deserves better error handling. This module helps you
+understand what code path lead to creation of a particular exception
+object.</p>
+
+<p><a name="Example"></a></p>
+<h2>Example</h2>
+
+
+<pre>
+errors = <span class="global">require</span>(<span class="string">'errors'</span>)
+
+DoSomethingError = errors.new_class(<span class="string">"DoSomethingError"</span>)
+
+<span class="keyword">function</span> do_something()
+    <span class="keyword">local</span> failure_condition = <span class="keyword">true</span>
+    <span class="keyword">local</span> result = <span class="string">"bar"</span>
+
+    <span class="keyword">if</span> failure_condition <span class="keyword">then</span>
+        <span class="keyword">return</span> <span class="keyword">nil</span>, DoSomethingError:new(<span class="string">"failure_condition is true"</span>)
+    <span class="keyword">end</span>
+
+    <span class="keyword">return</span> result
+<span class="keyword">end</span>
+
+res, err = do_something()
+
+<span class="keyword">if</span> err ~= <span class="keyword">nil</span> <span class="keyword">then</span>
+    <span class="global">print</span>(err)
+<span class="keyword">end</span>
+</pre>
+
+
+<p>This code will print:</p>
+
+
+<pre>
+DoSomethingError: failure_condition is <span class="keyword">true</span>
+stack traceback:
+    test.lua:<span class="number">10</span>: <span class="keyword">in</span> <span class="keyword">function</span> <span class="string">'do_something'</span>
+    test.lua:<span class="number">16</span>: <span class="keyword">in</span> main chunk
+</pre>
+
+
+<p>See that you have an exception type, message and traceback recorded
+inside the exception object. It can be converted to string using the
+<code>tostring()</code> function.</p>
+
+<p><a name="Uniform_error_handling"></a></p>
+<h2>Uniform error handling</h2>
+
+<p>The module praises uniform error handling and provides <code>pcall</code> API,
+which unifies return values:</p>
+
+
+<pre>
+&gt; <span class="global">print</span>( DoSomethingError:<span class="global">pcall</span>(do_something) )
+<span class="keyword">nil</span>     DoSomethingError: failure_condition is <span class="keyword">true</span>
+stack traceback:
+    test.lua:<span class="number">10</span>: <span class="keyword">in</span> <span class="keyword">function</span> <span class="string">'do_something'</span>
+    test.lua:<span class="number">16</span>: <span class="keyword">in</span> main chunk
+
+&gt; <span class="global">print</span>( DoSomethingError:<span class="global">pcall</span>(<span class="global">error</span>, <span class="string">'some functions still raise'</span>) )
+<span class="keyword">nil</span>     DoSomethingError: some functions still raise
+stack traceback:
+        [C]: <span class="keyword">in</span> <span class="keyword">function</span> <span class="string">'xpcall'</span>
+        /opt/errors/errors.lua:<span class="number">139</span>: <span class="keyword">in</span> <span class="keyword">function</span> <span class="string">'pcall'</span>
+        [<span class="global">string</span> <span class="string">"return print( DoSomethingEr"</span>]:<span class="number">1</span>: <span class="keyword">in</span> main chunk
+</pre>
+
+
+<p>In both cases <a href="../index.html#pcall">pcall</a> returns the same pattern <code>nil, err</code>.</p>
+
+<p>If there were no error raised, <code>pcall</code> doesn't modify any return values:</p>
+
+
+<pre>
+&gt; <span class="global">print</span>( DoSomethingError:<span class="global">pcall</span>(<span class="keyword">function</span>() <span class="keyword">return</span> <span class="keyword">nil</span>, <span class="string">"foo"</span>, <span class="string">"bar"</span> <span class="keyword">end</span>) )
+<span class="keyword">nil</span>     foo     bar
+</pre>
+
+
+<p><a name="Uniform_API_for_net_box_stuff"></a></p>
+<h2>Uniform API for net.box stuff</h2>
+
+<p>It may be tricky to debug errors, when they arise on a remote host:
+<code>net.box</code> throws an exception and doesn't keep stack trace from the remote.</p>
+
+<p>To simplify debugging in this case use <code>return nil, err</code> pattern with
+conjunction of <a href="../index.html#netbox_eval">errors.netbox_eval</a> or <a href="../index.html#netbox_call">netbox_call</a>. It'll collect
+stacktrace from both local and remote hosts and restore metatables
+(which can't be transfed over network).</p>
+
+
+<pre>
+&gt; conn = <span class="global">require</span>(<span class="string">'net.box'</span>).connect(<span class="string">'localhost:3301'</span>)
+&gt; <span class="global">print</span>( errors.netbox_eval(conn, <span class="string">'return nil, DoSomethingError:new("oops")'</span>) )
+<span class="keyword">nil</span>     DoSomethingError: oops
+stack traceback:
+        eval:<span class="number">1</span>: <span class="keyword">in</span> main chunk
+during net.box eval on localhost:<span class="number">3301</span>
+stack traceback:
+        [<span class="global">string</span> <span class="string">"return print( errors.netbox_eval("</span>]:<span class="number">1</span>: <span class="keyword">in</span> main chunk
+        [C]: <span class="keyword">in</span> <span class="keyword">function</span> <span class="string">'pcall'</span>
+</pre>
+
+
+<p><a name="Naming_conventions"></a></p>
+<h2>Naming conventions</h2>
+
+<ul>
+    <li>Error class should be named in <code>CamelCase</code>.</li>
+    <li>Error class should end with suffix <code>Error</code>.</li>
+    <li>See examples: <code>ReadFileError</code>, <code>DecodeYamlError</code>, <code>CheckSchemaError</code>.</li>
+</ul>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-08-16 14:59:27 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

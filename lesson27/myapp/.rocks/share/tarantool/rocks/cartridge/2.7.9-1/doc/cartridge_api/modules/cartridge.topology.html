@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.topology &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.clusterwide-config" href="cartridge.clusterwide-config.html" />
+    <link rel="prev" title="Module cartridge.failover" href="cartridge.failover.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-topology">
+<span id="cartridge-topology"></span><h1>Module <em>cartridge.topology</em><a class="headerlink" href="#module-cartridge-topology" title="Permalink to this headline">¶</a></h1>
+<p>Topology validation and filtering.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cluster-is-healthy">
+<span id="cartridge-topology-cluster-is-healthy"></span><h3>cluster_is_healthy ()<a class="headerlink" href="#cluster-is-healthy" title="Permalink to this headline">¶</a></h3>
+<p>Check the cluster health.
+It is healthy if all instances are healthy.</p>
+<p>The function is designed mostly for testing purposes.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+</div>
+<div class="section" id="local-functions">
+<h2>Local Functions<a class="headerlink" href="#local-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-leaders-order-topology-cfg-replicaset-uuid-new-order-opts">
+<span id="cartridge-topology-get-leaders-order"></span><h3>get_leaders_order (topology_cfg, replicaset_uuid, new_order, opts)<a class="headerlink" href="#get-leaders-order-topology-cfg-replicaset-uuid-new-order-opts" title="Permalink to this headline">¶</a></h3>
+<p>Get full list of replicaset leaders.</p>
+<p>Full list is composed of:</p>
+<ul class="simple">
+<li><p>New order array</p></li>
+<li><p>Initial order from topology_cfg (with no repetitions)</p></li>
+<li><p>All other servers in the replicaset, sorted by uuid, ascending</p></li>
+</ul>
+<p>Neither  <code class="docutils literal notranslate"><span class="pre">topology_cfg</span></code>  nor  <code class="docutils literal notranslate"><span class="pre">new_order</span></code>  tables are modified.
+New order validity is ignored too.</p>
+<p>By default,  <code class="docutils literal notranslate"><span class="pre">get_leaders_order</span></code>  doesn’t return unelectable nodes.
+To fix it, use  <code class="docutils literal notranslate"><span class="pre">only_electable</span></code>  argument of  <code class="docutils literal notranslate"><span class="pre">opts</span></code> .</p>
+<p>By default,  <code class="docutils literal notranslate"><span class="pre">get_leaders_order</span></code>  returns disabled nodes.
+To fix it, use  <code class="docutils literal notranslate"><span class="pre">only_enabled</span></code>  argument of  <code class="docutils literal notranslate"><span class="pre">opts</span></code> .</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>topology_cfg:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>replicaset_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>new_order:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>opts:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) array of leaders uuids</p>
+</div>
+<div class="section" id="validate-topology-new-topology-old">
+<span id="cartridge-topology-validate"></span><h3>validate (topology_new, topology_old)<a class="headerlink" href="#validate-topology-new-topology-old" title="Permalink to this headline">¶</a></h3>
+<p>Validate topology configuration.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>topology_new:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>topology_old:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="find-server-by-uri-topology-cfg-uri">
+<span id="cartridge-topology-find-server-by-uri"></span><h3>find_server_by_uri (topology_cfg, uri)<a class="headerlink" href="#find-server-by-uri-topology-cfg-uri" title="Permalink to this headline">¶</a></h3>
+<p>Find the server in topology config.</p>
+<p>(<strong>Added</strong> in v1.2.0-17)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>topology_cfg:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>uri:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>nil</strong> or <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) <cite>instance_uuid</cite> found</p>
+</div>
+<div class="section" id="refine-servers-uri-topology-cfg">
+<span id="cartridge-topology-refine-servers-uri"></span><h3>refine_servers_uri (topology_cfg)<a class="headerlink" href="#refine-servers-uri-topology-cfg" title="Permalink to this headline">¶</a></h3>
+<p>Merge servers URIs form topology_cfg with fresh membership status.</p>
+<p>This function sustains cartridge operability in case of
+advertise_uri change. The uri map is composed basing on
+topology_cfg, but if some of them turns out to be dead, the
+member with corresponding payload.uuid is searched beyond.</p>
+<p>(<strong>Added</strong> in v2.3.0-7)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>topology_cfg:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>{[uuid]</strong>) = uri} with all servers except expelled ones.</p>
+</div>
+<div class="section" id="probe-missing-members-servers">
+<span id="cartridge-topology-probe-missing-members"></span><h3>probe_missing_members (servers)<a class="headerlink" href="#probe-missing-members-servers" title="Permalink to this headline">¶</a></h3>
+<p>Send UDP ping to servers missing from membership table.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>servers:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="get-fullmesh-replication-topology-cfg-replicaset-uuid">
+<span id="cartridge-topology-get-fullmesh-replication"></span><h3>get_fullmesh_replication (topology_cfg, replicaset_uuid)<a class="headerlink" href="#get-fullmesh-replication-topology-cfg-replicaset-uuid" title="Permalink to this headline">¶</a></h3>
+<p>Get replication config to set up full mesh.</p>
+<p>(<strong>Added</strong> in v1.2.0-17)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>topology_cfg:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>replicaset_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.failover.html" title="previous chapter">Module <em>cartridge.failover</em></a></li>
+      <li>Next: <a href="cartridge.clusterwide-config.html" title="next chapter">Module <em>cartridge.clusterwide-config</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.topology.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

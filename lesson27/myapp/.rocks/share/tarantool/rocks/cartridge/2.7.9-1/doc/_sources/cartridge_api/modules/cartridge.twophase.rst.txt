@@ -1,0 +1,375 @@
+.. _cartridge.twophase:
+
+===============================================================================
+Module *cartridge.twophase*
+===============================================================================
+
+Clusterwide configuration propagation two-phase algorithm.
+
+
+
+(**Added** in v1.2.0-19)
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.twophase.twophase_commit:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+twophase_commit (opts)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Execute the two-phase commit algorithm. 
+
+* (*upload*) If  ``opts.upload_data``  isn't  ``nil`` , spread it across
+  the servers from  ``opts.uri_list`` .
+* (*prepare*) Run the  ``opts.fn_prepare``  function.
+* (*commit*) If all the servers do  ``return true`` ,
+  call  ``opts.fn_commit``  on every server.
+* (*abort*) Otherwise, if at least one server does  ``return nil, err`` 
+  or throws an exception, call  ``opts.fn_abort``  on servers which were
+  prepared successfully.
+
+
+
+
+**Parameters:**
+
+- *opts:* 
+
+  - *uri_list:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) array of URIs for performing twophase commit  
+  - *upload_data:*  any Lua object to be uploaded  
+  - *activity_name:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) understandable name of activity used for logging(default: "twophase_commit")  
+  - *fn_prepare:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *fn_commit:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *fn_abort:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: lua
+
+    local my_2pc_data = nil
+    
+    function _G.my_2pc_prepare(upload_id)
+        local data = upload.inbox[upload_id]
+        upload.inbox[upload_id] = nil
+        if my_2pc_data ~= nil then
+            error('Two-phase commit is locked')
+        end
+        my_2pc_data = data
+    end
+    
+    function _G.my_2pc_commit()
+        -- Apply my_2pc_data
+        ...
+    end
+    
+    function _G.my_2pc_abort()
+        twophase_data = nil
+    end
+    
+.. code-block:: lua
+
+    require('cartridge.twophase').twophase_commit({
+        uri_list = {...},
+        upload_data = ...,
+        activity_name = 'my_2pc',
+        fn_prepare = '_G.my_2pc_prepare',
+        fn_commit = '_G.my_2pc_commit',
+        fn_abort = '_G.my_2pc_abort',
+    })
+    
+
+.. _cartridge.twophase.patch_clusterwide:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+patch_clusterwide (patch)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Edit the clusterwide configuration. 
+Top-level keys are merged with the current configuration.
+To remove a top-level section, use
+``patch_clusterwide{key = box.NULL}`` .
+
+The function executes following steps:
+
+I. Patches the current configuration.
+
+II. Validates topology on the current server.
+
+III. Executes two-phase commit on all servers in the cluster
+excluding expelled and disabled ones.
+
+
+
+**Parameters:**
+
+- *patch:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.twophase.force_reapply:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+force_reapply (uuids)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Forcefully apply config to the given instances. 
+
+In particular:
+
+* Abort two-phase commit (remove  ``config.prepare``  lock)
+* Upload the active config from the current instance.
+* Apply it (reconfigure all roles)
+
+
+(**Added** in v2.3.0-68)
+
+
+
+**Parameters:**
+
+- *uuids:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.twophase.get_schema:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_schema ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get clusterwide DDL schema. 
+
+(**Added** in v1.2.0-28)
+
+
+
+**Returns**:
+
+(`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Schema in YAML format
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.twophase.set_schema:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set_schema (schema)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Apply clusterwide DDL schema. 
+
+(**Added** in v1.2.0-28)
+
+
+**Parameters:**
+
+- *schema:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) in YAML format  
+
+**Returns**:
+
+(`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) The same new schema
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.twophase.on_patch:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+on_patch (trigger_new, trigger_old)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set up trigger for for patch_clusterwide. 
+
+It will be executed **before** new new config applied.
+
+If the parameters are  ``(nil, old_trigger)`` , then the old trigger is
+deleted.
+
+The trigger function is called with two argument:
+-  ``conf_new``  ( ``ClusterwideConfig`` )
+-  ``conf_old``  ( ``ClusterWideConfig`` )
+
+It is allowed to modify  ``conf_new`` , but not  ``conf_old`` .
+Return values are ignored. If calling a trigger raises an error,
+``patch_clusterwide``  returns it as  ``nil, err`` .
+
+(**Added** in v2.1.0-4)
+
+
+
+**Parameters:**
+
+- *trigger_new:* (**function**)   
+- *trigger_old:* (**function**)   
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: lua
+
+    local function inject_data(conf_new, _)
+        local data_yml = yaml.encode({foo = 'bar'})
+        conf_new:set_plaintext('data.yml', data_yml)
+    end)
+    
+    twophase.on_patch(inject_data) -- set custom patch modifier trigger
+    twophase.on_patch(nil, inject_data) -- drop trigger
+    
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.twophase.wait_config_release:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+wait_config_release (timeout)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Wait until config won't released. 
+
+Two-phase commit starts with config preparation. It's just
+config pin into "vars.prepared_config". After it using this value
+we could determine is two-phase commit is started or not.
+This function allows to wait when two-phase commit will be
+finished (successfully or not).
+
+
+
+**Parameters:**
+
+- *timeout:* (**number**)   
+
+**Returns**:
+
+(**boolean**) true in case of success and false otherwise
+
+
+.. _cartridge.twophase.prepare_2pc:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+prepare_2pc (upload_id)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Two-phase commit - preparation stage. 
+
+Validate the configuration and acquire a lock setting local variable
+and writing "config.prepare.yml" file. If the validation fails, the
+lock isn't acquired and doesn't have to be aborted.
+
+
+
+**Parameters:**
+
+- *upload_id:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.twophase.commit_2pc:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+commit_2pc ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Two-phase commit - commit stage. 
+
+Back up the active configuration, commit changes to filesystem by
+renaming prepared file, release the lock, and configure roles.
+If any errors occur, configuration is not rolled back automatically.
+Any problem encountered during this call has to be solved manually.
+
+
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.twophase.abort_2pc:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+abort_2pc ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Two-phase commit - abort stage. 
+
+Release the lock for further commit attempts.
+
+
+
+**Returns**:
+
+(**boolean**) true
+
+

@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tarantool Cartridge &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tarantool Cartridge" href="README.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="tarantool-cartridge">
+<span id="id1"></span><h1>Tarantool Cartridge<a class="headerlink" href="#tarantool-cartridge" title="Permalink to this headline">¶</a></h1>
+<p>Cluster management in Tarantool is powered by the Tarantool Cartridge
+framework.</p>
+<p>Here we explain how you can benefit with Tarantool Cartridge,
+a framework for developing, deploying, and managing applications
+based on Tarantool.</p>
+<p>This documentation contains the following sections:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="README.html#about-tarantool-cartridge">About Tarantool Cartridge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="README.html#contributing">Contributing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_dev.html">Developer’s guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#installing-tarantool-cartridge">Installing Tarantool Cartridge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#creating-a-project">Creating a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#cluster-roles">Cluster roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#using-the-built-in-http-server">Using the built-in HTTP server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#implementing-authorization-in-the-web-interface">Implementing authorization in the web interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#application-versioning">Application versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#using-cartridge-ignore-files">Using .cartridge.ignore files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#failover-architecture">Failover architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#configuring-instances">Configuring instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#deploying-an-application">Deploying an application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#starting-stopping-instances">Starting/stopping instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#error-handling-guidelines">Error handling guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_dev.html#cluster-instance-lifecycle">Cluster instance lifecycle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_admin.html">Administrator’s guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#deploying-the-cluster">Deploying the cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#bootstrapping-from-an-existing-cluster-optional">Bootstrapping from an existing cluster (optional)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#cluster-setup">Cluster setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#updating-the-configuration">Updating the configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#managing-the-cluster">Managing the cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#managing-users">Managing users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#resolving-conflicts">Resolving conflicts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#monitoring-a-cluster-via-cli">Monitoring a cluster via CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#issues-and-suggestions">Issues and suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#instances-general-info">Instances general info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#changing-cluster-cookie">Changing cluster cookie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#fixing-broken-instance-configuration">Fixing broken instance configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#upgrading-schema">Upgrading schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#disaster-recovery">Disaster recovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_admin.html#backups">Backups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#problems-with-replica">Problems with replica</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#editing-clusterwide-configuration-in-webui-returns-an-error">Editing clusterwide configuration in WebUI returns an error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#an-instance-is-stuck-in-the-connectingfullmesh-state-upon-restart">An instance is stuck in the ConnectingFullmesh state upon restart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#i-want-to-run-an-instance-with-a-new-advertise-uri">I want to run an instance with a new advertise_uri</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#the-cluster-is-doomed-i-ve-edited-the-config-manually-how-do-i-reload-it">The cluster is doomed, I’ve edited the config manually. How do I reload it?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#repairing-cluster-using-cartridge-cli-repair-command">Repairing cluster using Cartridge CLI repair command</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/modules/cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge_api/classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#unreleased">[Unreleased]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id1">[2.7.9] - 2023-04-06</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id5">[2.7.8] - 2023-01-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id15">[2.7.7] - 2022-12-09</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id47">[2.7.6] - 2022-08-22</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id58">[2.7.5] - 2022-06-28</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id72">[2.7.4] - 2022-04-11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id133">[2.7.3] - 2021-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id135">[2.7.2] - 2021-10-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id139">[2.7.1] - 2021-08-18</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id141">[2.7.0] - 2021-08-10</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id145">[2.6.0] - 2021-04-26</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id150">[2.5.1] - 2021-03-24</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id153">[2.5.0] - 2021-03-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id156">[2.4.0] - 2020-12-29</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id161">[2.3.0] - 2020-08-26</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id165">[2.2.0] - 2020-06-23</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id169">[2.1.2] - 2020-04-24</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id171">[2.1.1] - 2020-04-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id173">[2.1.0] - 2020-04-16</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id179">[2.0.2] - 2020-03-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id184">[2.0.1] - 2020-01-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id187">[2.0.0] - 2019-12-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id191">[1.2.0] - 2019-10-21</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id195">[1.1.0] - 2019-09-24</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id200">[1.0.0] - 2019-08-29</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id204">[0.10.0] - 2019-08-01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id207">[0.9.2] - 2019-07-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id209">[0.9.1] - 2019-07-10</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id212">[0.9.0] - 2019-07-02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id216">[0.8.0] - 2019-05-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id220">[0.7.0] - 2019-04-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id223">[0.6.3] - 2019-02-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id225">[0.6.2] - 2019-02-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id227">[0.6.1] - 2019-02-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id229">[0.6.0] - 2019-01-30</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id233">[0.5.1] - 2018-12-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id235">[0.5.0] - 2018-12-11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id239">[0.4.0] - 2018-11-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id241">[0.3] - 2018-10-30</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id244">[0.2] - 2018-10-01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#id246">[0.1] - 2018-09-25</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="README.html" title="next chapter">Tarantool Cartridge</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

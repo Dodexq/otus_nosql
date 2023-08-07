@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Class cartridge.test-helpers.server &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Class cartridge.test-helpers.etcd" href="cartridge.test-helpers.etcd.html" />
+    <link rel="prev" title="Class cartridge.test-helpers.cluster" href="cartridge.test-helpers.cluster.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="class-cartridge-test-helpers-server">
+<span id="cartridge-test-helpers-server"></span><h1>Class <em>cartridge.test-helpers.server</em><a class="headerlink" href="#class-cartridge-test-helpers-server" title="Permalink to this headline">¶</a></h1>
+<p>Extended luatest.Server class to run a cartridge instance.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="server-build-env">
+<span id="cartridge-test-helpers-server-server-build-env"></span><h3>Server:build_env ()<a class="headerlink" href="#server-build-env" title="Permalink to this headline">¶</a></h3>
+<p>Generates environment to run process with.
+The result is merged into os.environ().</p>
+<p><strong>Returns</strong>:</p>
+<p>map</p>
+</div>
+<div class="section" id="server-start">
+<span id="cartridge-test-helpers-server-server-start"></span><h3>Server:start ()<a class="headerlink" href="#server-start" title="Permalink to this headline">¶</a></h3>
+<p>Start the server.</p>
+</div>
+<div class="section" id="server-stop">
+<span id="cartridge-test-helpers-server-server-stop"></span><h3>Server:stop ()<a class="headerlink" href="#server-stop" title="Permalink to this headline">¶</a></h3>
+<p>Stop server process.</p>
+</div>
+<div class="section" id="server-graphql-request-http-options">
+<span id="cartridge-test-helpers-server-server-graphql"></span><h3>Server:graphql (request, http_options)<a class="headerlink" href="#server-graphql-request-http-options" title="Permalink to this headline">¶</a></h3>
+<p>Perform GraphQL request.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>request:</em></p>
+<ul>
+<li><p><em>query:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) grapqhl query</p></li>
+<li><p><em>variables:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) variables for graphql query</p></li>
+<li><p><em>raise:</em> (optional <strong>boolean</strong>) raise if response contains an error(default: <strong>true</strong>)</p></li>
+</ul>
+</li>
+<li><p><em>http_options:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) passed to  <code class="docutils literal notranslate"><span class="pre">http_request</span></code>  options. (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) parsed response JSON.</p>
+<p><strong>Raises:</strong></p>
+<ul class="simple">
+<li><p>HTTPRequest error</p></li>
+<li><p>GraphQL error</p></li>
+</ul>
+</div>
+<div class="section" id="server-join-cluster-main-server-options">
+<span id="cartridge-test-helpers-server-server-join-cluster"></span><h3>Server:join_cluster (main_server[, options])<a class="headerlink" href="#server-join-cluster-main-server-options" title="Permalink to this headline">¶</a></h3>
+<p>Advertise this server to the cluster.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>main_server:</em>  Server to perform GraphQL request on.</p></li>
+<li><p><em>options:</em></p>
+<ul>
+<li><p><em>timeout:</em>  request timeout</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="server-setup-replicaset-config">
+<span id="cartridge-test-helpers-server-server-setup-replicaset"></span><h3>Server:setup_replicaset (config)<a class="headerlink" href="#server-setup-replicaset-config" title="Permalink to this headline">¶</a></h3>
+<p>Update server’s replicaset config.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>config:</em></p>
+<ul>
+<li><p><em>uuid:</em>  replicaset uuid</p></li>
+<li><p><em>roles:</em>  list of roles</p></li>
+<li><p><em>master:</em></p></li>
+<li><p><em>weight:</em></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="server-upload-config-config-table">
+<span id="cartridge-test-helpers-server-server-upload-config"></span><h3>Server:upload_config (config, table)<a class="headerlink" href="#server-upload-config-config-table" title="Permalink to this headline">¶</a></h3>
+<p>Upload application config.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>config:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) * table will be encoded as yaml and posted to /admin/config.</p></li>
+<li><p><em>table:</em>  opts - http request options</p></li>
+</ul>
+</div>
+<div class="section" id="server-download-config">
+<span id="cartridge-test-helpers-server-server-download-config"></span><h3>Server:download_config ()<a class="headerlink" href="#server-download-config" title="Permalink to this headline">¶</a></h3>
+<p>Download application config.</p>
+</div>
+</div>
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cartridge-test-helpers-server-new-object">
+<span id="cartridge-test-helpers-server-cartridge-test-helpers-server-new"></span><h3>cartridge.test-helpers.server:new (object)<a class="headerlink" href="#cartridge-test-helpers-server-new-object" title="Permalink to this headline">¶</a></h3>
+<p>Build server object.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>object:</em></p>
+<ul>
+<li><p><em>command:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Command to start server process.</p></li>
+<li><p><em>workdir:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Value to be passed in  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_WORKDIR</span></code> .</p></li>
+<li><p><em>chdir:</em> (<strong>bool</strong>) Path to cwd before starting a process. (optional)</p></li>
+<li><p><em>env:</em> (<strong>tab</strong>) Table to pass as env variables to process. (optional)</p></li>
+<li><p><em>args:</em> (<strong>tab</strong>) Args to run command with. (optional)</p></li>
+<li><p><em>http_port:</em> (<strong>int</strong>) Value to be passed in  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_HTTP_PORT</span></code>  and used to perform HTTP requests. (optional)</p></li>
+<li><p><em>advertise_port:</em> (<strong>int</strong>) Value to generate  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_ADVERTISE_URI</span></code>  and used for net_box connection.</p></li>
+<li><p><em>net_box_port:</em> (<strong>int</strong>) Alias for  <code class="docutils literal notranslate"><span class="pre">advertise_port</span></code> . (optional)</p></li>
+<li><p><em>net_box_credentials:</em> (<strong>tab</strong>) Override default net_box credentials. (optional)</p></li>
+<li><p><em>alias:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Instance alias.</p></li>
+<li><p><em>cluster_cookie:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Value to be passed in  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_CLUSTER_COOKIE</span></code>  and used as default net_box password.</p></li>
+<li><p><em>instance_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Server identifier. (optional)</p></li>
+<li><p><em>replicaset_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Replicaset identifier. (optional)</p></li>
+<li><p><em>zone:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Vshard zone. (optional)</p></li>
+<li><p><em>swim_period:</em> (<strong>number</strong>) SWIM protocol period in seconds. (optional)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>input object</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.test-helpers.cluster.html" title="previous chapter">Class <em>cartridge.test-helpers.cluster</em></a></li>
+      <li>Next: <a href="cartridge.test-helpers.etcd.html" title="next chapter">Class <em>cartridge.test-helpers.etcd</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/classes/cartridge.test-helpers.server.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,317 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.roles &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.issues" href="cartridge.issues.html" />
+    <link rel="prev" title="Module cartridge.auth" href="cartridge.auth.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-roles">
+<span id="cartridge-roles"></span><h1>Module <em>cartridge.roles</em><a class="headerlink" href="#module-cartridge-roles" title="Permalink to this headline">¶</a></h1>
+<p>Role management (internal module).</p>
+<p>The module consolidates all the role management functions:
+<code class="docutils literal notranslate"><span class="pre">cfg</span></code> , some getters,  <code class="docutils literal notranslate"><span class="pre">validate_config</span></code>  and  <code class="docutils literal notranslate"><span class="pre">apply_config</span></code> .</p>
+<p>The module is almost stateless, it’s only state is a collection of
+registered roles.</p>
+<p>(<strong>Added</strong> in v1.2.0-20)</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="reload">
+<span id="cartridge-roles-reload"></span><h3>reload ()<a class="headerlink" href="#reload" title="Permalink to this headline">¶</a></h3>
+<p>Perform hot-reload of cartridge roles code.</p>
+<p>This is an experimental feature, it’s only allowed if the application
+enables it explicitly:  <code class="docutils literal notranslate"><span class="pre">cartridge.cfg({roles_reload_allowed</span> <span class="pre">=</span>
+<span class="pre">true})</span></code> .</p>
+<p>Reloading starts by stopping all roles and restoring the initial
+state. It’s supposed that a role cleans up the global state when
+stopped, but even if it doesn’t, cartridge kills all fibers and
+removes global variables and HTTP routes.</p>
+<p>All Lua modules that were loaded during <a class="reference internal" href="cartridge.html#cartridge-cfg"><span class="std std-ref">cartridge.cfg</span></a> are unloaded,
+including supplementary modules required by a role. Modules, loaded
+before <a class="reference internal" href="cartridge.html#cartridge-cfg"><span class="std std-ref">cartridge.cfg</span></a> aren’t affected.</p>
+<p>Instance performs roles reload in a dedicated state  <code class="docutils literal notranslate"><span class="pre">ReloadingRoles</span></code> .
+If reload fails, the instance enters the  <code class="docutils literal notranslate"><span class="pre">ReloadError</span></code>  state, which
+can later be retried. Otherwise, if reload succeeds, instance
+proceeds to the  <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code>  state and initializes them as
+usual with  <code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> ,  <code class="docutils literal notranslate"><span class="pre">init()</span></code> , and  <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code>
+callbacks.</p>
+<p>Hot-reload could be forbidden in runtime with  <code class="docutils literal notranslate"><span class="pre">forbid_reload</span></code>  function.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="forbid-reload">
+<span id="cartridge-roles-forbid-reload"></span><h3>forbid_reload ()<a class="headerlink" href="#forbid-reload" title="Permalink to this headline">¶</a></h3>
+<p>Forbid hot-reload of cartridge roles code.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="allow-reload">
+<span id="cartridge-roles-allow-reload"></span><h3>allow_reload ()<a class="headerlink" href="#allow-reload" title="Permalink to this headline">¶</a></h3>
+<p>Allow hot-reload of cartridge roles code.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="is-reload-forbidden">
+<span id="cartridge-roles-is-reload-forbidden"></span><h3>is_reload_forbidden ()<a class="headerlink" href="#is-reload-forbidden" title="Permalink to this headline">¶</a></h3>
+<p>Returns true if hot-reload of cartridge roles code is forbidden.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="on-apply-config-table-string">
+<span id="cartridge-roles-on-apply-config"></span><h3>on_apply_config (table, string)<a class="headerlink" href="#on-apply-config-table-string" title="Permalink to this headline">¶</a></h3>
+<p>Do additional job after the roles configuration applying.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>table:</em>  conf</p></li>
+<li><p><em>string:</em>  state</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+<div class="section" id="local-functions">
+<h2>Local Functions<a class="headerlink" href="#local-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cfg-module-names">
+<span id="cartridge-roles-cfg"></span><h3>cfg (module_names)<a class="headerlink" href="#cfg-module-names" title="Permalink to this headline">¶</a></h3>
+<p>Load modules and register them as Cartridge Roles.</p>
+<p>This function is internal, it’s called as a part of <a class="reference internal" href="cartridge.html#cartridge-cfg"><span class="std std-ref">cartridge.cfg</span></a>.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>module_names:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="get-all-roles">
+<span id="cartridge-roles-get-all-roles"></span><h3>get_all_roles ()<a class="headerlink" href="#get-all-roles" title="Permalink to this headline">¶</a></h3>
+<p>List all registered roles.</p>
+<p>Hidden and permanent roles are listed too.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,..}</a>)</p>
+</div>
+<div class="section" id="get-known-roles">
+<span id="cartridge-roles-get-known-roles"></span><h3>get_known_roles ()<a class="headerlink" href="#get-known-roles" title="Permalink to this headline">¶</a></h3>
+<p>List registered roles names.</p>
+<p>Hidden roles are not listed as well as permanent ones.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,..}</a>)</p>
+</div>
+<div class="section" id="get-enabled-roles-without-deps">
+<span id="cartridge-roles-get-enabled-roles-without-deps"></span><h3>get_enabled_roles_without_deps ()<a class="headerlink" href="#get-enabled-roles-without-deps" title="Permalink to this headline">¶</a></h3>
+<p>List top-level roles names.</p>
+<p>Dependencies of top-level roles of the replicaset,
+hidden roles are not listed as well as permanent ones.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,..}</a>)</p>
+</div>
+<div class="section" id="get-enabled-roles-roles">
+<span id="cartridge-roles-get-enabled-roles"></span><h3>get_enabled_roles (roles)<a class="headerlink" href="#get-enabled-roles-roles" title="Permalink to this headline">¶</a></h3>
+<p>Roles to be enabled on the server.
+This function returns all roles that will be enabled
+including their dependencies (both hidden and not)
+and permanent roles.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>roles:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a> or <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{[string]=boolean,…}</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{[string]=boolean,…}</a>)</p>
+</div>
+<div class="section" id="get-role-dependencies-role-name">
+<span id="cartridge-roles-get-role-dependencies"></span><h3>get_role_dependencies (role_name)<a class="headerlink" href="#get-role-dependencies-role-name" title="Permalink to this headline">¶</a></h3>
+<p>List role dependencies.
+Including sub-dependencies.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>role_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,..}</a>)</p>
+</div>
+<div class="section" id="validate-config-conf-new-conf-old">
+<span id="cartridge-roles-validate-config"></span><h3>validate_config (conf_new, conf_old)<a class="headerlink" href="#validate-config-conf-new-conf-old" title="Permalink to this headline">¶</a></h3>
+<p>Validate configuration by all roles.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>conf_new:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>conf_old:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="apply-config-conf-opts-is-master">
+<span id="cartridge-roles-apply-config"></span><h3>apply_config (conf, opts, is_master)<a class="headerlink" href="#apply-config-conf-opts-is-master" title="Permalink to this headline">¶</a></h3>
+<p>Apply the role configuration.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>conf:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>opts:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>is_master:</em> (<strong>boolean</strong>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="stop">
+<span id="cartridge-roles-stop"></span><h3>stop ()<a class="headerlink" href="#stop" title="Permalink to this headline">¶</a></h3>
+<p>Stop all roles.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.auth.html" title="previous chapter">Module <em>cartridge.auth</em></a></li>
+      <li>Next: <a href="cartridge.issues.html" title="next chapter">Module <em>cartridge.issues</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.roles.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

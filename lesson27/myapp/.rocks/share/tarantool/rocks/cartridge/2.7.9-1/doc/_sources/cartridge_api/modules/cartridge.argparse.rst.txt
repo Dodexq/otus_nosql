@@ -1,0 +1,319 @@
+.. _cartridge.argparse:
+
+===============================================================================
+Module *cartridge.argparse*
+===============================================================================
+
+Gather configuration options.
+
+
+
+The module reads configuration options from multiple sources
+and then merges the options together according to source priority:
+
+* `--<VARNAME>` command line arguments.
+* `TARANTOOL_<VARNAME>` environment variables.
+* Configuration files.
+
+
+To specify a configuration file, use the `--cfg <CONFIG_FILE>` option
+or the `TARANTOOL_CFG=<CONFIG_FILE>` environment variable.
+
+Configuration files are  ``.yaml``  files, divided into
+sections like the following:
+
+
+.. code-block:: lua 
+ 
+    default:
+      memtx_memory: 10000000
+      some_option: "default value"
+    myapp.router:
+      memtx_memory: 1024000000
+      some_option: "router-specific value"
+    
+
+Within the configuration file, `argparse` looks for multiple matching sections:
+
+* The section named `<APP_NAME>.<INSTANCE_NAME>` is parsed first.
+  The application name is derived automatically from the rockspec filename in the
+  project directory. Alternatively, you can specify it manually via the  ``--app-name`` 
+  command line argument or the  ``TARANTOOL_APP_NAME``  environment variable.
+  The instance name can be specified the same way, either as `--instance-name`
+  or  ``TARANTOOL_INSTANCE_NAME`` .
+* The common `<APP_NAME>` section is parsed next.
+* Finally, the section  ``[default]``  with the global configuration is parsed
+  with the lowest priority.
+
+
+An instance name may consist of multiple period-separated parts,
+for example,  ``--app-name &quot;myapp&quot; --instance-name &quot;router.1&quot;`` .
+In this case, sections with names that include these parts are also parsed:
+first  ``[myapp.router.1]`` , then  ``[myapp.router]`` , then  ``[myapp]`` .
+
+Instead of a single configuration file, you can use a directory.
+In this case, all files in the directory are parsed.
+To avoid conflicts, the same section mustn't repeat across different files.
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.argparse.parse:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+parse ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Parse command line arguments, environment variables, and configuration files. 
+
+For example, running an application as follows:
+
+.. code-block:: lua 
+
+    TARANTOOL_MY_CUSTOM_ARG='value' ./init.lua --alias router --memtx-memory 33554432
+
+results in:
+
+.. code-block:: lua 
+
+    local argparse = require('cartridge.argparse')
+    argparse.parse()
+    ---
+    - memtx_memory: 33554432
+      my_custom_arg: value
+      alias: router
+    ...
+
+
+
+
+
+**Returns**:
+
+(**{argname=value,...}**) 
+
+
+.. _cartridge.argparse.get_opts:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_opts (filter)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Filter the results of parsing and cast variables to a given type. 
+
+From all the configuration options gathered by  ``parse`` , select only those
+specified in the filter.
+
+For example, running an application as follows:
+
+.. code-block:: lua 
+
+    TARANTOOL_ARG1='value' tarantool ./init.lua --arg2 100 --arg3 true
+
+results in:
+
+.. code-block:: lua 
+
+    local opts, err = argparse.get_opts({
+        arg1 = 'string',
+        arg2 = 'number',
+        arg3 = 'boolean'
+        missing_arg = 'string', -- no such arg, argparse returns nothing for this arg
+    })
+    ---
+    - arg1: value
+      arg2: 100
+      arg3: true
+    ...
+
+
+Each option have a type: string, boolean, number.
+There is an ability to set multiple types for one option.
+Types are split by separator  ``|`` ,  e.g.  ``string|number`` .
+
+
+
+**Parameters:**
+
+- *filter:* (**{argname=type,...}**)   
+
+**Returns**:
+
+(**{argname=value,...}**) 
+
+
+.. _cartridge.argparse.get_box_opts:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_box_opts ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Shorthand for  ``get_opts(box_opts)`` .
+
+
+
+
+.. _cartridge.argparse.get_cluster_opts:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_cluster_opts ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Shorthand for  ``get_opts(cluster_opts)`` .
+
+
+
+
+-------------------------------------------------------------------------------
+Tables
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.argparse.cluster_opts:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cluster_opts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Common :ref:`cartridge.cfg <cartridge.cfg>` options. 
+
+Any options not listed below (like the  ``roles``  option)
+can't be modified with  ``argparse``  and should be configured in code.
+
+
+
+**Fields:**
+
+- *alias:*  **string**  
+- *workdir:*  **string**  
+- *http_port:*  **number**  
+- *http_host:*  **string**  
+- *http_enabled:*  **boolean**  
+- *webui_enabled:*  **boolean**  
+- *webui_prefix:*  **string**  
+- *webui_enforce_root_redirect:*  **boolean**  
+- *advertise_uri:*  **string**  
+- *cluster_cookie:*  **string**  
+- *console_sock:*  **string**  
+- *auth_enabled:*  **boolean**  
+- *bucket_count:*  **number**  
+- *upgrade_schema:*  **boolean**  
+- *swim_broadcast:*  **boolean**  
+- *upload_prefix:*  **string**  
+- *transport:*  **string**  
+- *ssl_ciphers:*  **string**  
+- *ssl_server_ca_file:*  **string**  
+- *ssl_server_cert_file:*  **string**  
+- *ssl_server_key_file:*  **string**  
+- *ssl_server_password:*  **string**  
+- *ssl_client_ca_file:*  **string**  
+- *ssl_client_cert_file:*  **string**  
+- *ssl_client_key_file:*  **string**  
+- *ssl_client_password:*  **string**  
+- *disable_errstack:*  **boolean**  
+
+
+.. _cartridge.argparse.box_opts:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+box_opts
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Common `box.cfg <https://www.tarantool.io/en/doc/latest/reference/configuration/>`_ tuning options.
+
+
+**Fields:**
+
+- *listen:*  **string|number**  
+- *memtx_memory:*  **number**  
+- *memtx_allocator:*  **string**  
+- *strip_core:*  **boolean**  
+- *memtx_min_tuple_size:*  **number**  
+- *memtx_max_tuple_size:*  **number**  
+- *memtx_use_mvcc_engine:*  **boolean**  
+- *txn_isolation:*  **string|number**  
+- *slab_alloc_factor:*  **number**  
+- *slab_alloc_granularity:*  **number**  
+- *work_dir:*  **string** (**deprecated**)  
+- *memtx_dir:*  **string**  
+- *wal_dir:*  **string**  
+- *vinyl_dir:*  **string**  
+- *vinyl_memory:*  **number**  
+- *vinyl_cache:*  **number**  
+- *vinyl_max_tuple_size:*  **number**  
+- *vinyl_read_threads:*  **number**  
+- *vinyl_write_threads:*  **number**  
+- *vinyl_timeout:*  **number**  
+- *vinyl_defer_deletes:*  **boolean**  
+- *vinyl_run_count_per_level:*  **number**  
+- *vinyl_run_size_ratio:*  **number**  
+- *vinyl_range_size:*  **number**  
+- *vinyl_page_size:*  **number**  
+- *vinyl_bloom_fpr:*  **number**  
+- *log:*  **string**  
+- *log_nonblock:*  **boolean**  
+- *log_level:*  **string|number**  
+- *log_format:*  **string**  
+- *audit_log:*  **string**  
+- *audit_nonblock:*  **boolean**  
+- *audit_format:*  **string**  
+- *audit_filter:*  **string**  
+- *flightrec_enabled:*  **boolean**  
+- *flightrec_logs_size:*  **number**  
+- *flightrec_logs_max_msg_size:*  **number**  
+- *flightrec_logs_log_level:*  **number**  
+- *flightrec_metrics_interval:*  **number**  
+- *flightrec_metrics_period:*  **number**  
+- *flightrec_requests_size:*  **number**  
+- *flightrec_requests_max_req_size:*  **number**  
+- *flightrec_requests_max_res_size:*  **number**  
+- *io_collect_interval:*  **number**  
+- *readahead:*  **number**  
+- *snap_io_rate_limit:*  **number**  
+- *too_long_threshold:*  **number**  
+- *wal_mode:*  **string**  
+- *rows_per_wal:*  **number**  (**deprecated**)  
+- *wal_max_size:*  **number**  
+- *wal_queue_max_size:*  **number**  
+- *wal_dir_rescan_delay:*  **number**  
+- *wal_cleanup_delay:*  **number**  
+- *force_recovery:*  **boolean**  
+- *replication:*  **string**  
+- *instance_uuid:*  **string**  
+- *replicaset_uuid:*  **string**  
+- *custom_proc_title:*  **string**  
+- *pid_file:*  **string**  
+- *background:*  **boolean**  
+- *username:*  **string**  
+- *coredump:*  **boolean**  
+- *checkpoint_interval:*  **number**  
+- *checkpoint_wal_threshold:*  **number**  
+- *checkpoint_count:*  **number**  
+- *read_only:*  **boolean**  
+- *hot_standby:*  **boolean**  
+- *worker_pool_threads:*  **number**  
+- *replication_threads:*  **number**  
+- *replication_timeout:*  **number**  
+- *replication_sync_lag:*  **number**  
+- *replication_sync_timeout:*  **number**  
+- *replication_connect_timeout:*  **number**  
+- *replication_connect_quorum:*  **number**  
+- *replication_skip_conflict:*  **boolean**  
+- *replication_synchro_quorum:*  **string|number**  
+- *replication_synchro_timeout:*  **number**  
+- *feedback_enabled:*  **boolean**  
+- *feedback_host:*  **string**  
+- *feedback_interval:*  **number**  
+- *feedback_crashinfo:*  **boolean**  
+- *net_msg_max:*  **number**  
+- *iproto_threads:*  **number**  
+- *sql_cache_size:*  **number**  
+- *txn_timeout:*  **number**  
+- *election_mode:*  **string**  
+- *election_timeout:*  **number**  
+- *election_fencing_mode:*  **string**  
+
+

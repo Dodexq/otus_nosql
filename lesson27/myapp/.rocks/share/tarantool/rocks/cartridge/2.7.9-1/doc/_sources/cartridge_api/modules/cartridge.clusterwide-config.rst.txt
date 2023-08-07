@@ -1,0 +1,242 @@
+.. _cartridge.clusterwide-config:
+
+===============================================================================
+Module *cartridge.clusterwide-config*
+===============================================================================
+
+The abstraction, representing clusterwide configuration.
+
+
+
+Clusterwide configuration is more than just a lua table. It's an
+object in terms of OOP paradigm.
+
+On filesystem clusterwide config is represented by a file tree.
+
+In Lua it's represented as an object which holds both plaintext files
+content and unmarshalled lua tables. Unmarshalling is implicit and
+performed automatically for the sections with  ``.yml``  file extension.
+
+To access plaintext content there are two functions: `get_plaintext`
+and  ``set_plaintext`` .
+
+Unmarshalled lua tables are accessed without  ``.yml``  extension by
+``get_readonly``  and  ``get_deepcopy`` . Plaintext serves for
+accessing unmarshalled representation of corresponding sections.
+
+To avoid ambiguity it's prohibited to keep both `<FILENAME>` and
+`<FILENAME>.yml` in the configuration. An attempt to do so would
+result in `return nil, err` from `new()` and `load()`, and an attempt
+to call  ``get_readonly/deepcopy``  would raise an error.
+Nevertheless one can keep any other extensions because they aren't
+unmarshalled implicitly.
+
+(**Added** in v1.2.0-17)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: lua
+
+    tarantool> cfg = ClusterwideConfig.new({
+             >     -- two files
+             >     ['forex.yml'] = '{EURRUB_TOM: 70.33, USDRUB_TOM: 63.18}',
+             >     ['text'] = 'Lorem ipsum dolor sit amet',
+             > })
+    ---
+    ...
+    
+    tarantool> cfg:get_plaintext()
+    ---
+    - text: Lorem ipsum dolor sit amet
+      forex.yml: '{EURRUB_TOM: 70.33, USDRUB_TOM: 63.18}'
+    ...
+    
+    tarantool> cfg:get_readonly()
+    ---
+    - forex.yml: '{EURRUB_TOM: 70.33, USDRUB_TOM: 63.18}'
+      forex:
+        EURRUB_TOM: 70.33
+        USDRUB_TOM: 63.18
+      text: Lorem ipsum dolor sit amet
+    ...
+    
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.clusterwide-config.new:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+new ([data])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Create new object.
+
+
+**Parameters:**
+
+- *data:* (`{string=string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Plaintext content (optional) 
+
+**Returns**:
+
+(**ClusterwideConfig**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.clusterwide-config.save:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+save (clusterwide_config, filename)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Write configuration to filesystem. 
+
+Write atomicity is achieved by splitting it into two phases:
+1. Configuration is saved with a random filename in the same directory
+2. Temporal filename is renamed to the destination
+
+
+
+**Parameters:**
+
+- *clusterwide_config:* (**ClusterwideConfig**)   
+- *filename:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.clusterwide-config.load:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+load (filename)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Load object from filesystem. 
+
+This function handles both old-style single YAML and
+new-style directory with a file tree.
+
+
+
+**Parameters:**
+
+- *filename:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**ClusterwideConfig**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.clusterwide-config.load_from_file:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+load_from_file (filename)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Load old-style config from YAML file.
+
+
+**Parameters:**
+
+- *filename:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Filename to load.  
+
+**Returns**:
+
+(**ClusterwideConfig**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.clusterwide-config.load_from_dir:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+load_from_dir (path)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Load new-style config from a directory.
+
+
+**Parameters:**
+
+- *path:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Path to the config.  
+
+**Returns**:
+
+(**ClusterwideConfig**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.clusterwide-config.remove:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+remove (string)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Remove config from filesystem atomically. 
+
+The atomicity is achieved by splitting it into two phases:
+1. Configuration is saved with a random filename in the same directory
+2. Temporal filename is renamed to the destination
+
+
+
+
+**Parameters:**
+
+- *string:* (**path**) Directory path to remove.  
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

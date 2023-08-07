@@ -1,0 +1,230 @@
+.. _cartridge.lua-api.topology:
+
+===============================================================================
+Module *cartridge.lua-api.topology*
+===============================================================================
+
+Administration functions (topology related).
+
+
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.topology.get_servers:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_servers ([uuid])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get servers list. 
+Optionally filter out the server with the given uuid.
+
+
+**Parameters:**
+
+- *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)  (optional) 
+
+**Returns**:
+
+(**{ServerInfo,...}**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.topology.get_replicasets:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_replicasets ([uuid])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get replicasets list. 
+Optionally filter out the replicaset with given uuid.
+
+
+**Parameters:**
+
+- *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)  (optional) 
+
+**Returns**:
+
+(**{ReplicasetInfo,...}**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.topology.probe_server:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+probe_server (uri)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Discover an instance.
+
+
+**Parameters:**
+
+- *uri:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+
+.. _cartridge.lua-api.topology.enable_servers:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+enable_servers (uuids)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Enable nodes after they were disabled.
+
+
+**Parameters:**
+
+- *uuids:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**{ServerInfo,...}**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.topology.disable_servers:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+disable_servers (uuids)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Temporarily disable nodes.
+
+
+**Parameters:**
+
+- *uuids:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**{ServerInfo,...}**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.topology.restart_replication:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+restart_replication (...)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Restart replication on specified instances. 
+
+(added in v2.6.0-43)
+
+
+
+**Parameters:**
+
+- *...:* (`{string, <https://www.lua.org/manual/5.1/manual.html#5.4>`_) } uuids  
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.topology.set_electable_servers:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set_electable_servers (uuids)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Make nodes electable after they were set unelectable.
+
+
+**Parameters:**
+
+- *uuids:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**{ServerInfo,...}**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.topology.set_unelectable_servers:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set_unelectable_servers (uuids)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Temporarily make nodes unelectable as leaders.
+
+
+**Parameters:**
+
+- *uuids:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**{ServerInfo,...}**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.topology.get_self:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_self ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get alias, uri and uuid of current instance.
+
+
+
+**Returns**:
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) 
+
+

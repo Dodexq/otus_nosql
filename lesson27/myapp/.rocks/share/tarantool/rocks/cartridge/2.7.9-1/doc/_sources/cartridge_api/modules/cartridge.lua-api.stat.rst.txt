@@ -1,0 +1,41 @@
+.. _cartridge.lua-api.stat:
+
+===============================================================================
+Module *cartridge.lua-api.stat*
+===============================================================================
+
+Administration functions ( ``box.slab.info``  related).
+
+
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.stat.get_stat:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_stat (uri)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Retrieve  ``box.slab.info``  of a remote server.
+
+
+**Parameters:**
+
+- *uri:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

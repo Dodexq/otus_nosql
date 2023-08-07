@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>membership</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#_Unreleased_">[Unreleased] </a></li>
+<li><a href="#_2_4_0____2021_07_12">[2.4.0] - 2021-07-12 </a></li>
+<li><a href="#_2_3_2____2021_04_22">[2.3.2] - 2021-04-22 </a></li>
+<li><a href="#_2_3_1____2020_11_18">[2.3.1] - 2020-11-18 </a></li>
+<li><a href="#_2_3_0____2020_11_17">[2.3.0] - 2020-11-17 </a></li>
+<li><a href="#_2_2_0____2019_10_22">[2.2.0] - 2019-10-22 </a></li>
+<li><a href="#_2_1_4____2019_08_25">[2.1.4] - 2019-08-25 </a></li>
+<li><a href="#_2_1_3____2019_08_01">[2.1.3] - 2019-08-01 </a></li>
+<li><a href="#_2_1_2____2019_06_02">[2.1.2] - 2019-06-02 </a></li>
+<li><a href="#_2_1_1____2019_01_09">[2.1.1] - 2019-01-09 </a></li>
+<li><a href="#_2_1_0____2018_09_04">[2.1.0] - 2018-09-04 </a></li>
+<li><a href="#_2_0_0____2018_04_03">[2.0.0] - 2018-04-03 </a></li>
+<li><a href="#_1_0_0____2018_04_02">[1.0.0] - 2018-04-02 </a></li>
+</ul>
+
+
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="../topics/README.md.html">README</a></li>
+  <li><strong>CHANGELOG</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><a href="../index.html">membership</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+
+<h1>Changelog</h1>
+<p>All notable changes to this project will be documented in this file.</p>
+
+<p>The format is based on <a href="http://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>
+and this project adheres to <a href="http://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+
+<p><a name="_Unreleased_"></a></p>
+<h2>[Unreleased]</h2>
+
+<p><a name="_2_4_0____2021_07_12"></a></p>
+<h2>[2.4.0] - 2021-07-12</h2>
+
+<h3>Added</h3>
+
+<ul>
+    <li><p>New option <code>SUSPICIOUSNESS</code> (default: <code>true</code>) allows to
+    disable generation of rumors about suspected members. Also,
+    membership won't produce any rumors unless myself is alive.</p></li>
+    <li><p>New option <code>log_debug</code> which can be easily overridden to
+    control the verbosity level.</p></li>
+</ul>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li><p>Uncaught exception which prevented discovering
+    non-decryptable members.</p></li>
+    <li><p>Avoid event duplication due to a bug.</p></li>
+    <li><p>Properly handle the internal option <code>NUM_FAILURE_DETECTION_SUBGROUPS</code>
+    which controls the number of indirect pings.</p></li>
+</ul>
+
+<p><a name="_2_3_2____2021_04_22"></a></p>
+<h2>[2.3.2] - 2021-04-22</h2>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li>Enhance logging of <code>getaddrinfo</code> errors when DNS malfunctions.</li>
+</ul>
+
+<p><a name="_2_3_1____2020_11_18"></a></p>
+<h2>[2.3.1] - 2020-11-18</h2>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li>Make the initialization error more informative.</li>
+</ul>
+
+<p><a name="_2_3_0____2020_11_17"></a></p>
+<h2>[2.3.0] - 2020-11-17</h2>
+
+<h3>Added</h3>
+
+<ul>
+    <li>Allow reloading the code on the fly without status intervention.</li>
+</ul>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li>Make subscriptions garbage-collectible. Previously, <code>fiber.cond</code>
+    objects obtained from <a href="../index.html#subscribe">membership.subscribe</a> should have been
+    unsubscribed manually, otherwise, they would never be GC'ed.
+    And now they are.</li>
+</ul>
+
+<p><a name="_2_2_0____2019_10_22"></a></p>
+<h2>[2.2.0] - 2019-10-22</h2>
+
+<h3>Added</h3>
+
+<ul>
+    <li>New field <code>member.clock_delta</code>, which indicates difference between
+    remote and local clocks.</li>
+</ul>
+
+<p><a name="_2_1_4____2019_08_25"></a></p>
+<h2>[2.1.4] - 2019-08-25</h2>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li>In some cases membership did disseminate invalid (nil) payload.
+    The bug relates versions 2.1.2, 2.1.3.</li>
+</ul>
+
+<p><a name="_2_1_3____2019_08_01"></a></p>
+<h2>[2.1.3] - 2019-08-01</h2>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li>Leaving membership with encryption enabled.
+    Due to the bug, other members reported 'dead' status instead of 'left'.</li>
+</ul>
+
+<p><a name="_2_1_2____2019_06_02"></a></p>
+<h2>[2.1.2] - 2019-06-02</h2>
+
+<h3>Added</h3>
+
+<ul>
+    <li>Ldoc api documentation</li>
+</ul>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li>Fairly calculate size of UDP packets</li>
+    <li>Speed up events dissemination by fully utilizing
+    PING and ACK packets</li>
+    <li>Restrict packet size for anti-entropy sync.
+    Due to the lack of restriction it used to fail
+    which plagued members detection</li>
+</ul>
+
+<h3>Minor</h3>
+
+<ul>
+    <li>Make tests lighter by using <code>console</code> connection instead of <code>net.box</code></li>
+</ul>
+
+<p><a name="_2_1_1____2019_01_09"></a></p>
+<h2>[2.1.1] - 2019-01-09</h2>
+
+<h3>Fixed</h3>
+
+<ul>
+    <li>Obtain UDP broadcast address from <code>getifaddrs</code> C call</li>
+</ul>
+
+<h3>Updated</h3>
+
+<ul>
+    <li>Module <code>checks</code> dependency updated to v3.0.0</li>
+</ul>
+
+<p><a name="_2_1_0____2018_09_04"></a></p>
+<h2>[2.1.0] - 2018-09-04</h2>
+
+<h3>Added</h3>
+
+<ul>
+    <li>API method <code>probe_uri()</code></li>
+    <li>API method <code>get_member()</code></li>
+    <li>Low-level encryption support</li>
+    <li>API methods <code>set_encryption_key()</code>, <code>get_encryption_key()</code></li>
+    <li>API method <code>broadcast()</code></li>
+    <li>API methods <code>subscribe()</code>, <code>unsubscribe()</code></li>
+</ul>
+
+<h3>Changed</h3>
+
+<ul>
+    <li>API method <code>set_payload()</code> now sets only the given key within payload table</li>
+    <li>Hide internal numeric <code>status</code> from public API</li>
+</ul>
+
+<p><a name="_2_0_0____2018_04_03"></a></p>
+<h2>[2.0.0] - 2018-04-03</h2>
+
+<h3>Changed</h3>
+
+<ul>
+    <li>Rename API method: <code>quit()</code> -> <code>leave()</code></li>
+</ul>
+
+<p><a name="_1_0_0____2018_04_02"></a></p>
+<h2>[1.0.0] - 2018-04-02</h2>
+
+<h3>Added</h3>
+
+<ul>
+    <li>Basic functionality</li>
+    <li>Integration tests</li>
+    <li>Luarock-based packaging</li>
+    <li>Gitlab CI integration</li>
+</ul>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-07-12 22:06:16 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

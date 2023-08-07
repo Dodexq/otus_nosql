@@ -1,0 +1,102 @@
+.. _cartridge.lua-api.edit-topology:
+
+===============================================================================
+Module *cartridge.lua-api.edit-topology*
+===============================================================================
+
+Administration functions ( ``edit-topology``  implementation).
+
+
+
+
+-------------------------------------------------------------------------------
+Editing topology
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.edit-topology.edit_topology:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+edit_topology (args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Edit cluster topology. 
+This function can be used for:
+
+* bootstrapping cluster from scratch
+* joining a server to an existing replicaset
+* creating new replicaset with one or more servers
+* editing uri/labels of servers
+* disabling and expelling servers
+
+
+(**Added** in v1.0.0-17)
+
+
+**Parameters:**
+
+- *args:* 
+
+  - *servers:* (optional `{EditServerParams,..} <cartridge.lua-api.edit-topology.EditServerParams_>`_)   
+  - *replicasets:* (optional `{EditReplicasetParams,..} <cartridge.lua-api.edit-topology.EditReplicasetParams_>`_)   
+
+
+
+.. _cartridge.lua-api.edit-topology.EditReplicasetParams:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+EditReplicasetParams
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Replicatets modifications.
+
+
+**Fields:**
+
+- *uuid:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *alias:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *roles:* (optional `{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *all_rw:* (optional **boolean**)   
+- *weight:* (optional **number**)   
+- *failover_priority:* (optional `{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) array of uuids specifying servers failover priority  
+- *vshard_group:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *join_servers:* (optional `{JoinServerParams,...} <cartridge.lua-api.edit-topology.JoinServerParams_>`_)   
+
+
+.. _cartridge.lua-api.edit-topology.JoinServerParams:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+JoinServerParams
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Parameters required for joining a new server.
+
+
+**Fields:**
+
+- *uri:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *uuid:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *zone:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) (**Added** in v2.4.0-14)  
+- *labels:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+
+.. _cartridge.lua-api.edit-topology.EditServerParams:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+EditServerParams
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Servers modifications.
+
+
+**Fields:**
+
+- *uri:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *zone:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *labels:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+- *disabled:* (optional **boolean**)   
+- *electable:* (optional **boolean**)   
+- *expelled:* (optional **boolean**) Expelling an instance is permanent and can't be undone.It's suitable for situations when the hardware is destroyed,snapshots are lost and there is no hope to bring it back to life.  
+
+

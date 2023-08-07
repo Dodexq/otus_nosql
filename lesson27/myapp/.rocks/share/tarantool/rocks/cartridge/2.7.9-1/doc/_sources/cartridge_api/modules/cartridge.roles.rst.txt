@@ -1,0 +1,355 @@
+.. _cartridge.roles:
+
+===============================================================================
+Module *cartridge.roles*
+===============================================================================
+
+Role management (internal module).
+
+
+
+The module consolidates all the role management functions:
+``cfg`` , some getters,  ``validate_config``  and  ``apply_config`` .
+
+The module is almost stateless, it's only state is a collection of
+registered roles.
+
+(**Added** in v1.2.0-20)
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.roles.reload:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+reload ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Perform hot-reload of cartridge roles code. 
+
+This is an experimental feature, it's only allowed if the application
+enables it explicitly:  ``cartridge.cfg({roles_reload_allowed =
+true})`` .
+
+Reloading starts by stopping all roles and restoring the initial
+state. It's supposed that a role cleans up the global state when
+stopped, but even if it doesn't, cartridge kills all fibers and
+removes global variables and HTTP routes.
+
+All Lua modules that were loaded during :ref:`cartridge.cfg <cartridge.cfg>` are unloaded,
+including supplementary modules required by a role. Modules, loaded
+before :ref:`cartridge.cfg <cartridge.cfg>` aren't affected.
+
+Instance performs roles reload in a dedicated state  ``ReloadingRoles`` .
+If reload fails, the instance enters the  ``ReloadError``  state, which
+can later be retried. Otherwise, if reload succeeds, instance
+proceeds to the  ``ConfiguringRoles``  state and initializes them as
+usual with  ``validate_config()`` ,  ``init()`` , and  ``apply_config()`` 
+callbacks.
+
+Hot-reload could be forbidden in runtime with  ``forbid_reload``  function.
+
+
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.roles.forbid_reload:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+forbid_reload ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Forbid hot-reload of cartridge roles code.
+
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.roles.allow_reload:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+allow_reload ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Allow hot-reload of cartridge roles code.
+
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.roles.is_reload_forbidden:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+is_reload_forbidden ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Returns true if hot-reload of cartridge roles code is forbidden.
+
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.roles.on_apply_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+on_apply_config (table, string)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Do additional job after the roles configuration applying.
+
+
+**Parameters:**
+
+- *table:*  conf  
+- *string:*  state  
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.roles.cfg:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cfg (module_names)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Load modules and register them as Cartridge Roles. 
+
+This function is internal, it's called as a part of :ref:`cartridge.cfg <cartridge.cfg>`.
+
+
+
+**Parameters:**
+
+- *module_names:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.roles.get_all_roles:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_all_roles ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List all registered roles. 
+
+Hidden and permanent roles are listed too.
+
+
+
+
+**Returns**:
+
+(`{string,..} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) 
+
+
+.. _cartridge.roles.get_known_roles:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_known_roles ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List registered roles names. 
+
+Hidden roles are not listed as well as permanent ones.
+
+
+
+
+**Returns**:
+
+(`{string,..} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) 
+
+
+.. _cartridge.roles.get_enabled_roles_without_deps:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_enabled_roles_without_deps ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List top-level roles names. 
+
+Dependencies of top-level roles of the replicaset,
+hidden roles are not listed as well as permanent ones.
+
+
+
+
+**Returns**:
+
+(`{string,..} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) 
+
+
+.. _cartridge.roles.get_enabled_roles:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_enabled_roles (roles)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Roles to be enabled on the server. 
+This function returns all roles that will be enabled
+including their dependencies (both hidden and not)
+and permanent roles.
+
+
+
+**Parameters:**
+
+- *roles:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_ or `{[string]=boolean,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(`{[string]=boolean,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) 
+
+
+.. _cartridge.roles.get_role_dependencies:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_role_dependencies (role_name)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List role dependencies. 
+Including sub-dependencies.
+
+
+
+**Parameters:**
+
+- *role_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(`{string,..} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) 
+
+
+.. _cartridge.roles.validate_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+validate_config (conf_new, conf_old)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Validate configuration by all roles.
+
+
+**Parameters:**
+
+- *conf_new:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+- *conf_old:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.roles.apply_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+apply_config (conf, opts, is_master)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Apply the role configuration.
+
+
+**Parameters:**
+
+- *conf:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+- *opts:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+- *is_master:* (**boolean**)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.roles.stop:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+stop ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Stop all roles.
+
+
+
+

@@ -1,0 +1,155 @@
+.. _cartridge.lua-api.deprecated:
+
+===============================================================================
+Module *cartridge.lua-api.deprecated*
+===============================================================================
+
+Administration functions (deprecated).
+
+
+
+
+-------------------------------------------------------------------------------
+Deprecated functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.deprecated.join_server:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+join_server (args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Join an instance to the cluster (*deprecated*). 
+
+(**Deprecated** since v1.0.0-17 in favor of :ref:`cartridge.admin_edit_topology <cartridge.admin_edit_topology>`)
+
+
+
+**Parameters:**
+
+- *args:* 
+
+  - *uri:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *instance_uuid:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *replicaset_uuid:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *roles:* (optional `{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *timeout:* (optional **number**)   
+  - *zone:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) (**Added** in v2.4.0-14)  
+  - *labels:* (optional `{[string]=string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *vshard_group:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *replicaset_alias:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *replicaset_weight:* (optional **number**)   
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.deprecated.edit_server:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+edit_server (args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Edit an instance (*deprecated*). 
+
+(**Deprecated** since v1.0.0-17 in favor of :ref:`cartridge.admin_edit_topology <cartridge.admin_edit_topology>`)
+
+
+
+**Parameters:**
+
+- *args:* 
+
+  - *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *uri:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *labels:* (optional `{[string]=string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.deprecated.expel_server:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+expel_server (uuid)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Expel an instance (*deprecated*). 
+Forever.
+
+(**Deprecated** since v1.0.0-17 in favor of :ref:`cartridge.admin_edit_topology <cartridge.admin_edit_topology>`)
+
+
+
+**Parameters:**
+
+- *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.deprecated.edit_replicaset:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+edit_replicaset (args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Edit replicaset parameters (*deprecated*). 
+
+(**Deprecated** since v1.0.0-17 in favor of :ref:`cartridge.admin_edit_topology <cartridge.admin_edit_topology>`)
+
+
+
+**Parameters:**
+
+- *args:* 
+
+  - *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *alias:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *roles:* (optional `{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *master:* (optional `{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Failover order  
+  - *weight:* (optional **number**)   
+  - *vshard_group:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *all_rw:* (optional **boolean**)   
+
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

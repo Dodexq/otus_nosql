@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.rpc &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.tar" href="cartridge.tar.html" />
+    <link rel="prev" title="Module cartridge.clusterwide-config" href="cartridge.clusterwide-config.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-rpc">
+<span id="cartridge-rpc"></span><h1>Module <em>cartridge.rpc</em><a class="headerlink" href="#module-cartridge-rpc" title="Permalink to this headline">¶</a></h1>
+<p>Remote procedure calls between cluster instances.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-candidates-role-name-opts">
+<span id="cartridge-rpc-get-candidates"></span><h3>get_candidates (role_name[, opts])<a class="headerlink" href="#get-candidates-role-name-opts" title="Permalink to this headline">¶</a></h3>
+<p>List candidates suitable for performing a remote call.
+Candidates are deduced from a local config and membership, which may
+differ from replica to replica (e.g. during  <code class="docutils literal notranslate"><span class="pre">patch_clusterwide</span></code> ). It
+may produce invalid candidates.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>role_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>leader_only:</em> (optional <strong>boolean</strong>) Filter instances which are leaders now.(default: <strong>false</strong>)</p></li>
+<li><p><em>healthy_only:</em> (optional <strong>boolean</strong>) The member is considered healthy ifit reports either  <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code>  or  <code class="docutils literal notranslate"><span class="pre">RolesConfigured</span></code>  stateand its SWIM status is either  <code class="docutils literal notranslate"><span class="pre">alive</span></code>  or  <code class="docutils literal notranslate"><span class="pre">suspect</span></code> (added in v1.1.0-11, default: <strong>true</strong>)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Filter instances that have the specified labels. Adding labels is possible via theedit_topology method or via graphqlExample: rpc.get_candidates(‘role’, { labels = {[‘msk’] = ‘dc’} })</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) URIs</p>
+</div>
+<div class="section" id="call-role-name-fn-name-args-opts">
+<span id="cartridge-rpc-call"></span><h3>call (role_name, fn_name[, args[, opts]])<a class="headerlink" href="#call-role-name-fn-name-args-opts" title="Permalink to this headline">¶</a></h3>
+<p>Perform a remote procedure call.
+Find a suitable healthy instance with an enabled role and
+perform a [ <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code> ](
+<a class="reference external" href="https://tarantool.io/en/doc/latest/reference/reference_lua/net_box/#net-box-call">https://tarantool.io/en/doc/latest/reference/reference_lua/net_box/#net-box-call</a>)
+on it.  <code class="docutils literal notranslate"><span class="pre">rpc.call()</span></code>  can only be used for functions defined in role return table
+unlike  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call()</span></code> , which is used for global functions as well.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>role_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>fn_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>args:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)  (optional)</p></li>
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>prefer_local:</em> (optional <strong>boolean</strong>) Don’t perform a remote call if possible. When the role is enabledlocally and current instance is healthy the remote netbox call issubstituted with a local Lua function call. When the option isdisabled it never tries to perform call locally and always usesnetbox connection, even to connect self.(default: <strong>true</strong>)</p></li>
+<li><p><em>leader_only:</em> (optional <strong>boolean</strong>) Perform a call only on the replica set leaders.(default: <strong>false</strong>)</p></li>
+<li><p><em>uri:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Force a call to be performed on this particular uri.Disregards member status and  <code class="docutils literal notranslate"><span class="pre">opts.prefer_local</span></code> .Conflicts with  <code class="docutils literal notranslate"><span class="pre">opts.leader_only</span> <span class="pre">=</span> <span class="pre">true</span></code> .(added in v1.2.0-63)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Filter instances that have the specified labels. Adding labels is possible via theedit_topology method or via graphql.Example: rpc.call(‘role’, ‘func’, {}, { labels = { [‘msk’] = ‘dc’ } })</p></li>
+<li><p><em>remote_only:</em>  (<em>deprecated</em>) Use  <code class="docutils literal notranslate"><span class="pre">prefer_local</span></code>  instead.</p></li>
+<li><p><em>timeout:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+<li><p><em>buffer:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+<li><p><em>on_push:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+<li><p><em>on_push_ctx:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p><cite>conn:call()</cite> result</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="usage">
+<h3>Usage:<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- myrole.lua</span>
+<span class="kr">return</span> <span class="p">{</span>
+    <span class="n">role_name</span> <span class="o">=</span> <span class="s1">&#39;myrole&#39;</span><span class="p">,</span>
+    <span class="n">add</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="kr">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="kr">end</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- call it as follows:</span>
+<span class="n">cartridge</span><span class="p">.</span><span class="n">rpc_call</span><span class="p">(</span><span class="s1">&#39;myrole&#39;</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">})</span> <span class="c1">-- returns 4</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="local-functions">
+<h2>Local Functions<a class="headerlink" href="#local-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-connection-role-name-opts">
+<span id="cartridge-rpc-get-connection"></span><h3>get_connection (role_name[, opts])<a class="headerlink" href="#get-connection-role-name-opts" title="Permalink to this headline">¶</a></h3>
+<p>Connect to an instance with an enabled role.
+Candidates to connect are deduced from a local config and membership,
+which may differ from replica to replica (e.g. during  <code class="docutils literal notranslate"><span class="pre">patch_clusterwide</span></code> ).
+It may produce invalid candidates.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>role_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>prefer_local:</em> (optional <strong>boolean</strong>)</p></li>
+<li><p><em>leader_only:</em> (optional <strong>boolean</strong>)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">net.box</span></code>  connection</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.clusterwide-config.html" title="previous chapter">Module <em>cartridge.clusterwide-config</em></a></li>
+      <li>Next: <a href="cartridge.tar.html" title="next chapter">Module <em>cartridge.tar</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.rpc.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

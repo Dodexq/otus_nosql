@@ -1,0 +1,1655 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Changelog &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Class cartridge.test-helpers.stateboard" href="cartridge_api/classes/cartridge.test-helpers.stateboard.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a class="reference external" href="http://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>
+and this project adheres to
+<a class="reference external" href="http://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<div class="section" id="unreleased">
+<h2>[Unreleased]<a class="headerlink" href="#unreleased" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id1">
+<h2>[2.7.9] - 2023-04-06<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fragmentation_threshold_full</span></code> in issues increased up to 100%. The behaviour
+can be changed with <code class="docutils literal notranslate"><span class="pre">set_limits</span></code> function.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">vshard</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/vshard/releases/tag/0.1.23">0.1.23</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="fixed">
+<h3>Fixed<a class="headerlink" href="#fixed" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Allow to promote instances without electable configuration (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/2062">#2062</a>)</p></li>
+<li><p>Compression suggestion: fix instances freezing. Skip indexes compressing.
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/2041">#2041</a>).</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>[2.7.8] - 2023-01-27<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="added">
+<h3>Added<a class="headerlink" href="#added" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Ability to limit incoming connections on <code class="docutils literal notranslate"><span class="pre">vshard-router</span></code> by the argparse option
+<code class="docutils literal notranslate"><span class="pre">TARANTOOL_CONNECTIONS_LIMIT</span></code> or <code class="docutils literal notranslate"><span class="pre">--connections-limit</span></code>
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1971">#1971</a>).</p></li>
+<li><p>“Suggestions” button with a compression suggestions info in WebUI
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1913">#1913</a>).</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">app_name</span></code> and <code class="docutils literal notranslate"><span class="pre">app_version</span></code> to feedback.</p></li>
+<li><p>etcd v3 support in <code class="docutils literal notranslate"><span class="pre">test-helpers.etcd</span></code> (with <code class="docutils literal notranslate"><span class="pre">ETCD_ENABLE_V2=true</span></code>).</p></li>
+<li><p>Show tarantool edition version in WebUI.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fetch_schema</span></code> option to <code class="docutils literal notranslate"><span class="pre">cartridge.pool.connect</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check_cookie_hash</span></code> parameter in stateful failover configuration
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1765">#1765</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h3>Changed<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">http</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/http/releases/tag/1.4.0">1.4.0</a>.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">checks</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/checks/releases/tag/3.2.0">3.2.0</a>.</p></li>
+<li><p>Limits of memory issues decreased. Cartridge now produce an issue when at least
+one of memory ratio is higher than 95%.</p></li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h3>Fixed<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Use default values of <code class="docutils literal notranslate"><span class="pre">replication_connect_quorum</span></code> and
+<code class="docutils literal notranslate"><span class="pre">replication_sync_timeout</span></code> in first <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> call.</p></li>
+<li><p>Lowercase <code class="docutils literal notranslate"><span class="pre">transport</span></code> param to handle different cases of value (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/2021">#2021</a>).</p></li>
+<li><p>Check hash of cluster cookie on stateful failover configuration
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1765">#1765</a>).</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>[2.7.7] - 2022-12-09<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id16">
+<h3>Changed<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">graphql</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/graphql/releases/tag/0.2.0">0.2.0</a>.</p></li>
+<li><p>Disable Raft failover on replicasets where number of instances less than 3
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1914">#1914</a>).</p></li>
+<li><p>Check Raft failover availability on validate_config (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1916">#1916</a>).</p></li>
+<li><p>Forbid to enable Raft failover with <code class="docutils literal notranslate"><span class="pre">ALL_RW</span></code> replicasets (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1927">#1927</a>).</p></li>
+<li><p>Disabled instances won’t appear as leaders (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1930">#1930</a>).</p></li>
+<li><p>Mask failover password in WebUI and GraphQL API (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1960">#1960</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id23">
+<h3>Added<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Add instance labels to web UI (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1962">#1962</a>).</p></li>
+<li><p>Allow to make nodes unelectable (restrict it to become a leader) in WebUI,
+GraphQL and Lua API (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1843">#1843</a>).</p></li>
+<li><p>Allow to bootstrap cartridge from existing cluster via argparse option
+<code class="docutils literal notranslate"><span class="pre">TARANTOOL_BOOTSTRAP_FROM</span></code> or <code class="docutils literal notranslate"><span class="pre">--bootstrap_from</span></code> (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1842">#1842</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">election_state</span></code>, <code class="docutils literal notranslate"><span class="pre">election_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">synchro_queue_owner</span></code> to GraphQL
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1925">#1925</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">O_SYNC</span></code> flag for ClusterwideConfig.save (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1939">#1939</a>).</p></li>
+<li><p>Introduced way to filter instances by labels in rpc calls (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1957">#1957</a>).
+You can mark certain instances with the same role with different labels,
+and then make an rpc call with label. Adding labels is possible via the
+edit_topology method or via graphql.
+<code class="docutils literal notranslate"><span class="pre">rpc.call('role',</span> <span class="pre">'func',</span> <span class="pre">{},</span> <span class="pre">{</span> <span class="pre">labels</span> <span class="pre">=</span> <span class="pre">{</span> <span class="pre">['msk']</span> <span class="pre">=</span> <span class="pre">'dc'</span> <span class="pre">}</span> <span class="pre">})</span></code>
+<code class="docutils literal notranslate"><span class="pre">rpc.get_candidates('role',</span> <span class="pre">{</span> <span class="pre">labels</span> <span class="pre">=</span> <span class="pre">{</span> <span class="pre">['msk']</span> <span class="pre">=</span> <span class="pre">'dc',</span> <span class="pre">['meta']</span> <span class="pre">=</span> <span class="pre">'runner'</span> <span class="pre">}</span> <span class="pre">})</span></code>
+<code class="docutils literal notranslate"><span class="pre">rpc.get_connection('role',</span> <span class="pre">{</span> <span class="pre">labels</span> <span class="pre">=</span> <span class="pre">{</span> <span class="pre">['msk']</span> <span class="pre">=</span> <span class="pre">'dc'</span> <span class="pre">}</span> <span class="pre">})</span></code></p></li>
+<li><p>“Beta” tag for failover selector in WebUI (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1961">#1961</a>).</p></li>
+<li><p>Compression suggestion, see
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1911">#1911</a>.</p></li>
+<li><p>Leader autoreturn feature for stateful failover (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1942">#1942</a>).</p></li>
+<li><p>Add password decryption for ssl private key (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1983">#1983</a>).</p></li>
+<li><p>Add disable flag to not passing error stack to web (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1932">#1932</a>).</p></li>
+<li><p>New issues about invalid space format. Check is performed while recovering from snapshot in Tarantool 2.x.x
+and can be performed manually with <code class="docutils literal notranslate"><span class="pre">require('cartridge.invalid-format').run_check()</span></code> in runtime
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1985">#1985</a>).</p></li>
+<li><p>Descriptions to Vinyl parameters and <code class="docutils literal notranslate"><span class="pre">http_address</span></code> in WebUI (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1803">#1803</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id37">
+<h3>Fixed<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix tarantool binds to 0.0.0.0 despite advertise_uri settings (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1890">#1890</a>).</p></li>
+<li><p>Reduce count of <code class="docutils literal notranslate"><span class="pre">box.info</span></code> calls (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1924">#1924</a>).</p></li>
+<li><p>Incorrect calculation of Raft leader (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1943">#1943</a>).</p></li>
+<li><p>Fix <code class="docutils literal notranslate"><span class="pre">member_is_healthy</span></code> conditions to prevent send requests to non-role-configured node (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1949">#1949</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> <code class="docutils literal notranslate"><span class="pre">apply_config</span></code> won’t change order in <code class="docutils literal notranslate"><span class="pre">box.cfg.replication</span></code> (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1950">#1950</a>).</p></li>
+<li><p>Allow to use <code class="docutils literal notranslate"><span class="pre">box.NULL</span></code> as label value.</p></li>
+</ul>
+</div>
+<div class="section" id="deprecated">
+<h3>Deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Usage of invalid labels (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1980">#1980</a>).</p></li>
+<li><p>Deprecate eventual failover (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1984">#1984</a>).</p></li>
+<li><p>Usage of invalid space formats in cartridge (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1985">#1985</a>).
+See <a class="reference external" href="https://github.com/tarantool/tarantool/wiki/Fix-illegal-field-type-in-a-space-format-when-upgrading-to-2.10.4">#1985</a>
+for details.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id47">
+<h2>[2.7.6] - 2022-08-22<a class="headerlink" href="#id47" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id48">
+<h3>Added<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Add “Promote a leader” action in WebUI in Raft failover mode (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1853">#1853</a>).</p></li>
+<li><p>Introduced SSL support for Tarantool Enterprise from 2.10.2 (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1838">#1838</a>).</p></li>
+<li><p>Introduced Remote Control Suspend/Resume methods to pause producing requests
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1878">#1878</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id52">
+<h3>Fixed<a class="headerlink" href="#id52" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix multitype argparse params.</p></li>
+<li><p>Remove expelled instances from state provider (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1875">#1875</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id54">
+<h3>Changed<a class="headerlink" href="#id54" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">http</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/http/releases/tag/1.3.0">1.3.0</a>.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">ddl</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/ddl/releases/tag/1.6.2">1.6.2</a>.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">vshard</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/vshard/releases/tag/0.1.21">0.1.21</a>.</p></li>
+<li><p>Update frontend dependencies.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id58">
+<h2>[2.7.5] - 2022-06-28<a class="headerlink" href="#id58" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id59">
+<h3>Added<a class="headerlink" href="#id59" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Introduced new failover mode: Raft-based failover (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1233">#1233</a>).
+The replicaset leader is chosen by
+built-in Raft, then the other replicasets get information about leader change
+from membership. It’s needed to use Cartridge RPC calls. The user can control
+the election mode of an instance by the argparse option <code class="docutils literal notranslate"><span class="pre">TARANTOOL_ELECTION_MODE</span></code>
+or <code class="docutils literal notranslate"><span class="pre">--election-mode</span></code>.</p></li>
+<li><p>Promotion API for Raft failover (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1233">#1233</a>):
+<a class="reference internal" href="cartridge_api/modules/cartridge.html#cartridge-failover-promote"><span class="std std-ref">cartridge.failover_promote</span></a> in Lua or
+<code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{cluster{failover_promote()}}</span></code> in GraphQL,
+which calls <code class="docutils literal notranslate"><span class="pre">box.ctl.promote</span></code> on the specified instances.
+Note that <code class="docutils literal notranslate"><span class="pre">box.ctl.promote</span></code> starts fair elections, so some other instance
+may become the leader in the replicaset.</p></li>
+<li><p>Tarantool Raft options and Tarantool 2.10 <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> options are supported in argparse
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1826">#1826</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id63">
+<h3>Changed<a class="headerlink" href="#id63" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">vshard</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/vshard/releases/tag/0.1.20">0.1.20</a>.</p></li>
+<li><p>Failover suppressing (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1758">#1758</a>).
+If enabled (by <code class="docutils literal notranslate"><span class="pre">enable_failover_suppressing</span></code> parameter
+in <code class="docutils literal notranslate"><span class="pre">cartridge.cfg</span></code>) then allows to automatically pause failover in runtime.
+It configures with <code class="docutils literal notranslate"><span class="pre">failover_suppress_threshold</span></code> and
+<code class="docutils literal notranslate"><span class="pre">failover_suppress_timeout</span></code> options of argparse.</p></li>
+<li><p>Revert argparse throws an error when it encouters <code class="docutils literal notranslate"><span class="pre">instance_name</span></code> missing in
+instances.yml.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">ddl</span></code> to <a class="reference external" href="https://github.com/tarantool/ddl/releases/tag/1.6.1">1.6.1</a>.</p></li>
+<li><p>Disable schema fetch for <code class="docutils literal notranslate"><span class="pre">cartridge.pool</span></code> connections (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1750">#1750</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id68">
+<h3>Fixed<a class="headerlink" href="#id68" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Disable <code class="docutils literal notranslate"><span class="pre">vshard.storage</span></code> in case of <code class="docutils literal notranslate"><span class="pre">OperationError</span></code> (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1411">#1411</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id70">
+<h3>Deprecated<a class="headerlink" href="#id70" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">vshard</span></code> config option <code class="docutils literal notranslate"><span class="pre">collect_lua_garbage</span></code> (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1814">#1814</a>).</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id72">
+<h2>[2.7.4] - 2022-04-11<a class="headerlink" href="#id72" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id73">
+<h3>Added<a class="headerlink" href="#id73" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">swim_period</span></code> argument to the test-helpers (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1592">#1592</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http_port</span></code>, <code class="docutils literal notranslate"><span class="pre">http_host</span></code> and <code class="docutils literal notranslate"><span class="pre">webui_prefix</span></code> to graphql and webui
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/622">#622</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1527">#1527</a>).</p></li>
+<li><p>Unit tests for the Failover modal.</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">get_servers</span></code>, <code class="docutils literal notranslate"><span class="pre">get_replicasets</span></code> and <code class="docutils literal notranslate"><span class="pre">get_enabled_roles_without_deps</span></code> API
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1624">#1624</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1722">#1722</a>).</p></li>
+<li><p>Logging of configuration options on start and boot instance
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1557">#1557</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">app_version</span></code> field to graphql and webui. It filled from <code class="docutils literal notranslate"><span class="pre">VERSION.lua</span></code>
+file in the root of cartridge app (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1367">#1367</a>).</p></li>
+<li><p>Param <code class="docutils literal notranslate"><span class="pre">opts</span></code> to <code class="docutils literal notranslate"><span class="pre">Server:upload_config</span></code> in <code class="docutils literal notranslate"><span class="pre">test-helpers</span></code> and pass it
+to <code class="docutils literal notranslate"><span class="pre">http_request</span></code> (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1321">#1321</a>).</p></li>
+<li><p>Setters ans getters for timeout options in <code class="docutils literal notranslate"><span class="pre">twophase.lua</span></code>
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1440">#1440</a>):
+<code class="docutils literal notranslate"><span class="pre">netbox_call_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">upload_config_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">validate_config_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">apply_config_timeout</span></code>.</p></li>
+<li><p>New tests cases (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/892">#892</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/944">#944</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1473">#1473</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1726">#1726</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">test-helpers.Cluster:server_by_role</span></code> method (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1615">#1615</a>).</p></li>
+<li><p>Allow to extract filename from http request body (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1613">#1613</a>).</p></li>
+<li><p>Testing on Tarantool pre-release version.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">box.info.ro_reason</span></code> and <code class="docutils literal notranslate"><span class="pre">box.info.replication.X.downstream.lag</span></code>
+to boxinfo API (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1721">#1721</a>).</p></li>
+<li><p>Ability to set multiple types for Cartridge arguments.
+Types are split by separator <code class="docutils literal notranslate"><span class="pre">|</span></code>,  e.g. <code class="docutils literal notranslate"><span class="pre">string|number</span></code>
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1651">#1651</a>).</p></li>
+<li><p>Downgrade test (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1397">#1397</a>).</p></li>
+<li><p>Vshard weight parameter to <code class="docutils literal notranslate"><span class="pre">test-helpers.Cluster.replicasets</span></code>
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1743">#1743</a>).</p></li>
+<li><p>Add logging for role machinery (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1745">#1745</a>).</p></li>
+<li><p>Export vshard config in Lua API (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1761">#1761</a>).</p></li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">failover_promote</span></code> option <code class="docutils literal notranslate"><span class="pre">skip_error_on_change</span></code> to skip etcd error
+when vclockkeeper was changed between <code class="docutils literal notranslate"><span class="pre">set_vclokkeeper</span></code> calls
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1399">#1399</a>).</p></li>
+<li><p>Allow to pause failover at runtime, with Lua API and GraphQL
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1763">#1763</a>).</p></li>
+<li><p>Allow to block roles reload at runtime, with Lua API
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1219">#1219</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id98">
+<h3>Changed<a class="headerlink" href="#id98" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">http</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/http/releases/tag/1.2.0">1.2.0</a>.</p></li>
+<li><p>Allow to bootstrap vshard groups partially (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1148">#1148</a>).</p></li>
+<li><p>Use effector for business logic and storing Cluster page data (models folder).</p></li>
+<li><p>Rewrite all Cluster page components using typescript.</p></li>
+<li><p>Improve the error message in login dialog.</p></li>
+<li><p>Use core as a node module instead of a window scope object.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">frontend-core</span></code> dependency to 8.1.0.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">graphql</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/graphql/releases/tag/0.1.4">0.1.4</a> .</p></li>
+<li><p>Bind remote control socket to <code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code> (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1495">#1495</a>).</p></li>
+<li><p>The new compact design of the Cluster page.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">vshard</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/graphql/vshard/tag/0.1.19">0.1.19</a>.</p></li>
+<li><p>Change type of <code class="docutils literal notranslate"><span class="pre">replication_synchro_quorum</span></code> in argparse to <code class="docutils literal notranslate"><span class="pre">string|number</span></code>.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">ddl</span></code> dependency to <a class="reference external" href="https://github.com/tarantool/ddl/releases/tag/1.6.0">1.6.0</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="id105">
+<h3>Fixed<a class="headerlink" href="#id105" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix joining an instance when leader is not the first instance from leaders_order
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1204">#1204</a>).</p></li>
+<li><p>Fix the incorrect number of total buckets on the replication server in webui
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1176">#1176</a>).</p></li>
+<li><p>Fix GraphQL query <code class="docutils literal notranslate"><span class="pre">auth_params.username</span></code> returns empty string instead of <code class="docutils literal notranslate"><span class="pre">username</span></code>.</p></li>
+<li><p>Flaky tests (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1538">#1538</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1569">#1569</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1590">#1590</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1594">#1594</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1599">#1599</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1602">#1602</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1656">#1656</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1657">#1657</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1658">#1658</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1664">#1664</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1671">#1671</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1681">#1681</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1682">#1682</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1683">#1683</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1703">#1703</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1709">#1709</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1751">#1751</a>,
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1756">#1756</a>).</p></li>
+<li><p>Tests compatibility with tarantool/master (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1619">#1619</a>).</p></li>
+<li><p>Tests improvements on macOS (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1638">#1638</a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fetch-schema</span></code> script on macOS (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1628">#1628</a>).</p></li>
+<li><p>Stateful failover triggers when instance is in OperationError state
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1139">#1139</a>).</p></li>
+<li><p>Fix <code class="docutils literal notranslate"><span class="pre">rpc_call</span></code> failure in case if the role hasn’t been activated yet on target instance
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1575">#1575</a>).</p></li>
+<li><p>Fixed the visibility of the configuration management page if the cluster
+is not bootstrapped yet (<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1707">#1707</a>).</p></li>
+<li><p>Error when vclockkeeper in stateboard was changed between <code class="docutils literal notranslate"><span class="pre">failover_promote</span></code> calls
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1399">#1399</a>).</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id133">
+<h2>[2.7.3] - 2021-10-27<a class="headerlink" href="#id133" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id134">
+<h3>Changed<a class="headerlink" href="#id134" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Disabled role’s <code class="docutils literal notranslate"><span class="pre">validate_config</span></code> is not called during config validation.</p></li>
+<li><p>Update &#64;tarantool.io/ui-kit and frontend-core dependencies to support
+the new design style.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id135">
+<h2>[2.7.2] - 2021-10-08<a class="headerlink" href="#id135" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id136">
+<h3>Added<a class="headerlink" href="#id136" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>‘Make all instances writeable’ configuration field can be hidden via
+frontend-core’s <code class="docutils literal notranslate"><span class="pre">set_variable</span></code> feature or at runtime.</p></li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">get_issues</span></code> callback in role API to collect user-defined issues.
+The issues are gathered from the enabled roles only (present in
+<code class="docutils literal notranslate"><span class="pre">service-registry</span></code>).</p></li>
+<li><p>Allow disabling built-in HTTP “admin” user:</p>
+<ul>
+<li><p>by specifying <code class="docutils literal notranslate"><span class="pre">auth_builtin_admin_enabled:</span> <span class="pre">false</span></code> in the <code class="docutils literal notranslate"><span class="pre">instances.yml</span></code>;</p></li>
+<li><p>using <code class="docutils literal notranslate"><span class="pre">TARANTOOL_AUTH_BUILTIN_ADMIN_ENABLED=false</span></code> environment variable;</p></li>
+<li><p>permanently in <code class="docutils literal notranslate"><span class="pre">init.lua</span></code>:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- init.lua</span>
+
+<span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.auth-backend&#39;</span><span class="p">).</span><span class="n">set_builtin_admin_enabled</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+<span class="n">cartridge</span><span class="p">.</span><span class="n">cfg</span><span class="p">({</span>
+    <span class="n">auth_backend_name</span> <span class="o">=</span> <span class="s1">&#39;cartridge.auth-backend&#39;</span><span class="p">,</span>
+    <span class="p">...</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id137">
+<h3>Changed<a class="headerlink" href="#id137" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Make built-in HTTP “admin” user a part of default auth backend. Custom
+backends are free of it now.</p></li>
+</ul>
+</div>
+<div class="section" id="id138">
+<h3>Fixed<a class="headerlink" href="#id138" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Eliminate unnecessary transactions after the restart before the replication
+sync. This reduces the chance the hardware restart leads to WAL corruption
+(<a class="reference external" href="https://github.com/tarantool/cartridge/issues/1546">#1546</a>).</p></li>
+<li><p>Fix net.box clients compatibility with future tarantool 2.10 versions.</p></li>
+<li><p>Fix vshard rebalancer broken by roles reload.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id139">
+<h2>[2.7.1] - 2021-08-18<a class="headerlink" href="#id139" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id140">
+<h3>Fixed<a class="headerlink" href="#id140" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Compatibility with Tarantool 2.9 (update <code class="docutils literal notranslate"><span class="pre">errors</span></code> dependency to 2.2.1).</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id141">
+<h2>[2.7.0] - 2021-08-10<a class="headerlink" href="#id141" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id142">
+<h3>Added<a class="headerlink" href="#id142" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>New suggestion to restart replication. Whenever the replication isn’t running
+and the reason isn’t in the dead upstream, Cartridge will show the
+corresponding banner in WebUI.</p></li>
+<li><p>More server details in WebUI: membership, vshard-router, and vshard-storage.</p></li>
+<li><p>Roles are stopped with the <code class="docutils literal notranslate"><span class="pre">on_shutdown</span></code> trigger where it’s supported
+(in Tarantool 2.8+).</p></li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">cartridge.cfg</span></code> options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">webui_prefix</span></code> (default: <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>) allows to modify WebUI routes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">webui_enforce_root_redirect</span></code> (default: <code class="docutils literal notranslate"><span class="pre">true</span></code>) manage redirection.</p></li>
+</ul>
+<p>To sum up, now they look as follows:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/admin/</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/admin/api</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/admin/config</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/admin/cluster/*</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/static/*</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/login</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/logout</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;PREFIX&gt;/</span></code> redirect to <code class="docutils literal notranslate"><span class="pre">/&lt;PREFIX&gt;/admin</span></code> (if enabled).</p></li>
+</ul>
+</li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">validate_config</span></code> method in GraphQL API.</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">zone</span></code> and <code class="docutils literal notranslate"><span class="pre">zone_distances</span></code> parameters to test helpers.</p></li>
+<li><p>Support <code class="docutils literal notranslate"><span class="pre">rebalancer_max_sending</span></code> vshard option.</p></li>
+</ul>
+</div>
+<div class="section" id="id143">
+<h3>Changed<a class="headerlink" href="#id143" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Merge “Schema” and “Code” pages. Also, allow validating all files, not only
+the <code class="docutils literal notranslate"><span class="pre">schema.yml</span></code>.</p></li>
+<li><p>Allow expelling a leader. Cartridge will appoint a new leader according to the
+failover priority from the topology.</p></li>
+<li><p>Add default <code class="docutils literal notranslate"><span class="pre">pool.map_call</span></code> timeout 10 seconds.</p></li>
+<li><p>Forbid starting an instance absent in <code class="docutils literal notranslate"><span class="pre">instances.yml</span></code>.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">errors</span></code> dependency to 2.2.0 with a new method
+<code class="docutils literal notranslate"><span class="pre">errors.netbox_wait_async</span></code> to wait for <code class="docutils literal notranslate"><span class="pre">netbox.future</span></code> result.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">membership</span></code> dependency to 2.4.0
+(<a class="reference external" href="https://github.com/tarantool/membership/releases/tag/2.4.0">Changelog</a>).</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">ddl</span></code> dependency to 1.5.0 which supplements the clusterwide config
+with an example schema (<a class="reference external" href="https://github.com/tarantool/ddl/releases/tag/1.5.0">Changelog</a>).</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">vshard</span></code> to 0.1.18
+(<a class="reference external" href="https://github.com/tarantool/vshard/releases/tag/0.1.18">Changelog</a>).</p></li>
+</ul>
+</div>
+<div class="section" id="id144">
+<h3>Fixed<a class="headerlink" href="#id144" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Leaders replaced during stateful failover can be expelled now.</p></li>
+<li><p>Make failover logging more verbose.</p></li>
+<li><p>Fix hot-reload for roles that leave gaps in httpd routes.</p></li>
+<li><p>Check user e-mail uniqueness when editing.</p></li>
+<li><p>Expelled instances are removed from the <code class="docutils literal notranslate"><span class="pre">_cluster</span></code> space.</p></li>
+<li><p>Fix <code class="docutils literal notranslate"><span class="pre">get_enabled_roles</span></code> to work without arguments.</p></li>
+<li><p>Don’t default to syslog driver unless <code class="docutils literal notranslate"><span class="pre">/dev/log</span></code> or <code class="docutils literal notranslate"><span class="pre">/var/run/syslog</span></code> are
+available.</p></li>
+<li><p>Fix inappropriate consistency timeout that led to “Timed out” error during
+forceful leader promotion.</p></li>
+<li><p>Support automatic parsing of Tarantool Enterprise box options <code class="docutils literal notranslate"><span class="pre">audit_log</span></code>
+and <code class="docutils literal notranslate"><span class="pre">audit_nonblock</span></code>.</p></li>
+<li><p>Instance won’t suspect any members during <code class="docutils literal notranslate"><span class="pre">RecoveringSnapshot</span></code> and
+<code class="docutils literal notranslate"><span class="pre">BootstrappingBox</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="enhanced-in-webui">
+<h3>Enhanced in WebUI<a class="headerlink" href="#enhanced-in-webui" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Allow to blacklist subpages for complex modules.</p></li>
+<li><p>Fix notifications displaying. Close it by clicking anywhere. Keep it open
+while the mouse is over.</p></li>
+<li><p>Various styles enhancements.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id145">
+<h2>[2.6.0] - 2021-04-26<a class="headerlink" href="#id145" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id146">
+<h3>Added<a class="headerlink" href="#id146" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update vshard to 0.1.17.
+(<a class="reference external" href="https://github.com/tarantool/vshard/releases/tag/0.1.17">Changelog</a>).</p></li>
+<li><p>Update graphql to 0.1.1.
+(<a class="reference external" href="https://github.com/tarantool/graphql/releases/tag/0.1.1">Changelog</a>).</p></li>
+<li><p>New test helper: <code class="docutils literal notranslate"><span class="pre">cartridge.test-helpers.stateboard</span></code>.</p></li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">failover</span></code> option in the cluster test helper for easier failover setup.</p></li>
+</ul>
+</div>
+<div class="section" id="id147">
+<h3>Changed<a class="headerlink" href="#id147" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Move DDL related code out of Cartridge and ship it as a permaent role in the
+ddl rock. No observable functionality is affected. The roles remains
+registered implicitly. Nonetheless it’s recomended to add it explicitly to
+<code class="docutils literal notranslate"><span class="pre">cartridge.cfg({roles</span> <span class="pre">=</span> <span class="pre">{'cartridge.roles.ddl-manager'}})</span></code> (if it’s
+actually used) as this implicity may be removed in future.</p></li>
+</ul>
+</div>
+<div class="section" id="id148">
+<h3>Fixed<a class="headerlink" href="#id148" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix unclear timeout errors in case of <code class="docutils literal notranslate"><span class="pre">InitError</span></code> and <code class="docutils literal notranslate"><span class="pre">BootError</span></code> states.</p></li>
+<li><p>Fix inconsistency which could occur while longpolling stateboard in unstable
+networks.</p></li>
+<li><p>Increase timeout for the <code class="docutils literal notranslate"><span class="pre">validate_config</span></code> stage from 1 to 10 seconds.
+It afftected <code class="docutils literal notranslate"><span class="pre">config_patch_clusterwide</span></code> in v2.5, mostly on large clusters.</p></li>
+</ul>
+</div>
+<div class="section" id="id149">
+<h3>Enhanced in WebUI<a class="headerlink" href="#id149" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Highlight if file name exists in file create/rename mode on Code page.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id150">
+<h2>[2.5.1] - 2021-03-24<a class="headerlink" href="#id150" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id151">
+<h3>Added<a class="headerlink" href="#id151" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Extend GraphQL <code class="docutils literal notranslate"><span class="pre">issues</span></code> API with <code class="docutils literal notranslate"><span class="pre">aliens</span></code> topic. The issues warns if
+two separate clusters share the same cluster cookie.</p></li>
+<li><p>Enhance error messages when they’re transferred over network. Supply it
+with the connection URI.</p></li>
+</ul>
+</div>
+<div class="section" id="id152">
+<h3>Fixed<a class="headerlink" href="#id152" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Don’t skip two-phase commit prematurely. From now on, the decision to skip
+the <code class="docutils literal notranslate"><span class="pre">apply_config</span></code> is made by every instance individually. The validation
+step is never skipped.</p></li>
+<li><p>Avoid WebUI and <code class="docutils literal notranslate"><span class="pre">pool.map_call</span></code> requests hanging because of network
+connection problems.</p></li>
+<li><p>Fix unclear “Timeout exceeded” error. It affects v2.5.0 two-phase commit
+when an instance is stuck in <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code> state.</p></li>
+<li><p>Make the “Replication isn’t running” issue critical instead of a warning.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id153">
+<h2>[2.5.0] - 2021-03-05<a class="headerlink" href="#id153" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id154">
+<h3>Added<a class="headerlink" href="#id154" title="Permalink to this headline">¶</a></h3>
+<p>Issues and suggestions:</p>
+<ul class="simple">
+<li><p>Show an issue when <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code> state gets stuck for more than 5s.</p></li>
+<li><p>New GraphQL API: <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">cluster</span> <span class="pre">{</span> <span class="pre">suggestions</span> <span class="pre">{</span> <span class="pre">force_apply</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code> to heal the
+cluster in case of config errors like <code class="docutils literal notranslate"><span class="pre">Configuration</span> <span class="pre">checksum</span> <span class="pre">mismatch</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Configuration</span> <span class="pre">is</span> <span class="pre">prepared</span> <span class="pre">and</span> <span class="pre">locked</span></code>, and sometimes <code class="docutils literal notranslate"><span class="pre">OperationError</span></code>.</p></li>
+<li><p>New GraphQL API: <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">cluster</span> <span class="pre">{</span> <span class="pre">suggestions</span> <span class="pre">{</span> <span class="pre">disable_servers</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code> to
+restore the quorum in case of some servers go offline.</p></li>
+</ul>
+<p>Configuration options:</p>
+<ul class="simple">
+<li><p>New <code class="docutils literal notranslate"><span class="pre">cartridge.cfg</span></code> option <code class="docutils literal notranslate"><span class="pre">webui_enabled</span></code> (default: <code class="docutils literal notranslate"><span class="pre">true</span></code>). Otherwise,
+HTTP server remains operable (and GraphQL too), but serves user-defined
+roles API only.</p></li>
+<li><p>New <code class="docutils literal notranslate"><span class="pre">cartridge.cfg</span></code> option <code class="docutils literal notranslate"><span class="pre">http_host</span></code> (default: <code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code>) which
+allows to specify the bind address of the HTTP server.</p></li>
+</ul>
+<p>Miscellaneous:</p>
+<ul class="simple">
+<li><p>Allow observing cluster from an unconfigured instance WebUI.</p></li>
+<li><p>Introduce a new graphql parser (<code class="docutils literal notranslate"><span class="pre">libgraphqlparser</span></code> instead of <code class="docutils literal notranslate"><span class="pre">lulpeg</span></code>).
+It conforms to the newer GraphQL specification and provides better error
+messages. The “null” literal is now supported. But some other GraphQL
+expressions are considered invalid (e.g. empty subselection).</p></li>
+</ul>
+</div>
+<div class="section" id="id155">
+<h3>Fixed<a class="headerlink" href="#id155" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Properly handle etcd index updates while polling stateful failover updates.
+The problem affected long-running clusters and resulted in flooding logs with
+the “Etcd cluster id mismatch” warnings.</p></li>
+<li><p>Refactor two-phase commit (<code class="docutils literal notranslate"><span class="pre">patch_clusterwide</span></code>) logics: don’t use hardcoded
+timeout for the <code class="docutils literal notranslate"><span class="pre">prepare</span></code> stage, move <code class="docutils literal notranslate"><span class="pre">upload</span></code> to a separate stage.</p></li>
+<li><p>Eliminate GraphQL error “No value provided for non-null ReplicaStatus” when
+a replica is removed from the <code class="docutils literal notranslate"><span class="pre">box.space._cluster</span></code>.</p></li>
+<li><p>Allow specifying server zone in <code class="docutils literal notranslate"><span class="pre">join_server</span></code> API.</p></li>
+<li><p>Don’t make formatting ugly during config upload.</p></li>
+</ul>
+</div>
+<div class="section" id="enhanced-is-webui">
+<h3>Enhanced is WebUI<a class="headerlink" href="#enhanced-is-webui" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Allow disabling instances and fix their style.</p></li>
+<li><p>Show a suggestion to disable broken instances.</p></li>
+<li><p>Show a suggestion to force reapply clusterwide configuration.</p></li>
+<li><p>Hide the bootstrap button when it’s not necessary (e.g. before the cluster
+is bootstrapped, and in vshardless cluster too).</p></li>
+<li><p>Properly display an error if changing server zone fails.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id156">
+<h2>[2.4.0] - 2020-12-29<a class="headerlink" href="#id156" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id157">
+<h3>Added<a class="headerlink" href="#id157" title="Permalink to this headline">¶</a></h3>
+<p>Zones and zone distances:</p>
+<ul class="simple">
+<li><p>Add support of replica weights and zones via a clusterwide config new section
+<code class="docutils literal notranslate"><span class="pre">zone_distances</span></code> and a server parameter <code class="docutils literal notranslate"><span class="pre">zone</span></code>.</p></li>
+</ul>
+<p>Fencing:</p>
+<ul class="simple">
+<li><p>Implement a fencing feature. It protects a replicaset from the presence of
+multiple leaders when the network is partitioned and forces the leader to
+become read-only.</p></li>
+<li><p>New failover parameter <code class="docutils literal notranslate"><span class="pre">failover_timout</span></code> specifies the time (in seconds)
+used by membership to mark <code class="docutils literal notranslate"><span class="pre">suspect</span></code> members as <code class="docutils literal notranslate"><span class="pre">dead</span></code> which triggers
+failover.</p></li>
+<li><p>Fencing parameters <code class="docutils literal notranslate"><span class="pre">fencing_enabled</span></code>, <code class="docutils literal notranslate"><span class="pre">fencing_pause</span></code>, <code class="docutils literal notranslate"><span class="pre">fencing_timeout</span></code>
+are available for customization via Lua and GraphQL API, and in WebUI too.</p></li>
+</ul>
+<p>Issues and suggestions:</p>
+<ul>
+<li><p>New GraphQL API: <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">cluster</span> <span class="pre">{</span> <span class="pre">suggestions</span> <span class="pre">{</span> <span class="pre">refine_uri</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code> to heal the
+cluster after relocation of servers <code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code>.</p></li>
+<li><p>New Lua API <code class="docutils literal notranslate"><span class="pre">cartridge.config_force_reapply()</span></code> and similar GraphQL mutation
+<code class="docutils literal notranslate"><span class="pre">cluster</span> <span class="pre">{</span> <span class="pre">config_force_reapply()</span> <span class="pre">}</span></code> to heal several operational errors:</p>
+<ul class="simple">
+<li><p>“Prepare2pcError: Two-phase commit is locked”;</p></li>
+<li><p>“SaveConfigError: …/config.prepare: Directory not empty”;</p></li>
+<li><p>“Configuration is prepared and locked on …” (an issue);</p></li>
+<li><p>“Configuration checksum mismatch on …” (an issue).</p></li>
+</ul>
+<p>It’ll unlock two-phase commit (remove <code class="docutils literal notranslate"><span class="pre">config.prepare</span></code> lock), upload the
+active config from the current instance and reconfigure all roles.</p>
+</li>
+</ul>
+<p>Hot-reload:</p>
+<ul class="simple">
+<li><p>New feature for hot reloading roles code without restarting an instance –
+<code class="docutils literal notranslate"><span class="pre">cartridge.reload_roles</span></code>. The feature is experimental and should be
+enabled explicitly: <code class="docutils literal notranslate"><span class="pre">cartridge.cfg({roles_reload_allowed</span> <span class="pre">=</span> <span class="pre">true})</span></code>.</p></li>
+</ul>
+<p>Miscellaneous:</p>
+<ul class="simple">
+<li><p>New <code class="docutils literal notranslate"><span class="pre">cartridge.cfg</span></code> option <code class="docutils literal notranslate"><span class="pre">swim_broadcast</span></code> to manage
+instances auto-discovery on start. Default: true.</p></li>
+<li><p>New argparse options support for tarantool 2.5+:
+<code class="docutils literal notranslate"><span class="pre">replication_synchro_quorum</span></code>, <code class="docutils literal notranslate"><span class="pre">replication_synchro_timeout</span></code>,
+<code class="docutils literal notranslate"><span class="pre">memtx_use_mvcc_engine</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="id158">
+<h3>Changed<a class="headerlink" href="#id158" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Default value of <code class="docutils literal notranslate"><span class="pre">failover_timeout</span></code> increased from 3 to 20 seconds
+<strong>(important change)</strong>.</p></li>
+<li><p>RPC functions now consider <code class="docutils literal notranslate"><span class="pre">suspect</span></code> members as healthy to be in agreement
+with failover <strong>(important change)</strong>.</p></li>
+</ul>
+</div>
+<div class="section" id="id159">
+<h3>Fixed<a class="headerlink" href="#id159" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Don’t stuck in <code class="docutils literal notranslate"><span class="pre">ConnectingFullmesh</span></code> state when instance is restarted with a
+different <code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code>. Also keep “Server details” dialog in WebUI
+operable in this case.</p></li>
+<li><p>Allow applying config when instance is in <code class="docutils literal notranslate"><span class="pre">OperationError</span></code>. It doesn’t cause
+loss of quorum anymore.</p></li>
+<li><p>Stop vshard fibers when the corresponding role is disabled.</p></li>
+<li><p>Make <code class="docutils literal notranslate"><span class="pre">console.listen</span></code> error more clear when <code class="docutils literal notranslate"><span class="pre">console_sock</span></code> exceeds
+<code class="docutils literal notranslate"><span class="pre">UNIX_PATH_MAX</span></code> limit.</p></li>
+<li><p>Fix <code class="docutils literal notranslate"><span class="pre">upstream.idle</span></code> issue tolerance to avoid unnecessary warnings
+“Replication: long idle (1 &gt; 1)”.</p></li>
+<li><p>Allow removing spaces from DDL schema for the sake of <code class="docutils literal notranslate"><span class="pre">drop</span></code> migrations.</p></li>
+<li><p>Make DDL schema validation stricter. Forbid redundant keys in schema top-level
+and make <code class="docutils literal notranslate"><span class="pre">spaces</span></code> mandatory.</p></li>
+</ul>
+</div>
+<div class="section" id="id160">
+<h3>Enhanced is WebUI<a class="headerlink" href="#id160" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update server details modal, add support for server zones.</p></li>
+<li><p>Properly display errors on WebUI pages “Users” and “Code”.</p></li>
+<li><p>Indicate config checksum mismatch in issues list.</p></li>
+<li><p>Indicate the change of <code class="docutils literal notranslate"><span class="pre">arvertise_uri</span></code> in issues list.</p></li>
+<li><p>Show an issue if the clusterwide config is locked on an instance.</p></li>
+<li><p>Refresh interval and stat refresh period variables can be customized via
+frontend-core’s <code class="docutils literal notranslate"><span class="pre">set_variable</span></code> feature or at runtime.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id161">
+<h2>[2.3.0] - 2020-08-26<a class="headerlink" href="#id161" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id162">
+<h3>Added<a class="headerlink" href="#id162" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>When failover mode is stateful, all manual leader promotions will be consistent:
+every instance before becoming writable performs <code class="docutils literal notranslate"><span class="pre">wait_lsn</span></code> operation to
+sync with previous one. If consistency couldn’t be reached due to replication
+failure, a user could either revert it (promote previous leader), or force
+promotion to be inconsistent.</p></li>
+<li><p>Early logger initialization (for Tarantool &gt; 2.5.0-100, which supports it).</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">probe_uri_timeout</span></code> argparse option responsible for retrying
+“Can’t ping myself” error on startup.</p></li>
+<li><p>New test helper: <code class="docutils literal notranslate"><span class="pre">cartridge.test-helpers.etcd</span></code>.</p></li>
+<li><p>Support <code class="docutils literal notranslate"><span class="pre">on_push</span></code> and <code class="docutils literal notranslate"><span class="pre">on_push_ctx</span></code> options for <code class="docutils literal notranslate"><span class="pre">cartridge.rpc_call()</span></code>.</p></li>
+<li><p>Changing users password invalidates HTTP cookie.</p></li>
+<li><p>Support GraphQL <a class="reference external" href="https://graphql.org/learn/queries/#default-variables">default variables</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="id163">
+<h3>Fixed<a class="headerlink" href="#id163" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Eventual failover may miss an event while roles are being reconfigured.</p></li>
+<li><p>Compatibility with pipe logging, see
+<a class="reference external" href="https://github.com/tarantool/tarantool/issues/5220">tarantool/tarantool#5220</a>.</p></li>
+<li><p>Non-informative assertion when instance is bootstrapped with a distinct
+<code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code>.</p></li>
+<li><p>Indexing <code class="docutils literal notranslate"><span class="pre">nil</span></code> value in <code class="docutils literal notranslate"><span class="pre">get_topology()</span></code> query.</p></li>
+<li><p>Initialization race of vshard storage which results in <code class="docutils literal notranslate"><span class="pre">OperationError</span></code>.</p></li>
+<li><p>Lack of vshard router attempts to reconnect to the replicas.</p></li>
+<li><p>Make GraphQL syntax errors more clear.</p></li>
+<li><p>Better <code class="docutils literal notranslate"><span class="pre">errors.pcall()</span></code> performance, <code class="docutils literal notranslate"><span class="pre">errors</span></code> rock updated to v2.1.4.</p></li>
+</ul>
+</div>
+<div class="section" id="id164">
+<h3>Enhanced is WebUI<a class="headerlink" href="#id164" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Show instance names in issues list.</p></li>
+<li><p>Show app name in window title.</p></li>
+<li><p>Add the “Force leader promotion” button in the stateful failover mode.</p></li>
+<li><p>Indicate consistent switchover problems with a yellow leader flag.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id165">
+<h2>[2.2.0] - 2020-06-23<a class="headerlink" href="#id165" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id166">
+<h3>Added<a class="headerlink" href="#id166" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>When running under systemd use <code class="docutils literal notranslate"><span class="pre">&lt;APP_NAME&gt;.&lt;INSTANCE_NAME&gt;</span></code> as
+default syslog identity.</p></li>
+<li><p>Support <code class="docutils literal notranslate"><span class="pre">etcd</span></code> as state provider for stateful failover.</p></li>
+</ul>
+</div>
+<div class="section" id="id167">
+<h3>Changed<a class="headerlink" href="#id167" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Improve rocks detection for feedback daemon. Besides cartridge version it
+now parses manifest file from the <code class="docutils literal notranslate"><span class="pre">.rocks/</span></code> directory and collects rocks
+versions.</p></li>
+<li><p>Make <code class="docutils literal notranslate"><span class="pre">uuid</span></code> parameters optional for test helpers.
+Make <code class="docutils literal notranslate"><span class="pre">servers</span></code> option accept number of servers in replicaset.</p></li>
+</ul>
+</div>
+<div class="section" id="id168">
+<h3>Enhanced in WebUI<a class="headerlink" href="#id168" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Prettier errors displaying.</p></li>
+<li><p>Enhance replicaset filtering by role / status.</p></li>
+<li><p>Error stacktrace received from the backend is shown in notifications.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id169">
+<h2>[2.1.2] - 2020-04-24<a class="headerlink" href="#id169" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id170">
+<h3>Fixed<a class="headerlink" href="#id170" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Avoid trimming <code class="docutils literal notranslate"><span class="pre">console_sock</span></code> if it’s name is too long.</p></li>
+<li><p>Fix file descriptors leak during box recovery.</p></li>
+<li><p>Support <code class="docutils literal notranslate"><span class="pre">console_sock</span></code> option in stateboard as well as notify socket
+and other box options similar to regular cartridge instances.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id171">
+<h2>[2.1.1] - 2020-04-20<a class="headerlink" href="#id171" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id172">
+<h3>Fixed<a class="headerlink" href="#id172" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Frontend core update: fix route mapping</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id173">
+<h2>[2.1.0] - 2020-04-16<a class="headerlink" href="#id173" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id174">
+<h3>Added<a class="headerlink" href="#id174" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Implement stateful failover mode. You can read more in
+“<a class="reference internal" href="cartridge_dev.html#cartridge-failover"><span class="std std-ref">Failover architecture</span></a>” documentation topic.</p></li>
+<li><p>Respect <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> options <code class="docutils literal notranslate"><span class="pre">wal_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">memtx_dir</span></code>, <code class="docutils literal notranslate"><span class="pre">vinyl_dir</span></code>. They
+can be either absolute or relative - in the later case it’s calculated
+relative to <code class="docutils literal notranslate"><span class="pre">cartridge.workdir</span></code>.</p></li>
+<li><p>New option in <code class="docutils literal notranslate"><span class="pre">cartridge.cfg({upgrade_schema=...})</span></code>
+to automatically upgrade schema to modern tarantool version
+(only for leader). It also has been added for <code class="docutils literal notranslate"><span class="pre">argparse</span></code>.</p></li>
+<li><p>Extend GraphQL <code class="docutils literal notranslate"><span class="pre">issues</span></code> API with various topics: <code class="docutils literal notranslate"><span class="pre">replication</span></code>,
+<code class="docutils literal notranslate"><span class="pre">failover</span></code>, <code class="docutils literal notranslate"><span class="pre">memory</span></code>, <code class="docutils literal notranslate"><span class="pre">clock</span></code>. Make thresholds configurable via
+argparse.</p></li>
+</ul>
+</div>
+<div class="section" id="id175">
+<h3>Changed<a class="headerlink" href="#id175" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Make GraphQL validation stricter: scalar values can’t have
+sub-selections; composite types must have sub-selections; omitting
+non-nullable arguments in variable list is forbidden. Your code <strong>may
+be affected</strong> if it doesn’t conform GraphQL specification.</p></li>
+<li><p>GraphQL query <code class="docutils literal notranslate"><span class="pre">auth_params</span></code> returns “fullname” (if it was specified)
+instead of “username”.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">errors</span></code> dependency to 2.1.3.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">ddl</span></code> dependency to 1.1.0.</p></li>
+</ul>
+</div>
+<div class="section" id="id176">
+<h3>Deprecated<a class="headerlink" href="#id176" title="Permalink to this headline">¶</a></h3>
+<p>Lua API:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_get_failover</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">cartridge.failover_get_params</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_enable/disable_failover</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">cartridge.failover_set_params</span></code></p></li>
+</ul>
+<p>GraphQL API:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">query</span> <span class="pre">{cluster</span> <span class="pre">{failover}</span> <span class="pre">}</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">query</span> <span class="pre">{cluster</span> <span class="pre">{failover_params</span> <span class="pre">{...}</span> <span class="pre">}</span> <span class="pre">}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{cluster</span> <span class="pre">{failover()}</span> <span class="pre">}</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{cluster</span> <span class="pre">{failover_params()</span> <span class="pre">{...}</span> <span class="pre">}</span> <span class="pre">}</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id177">
+<h3>Fixed<a class="headerlink" href="#id177" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>Properly handle nested input object in GraphQL:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>mutation($uuid: String!) {
+  cluster { edit_topology(servers: [{uuid: $uuid ...}]) {} }
+}
+</pre></div>
+</div>
+</li>
+<li><p>Show WebUI notification on successful config upload.</p></li>
+<li><p>Repair GraphQL queries <code class="docutils literal notranslate"><span class="pre">add_user</span></code>, <code class="docutils literal notranslate"><span class="pre">issues</span></code> on uninitialized instance.</p></li>
+</ul>
+</div>
+<div class="section" id="id178">
+<h3>Enhanced in WebUI<a class="headerlink" href="#id178" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Show “You are here” marker.</p></li>
+<li><p>Show application and instance names in app title.</p></li>
+<li><p>Indicate replication and failover issues.</p></li>
+<li><p>Fix bug with multiple menu items selected.</p></li>
+<li><p>Refactor pages filtering, forbid opening blacklisted pages.</p></li>
+<li><p>Enable JS chunks caching.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id179">
+<h2>[2.0.2] - 2020-03-17<a class="headerlink" href="#id179" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id180">
+<h3>Added<a class="headerlink" href="#id180" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Expose membership options in <code class="docutils literal notranslate"><span class="pre">argparse</span></code> module (edit them with
+environment variables and command-line arguments).</p></li>
+<li><p>New internal module to handle <code class="docutils literal notranslate"><span class="pre">.tar</span></code> files.</p></li>
+</ul>
+<p>Lua API:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.cfg({webui_blacklist</span> <span class="pre">=</span> <span class="pre">{'/admin/code',</span> <span class="pre">...}})</span></code>: blacklist
+certain WebUI pages.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.get_schema()</span></code> referencing older <code class="docutils literal notranslate"><span class="pre">_G.cartridge_get_schema</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.set_schema()</span></code> referencing older <code class="docutils literal notranslate"><span class="pre">_G.cartridge_set_schema</span></code>.</p></li>
+</ul>
+<p>GraphQL API:</p>
+<ul class="simple">
+<li><p>Make use of GraphQL error extensions: provide additional information
+about <code class="docutils literal notranslate"><span class="pre">class_name</span></code> and <code class="docutils literal notranslate"><span class="pre">stack</span></code> of original error.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster{</span> <span class="pre">issues{</span> <span class="pre">level</span> <span class="pre">message</span> <span class="pre">...</span> <span class="pre">}}</span></code>: obtain more details on
+replication status</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster{</span> <span class="pre">self</span> <span class="pre">{...}</span> <span class="pre">}</span></code>: new fields <code class="docutils literal notranslate"><span class="pre">app_name</span></code>, <code class="docutils literal notranslate"><span class="pre">instance_name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">servers{</span> <span class="pre">boxinfo</span> <span class="pre">{</span> <span class="pre">cartridge</span> <span class="pre">{...}</span> <span class="pre">}}</span></code>: new fields <code class="docutils literal notranslate"><span class="pre">version</span></code>,
+<code class="docutils literal notranslate"><span class="pre">state</span></code>, <code class="docutils literal notranslate"><span class="pre">error</span></code>.</p></li>
+</ul>
+<p>Test helpers:</p>
+<ul class="simple">
+<li><p>Allow specifying <code class="docutils literal notranslate"><span class="pre">all_rw</span></code> replicaset flag in luatest helpers.</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">cluster({env</span> <span class="pre">=</span> <span class="pre">...})</span></code> option for specifying clusterwide
+environment variables.</p></li>
+</ul>
+</div>
+<div class="section" id="id181">
+<h3>Changed<a class="headerlink" href="#id181" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Remove redundant topology availability checks from two-phase commit.</p></li>
+<li><p>Prevent instance state transition from <code class="docutils literal notranslate"><span class="pre">ConnectingFullmesh</span></code> to
+<code class="docutils literal notranslate"><span class="pre">OperationError</span></code> if replication fails to connect or to sync. Since now
+such fails result in staying in <code class="docutils literal notranslate"><span class="pre">ConnectingFullmesh</span></code> state until it
+succeeds.</p></li>
+<li><p>Specifying <code class="docutils literal notranslate"><span class="pre">pool.connect()</span></code> options <code class="docutils literal notranslate"><span class="pre">user</span></code>, <code class="docutils literal notranslate"><span class="pre">password</span></code>,
+<code class="docutils literal notranslate"><span class="pre">reconnect_after</span></code> are deprecated and ignored, they never worked as
+intended and will never do. Option <code class="docutils literal notranslate"><span class="pre">connect_timeout</span></code> is deprecated,
+but for backward compatibility treated as <code class="docutils literal notranslate"><span class="pre">wait_connected</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="id182">
+<h3>Fixed<a class="headerlink" href="#id182" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix DDL failure if <code class="docutils literal notranslate"><span class="pre">spaces</span></code> field is <code class="docutils literal notranslate"><span class="pre">null</span></code> in input schema.</p></li>
+<li><p>Check content of <code class="docutils literal notranslate"><span class="pre">cluster_cookie</span></code> for absence of special
+characters so it doesn’t break the authorization.
+Allowed symbols are <code class="docutils literal notranslate"><span class="pre">[a-zA-Z0-9_.~-]</span></code>.</p></li>
+<li><p>Drop remote-control connections after full-featured <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> becomes
+available to prevent clients from using limited functionality for too
+long. During instance recovery remote-control won’t accept any
+connections: clients wait for box.cfg to finish recovery.</p></li>
+<li><p>Update errors rock dependency to 2.1.2: eliminate duplicate stack
+trace from <code class="docutils literal notranslate"><span class="pre">error.str</span></code> field.</p></li>
+<li><p>Apply <code class="docutils literal notranslate"><span class="pre">custom_proc_title</span></code> setting without waiting for <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code>.</p></li>
+<li><p>Make GraphQL compatible with <code class="docutils literal notranslate"><span class="pre">req:read_cached()</span></code> call in httpd hooks.</p></li>
+<li><p>Avoid “attempt to index nil value” error when using rpc on an
+uninitialized instance.</p></li>
+</ul>
+</div>
+<div class="section" id="id183">
+<h3>Enhanced in WebUI<a class="headerlink" href="#id183" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Add an ability to hide certain WebUI pages.</p></li>
+<li><p>Validate YAML in code editor WebUI.</p></li>
+<li><p>Fix showing errors in Code editor page.</p></li>
+<li><p>Remember last open file in Code editor page.
+Open first file when local storage is empty.</p></li>
+<li><p>Expand file tree in Code editor page by default.</p></li>
+<li><p>Show Cartridge version in server info dialog.</p></li>
+<li><p>Server alias is clickable in replicaset list.</p></li>
+<li><p>Show networking errors in splash panel instead of notifications.</p></li>
+<li><p>Accept float values for vshard-storage weight.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id184">
+<h2>[2.0.1] - 2020-01-15<a class="headerlink" href="#id184" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id185">
+<h3>Added<a class="headerlink" href="#id185" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Expose <code class="docutils literal notranslate"><span class="pre">TARANTOOL_DEMO_URI</span></code> environment variable in GraphQL query
+<code class="docutils literal notranslate"><span class="pre">cluster{</span> <span class="pre">self{demo_uri}</span> <span class="pre">}</span></code> for demo purposes.</p></li>
+</ul>
+</div>
+<div class="section" id="id186">
+<h3>Fixed<a class="headerlink" href="#id186" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Notifications in schema editor WebUI.</p></li>
+<li><p>Fix GraphQL <code class="docutils literal notranslate"><span class="pre">servers</span></code> query compatibility with old cartridge versions.</p></li>
+<li><p>Two-phase commit backward compatibility with v1.2.0.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id187">
+<h2>[2.0.0] - 2019-12-27<a class="headerlink" href="#id187" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id188">
+<h3>Added<a class="headerlink" href="#id188" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Use for frontend part single point of configuration HTTP handlers.
+As example: you can add your own client HTTP middleware for auth.</p></li>
+<li><p>Built-in DDL schema management. Schema is a part of clusterwide
+configuration. It’s applied to every instance in cluster.</p></li>
+<li><p>DDL schema editor and code editor pages in WebUI.</p></li>
+<li><p>Instances now have internal state machine which helps to manage
+cluster operation and protect from invalid state transitions.</p></li>
+<li><p>WebUI checkbox to specify <code class="docutils literal notranslate"><span class="pre">all_rw</span></code> replicaset property.</p></li>
+<li><p>GraphQL API for clusterwide configuration management.</p></li>
+<li><p>Measure clock difference across instances and provide <code class="docutils literal notranslate"><span class="pre">clock_delta</span></code>
+in GraphQL <code class="docutils literal notranslate"><span class="pre">servers</span></code> query and in <code class="docutils literal notranslate"><span class="pre">admin.get_servers()</span></code> Lua API.</p></li>
+<li><p>New option in <code class="docutils literal notranslate"><span class="pre">rpc_call(...,</span> <span class="pre">{uri=...})</span></code> to perform a call
+on a particular uri.</p></li>
+</ul>
+</div>
+<div class="section" id="id189">
+<h3>Changed<a class="headerlink" href="#id189" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.rpc_get_candidates()</span></code> doesn’t return error “No remotes with
+role available” anymore, empty table is returned instead.
+<strong>(incompatible change)</strong></p></li>
+<li><p>Base advertise port in luatest helpers changed from 33000 to 13300,
+which is outside <code class="docutils literal notranslate"><span class="pre">ip_local_port_range</span></code>. Using port from local range
+usually caused tests failing with an error “address already in use”.
+(<em>incompatible change</em>, but affects tests only)</p></li>
+<li><p>Whole new way to bootstrap instances. Instead of polling membership
+for getting clusterwide config the instance now start Remote Control
+Server (with limited iproto protocol functionality) on the same port.
+Two-phase commit is then executed over net.box connection.
+(<strong>major change</strong>, but still compatible)</p></li>
+<li><p>Failover isn’t triggered on <code class="docutils literal notranslate"><span class="pre">suspect</span></code> instance state anymore</p></li>
+<li><p>Functions <code class="docutils literal notranslate"><span class="pre">admin.get_servers</span></code>, <code class="docutils literal notranslate"><span class="pre">get_replicasets</span></code> and similar GraphQL
+queries now return an error if the instance handling the request is in
+state <code class="docutils literal notranslate"><span class="pre">InitError</span></code> or <code class="docutils literal notranslate"><span class="pre">BootError</span></code>.</p></li>
+<li><p>Clusterwide configuration is now represented with a file tree.
+All sections that were tables are saved to separate <code class="docutils literal notranslate"><span class="pre">.yml</span></code> files.
+Compatibility with the old-style configuration is preserved.
+Accessing unmarshalled sections with <code class="docutils literal notranslate"><span class="pre">get_readonly/deepcopy</span></code> methods
+is provided without <code class="docutils literal notranslate"><span class="pre">.yml</span></code> extension as earlier.
+(<strong>major change</strong>, but still compatible)</p></li>
+<li><p>After an old leader restarts it’ll try to sync with an active one
+before taking the leadership again so that failover doesn’t switch too
+early before leader finishes recovery. If replication setup fails the
+instance enters the <code class="docutils literal notranslate"><span class="pre">OperationError</span></code> state, which can be avoided by
+explicitly specifying <code class="docutils literal notranslate"><span class="pre">replication_connect_quorum</span> <span class="pre">=</span> <span class="pre">1</span></code> (or 0).
+<strong>(major change)</strong></p></li>
+<li><p>Option <code class="docutils literal notranslate"><span class="pre">{prefer_local</span> <span class="pre">=</span> <span class="pre">false}</span></code> in <code class="docutils literal notranslate"><span class="pre">rpc_call</span></code> makes it always use
+netbox connection, even to connect self. It never tries to perform
+call locally.</p></li>
+<li><p>Update <code class="docutils literal notranslate"><span class="pre">vshard</span></code> dependency to 0.1.14.</p></li>
+</ul>
+</div>
+<div class="section" id="removed">
+<h3>Removed<a class="headerlink" href="#removed" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Function <code class="docutils literal notranslate"><span class="pre">cartridge.bootstrap</span></code> is removed. Use <code class="docutils literal notranslate"><span class="pre">admin_edit_topology</span></code>
+interad. <strong>(incompatible change)</strong></p></li>
+<li><p>Misspelled role callback <code class="docutils literal notranslate"><span class="pre">validate</span></code> is now removed completely.
+Keep using <code class="docutils literal notranslate"><span class="pre">validate_config</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="id190">
+<h3>Fixed<a class="headerlink" href="#id190" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Arrange proper failover triggering: don’t miss events, don’t trigger
+if nothing changed. Fix races in calling <code class="docutils literal notranslate"><span class="pre">apply_config</span></code> between
+failover and two-phase commit.</p></li>
+<li><p>Race condition when creating working directory.</p></li>
+<li><p>Hide users page in WebUI when auth backend implements no user
+management functions. Enable auth switcher is displayed on main
+cluster page in this case.</p></li>
+<li><p>Displaying boolean values in server details.</p></li>
+<li><p>Add deduplication for WebUI notifications: no more spam.</p></li>
+<li><p>Automatically choose default vshard group in create and edit
+replicaset modals.</p></li>
+<li><p>Enhance WebUI modals scrolling.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id191">
+<h2>[1.2.0] - 2019-10-21<a class="headerlink" href="#id191" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id192">
+<h3>Added<a class="headerlink" href="#id192" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>‘Auto’ placeholder to weight input in the Replicaset forms.</p></li>
+<li><p>‘Select all’ and ‘Deselect all’ buttons to roles field in Replicaset add and edit forms.</p></li>
+<li><p>Refresh replicaset list in UI after topology edit actions: bootstrap, join, expel,
+probe, replicaset edit.</p></li>
+<li><p>New Lua API <code class="docutils literal notranslate"><span class="pre">cartridge.http_authorize_request()</span></code> suitable for checking
+HTTP request headers.</p></li>
+<li><p>New Lua API <code class="docutils literal notranslate"><span class="pre">cartridge.http_render_response()</span></code> for generating HTTP
+response with proper <code class="docutils literal notranslate"><span class="pre">Set-Cookie</span></code> headers.</p></li>
+<li><p>New Lua API <code class="docutils literal notranslate"><span class="pre">cartridge.http_get_username()</span></code> to check authorization of
+active HTTP session.</p></li>
+<li><p>New Lua API <code class="docutils literal notranslate"><span class="pre">cartridge.rpc_get_candidates()</span></code> to get list
+of instances suitable for performing a remote call.</p></li>
+<li><p>Network error notification in UI.</p></li>
+<li><p>Allow specifying vshard storage group in test helpers.</p></li>
+</ul>
+</div>
+<div class="section" id="id193">
+<h3>Changed<a class="headerlink" href="#id193" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Get UI components from Tarantool UI-Kit</p></li>
+<li><p>When recovering from snapshot, instances are started read-only.
+It is still possible to override it by argparse (command line
+arguments or environment variables)</p></li>
+</ul>
+</div>
+<div class="section" id="id194">
+<h3>Fixed<a class="headerlink" href="#id194" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Editing topology with <code class="docutils literal notranslate"><span class="pre">failover_priority</span></code> argument.</p></li>
+<li><p>Now <code class="docutils literal notranslate"><span class="pre">cartridge.rpc.get_candidates()</span></code> returns value as specified in doc.
+Also it accepts new option <code class="docutils literal notranslate"><span class="pre">healthy_only</span></code> to filter instances which
+have membership status healthy.</p></li>
+<li><p>Replicaset weight tooltip in replicasets list</p></li>
+<li><p>Total buckets count in buckets tooltip</p></li>
+<li><p>Validation error in user edit form</p></li>
+<li><p>Leader flag in server details modal</p></li>
+<li><p>Human-readable error for invalid GrqphQL queries:
+<code class="docutils literal notranslate"><span class="pre">Field</span> <span class="pre">&quot;x&quot;</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">defined</span> <span class="pre">on</span> <span class="pre">type</span> <span class="pre">&quot;String&quot;</span></code></p></li>
+<li><p>User management error “attempt to index nil value” when one of users
+has empty e-mail value</p></li>
+<li><p>Catch <code class="docutils literal notranslate"><span class="pre">rpc_call</span></code> errors when they are performed locally</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id195">
+<h2>[1.1.0] - 2019-09-24<a class="headerlink" href="#id195" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id196">
+<h3>Added<a class="headerlink" href="#id196" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>New Lua API <code class="docutils literal notranslate"><span class="pre">admin_edit_topology</span></code> has been added to unite multiple others:
+<code class="docutils literal notranslate"><span class="pre">admin_edit_replicaset</span></code>, <code class="docutils literal notranslate"><span class="pre">admin_edit_server</span></code>, <code class="docutils literal notranslate"><span class="pre">admin_join_server</span></code>,
+<code class="docutils literal notranslate"><span class="pre">admin_expel_server</span></code>. It’s suitable for editing multiple servers/replicasets
+at once. It can be used for bootstrapping cluster from scratch, joining a
+server to an existing replicaset, creating new replicaset with one or more
+servers, editing uri/labels of servers, disabling or expelling servers.</p></li>
+<li><p>Similar API is implemented in a GraphQL mutation <code class="docutils literal notranslate"><span class="pre">cluster{edit_topology()}</span></code>.</p></li>
+<li><p>New GraphQL mutation <code class="docutils literal notranslate"><span class="pre">cluster</span> <span class="pre">{</span> <span class="pre">edit_vshard_options</span> <span class="pre">}</span></code> is suitable for
+fine-tuning vshard options: <code class="docutils literal notranslate"><span class="pre">rebalancer_max_receiving</span></code>, <code class="docutils literal notranslate"><span class="pre">collect_lua_garbage</span></code>,
+<code class="docutils literal notranslate"><span class="pre">sync_timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">collect_bucket_garbage_interval</span></code>,
+<code class="docutils literal notranslate"><span class="pre">rebalancer_disbalance_threshold</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="id197">
+<h3>Changed<a class="headerlink" href="#id197" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Both bootstrapping from scratch and patching topology in clusterwide config automatically probe
+servers, which aren’t added to membership yet (earlier it influenced join_server mutation only).
+This is a prerequisite for multijoin api implementation.</p></li>
+<li><p>WebUI users page is hidden if auth_backend doesn’t provide list_users callback.</p></li>
+</ul>
+</div>
+<div class="section" id="id198">
+<h3>Deprecated<a class="headerlink" href="#id198" title="Permalink to this headline">¶</a></h3>
+<p>Lua API:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_edit_replicaset()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_edit_server()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_join_server()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_expel_server()</span></code></p></li>
+</ul>
+<p>GraphQL API:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mutation{</span> <span class="pre">edit_replicaset()</span> <span class="pre">}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutation{</span> <span class="pre">edit_server()</span> <span class="pre">}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutation{</span> <span class="pre">join_server()</span> <span class="pre">}</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutation{</span> <span class="pre">expel_server()</span> <span class="pre">}</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id199">
+<h3>Fixed<a class="headerlink" href="#id199" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Protect <code class="docutils literal notranslate"><span class="pre">users_acl</span></code> and <code class="docutils literal notranslate"><span class="pre">auth</span></code> sections when downloading clusterwide config.
+Also forbid uploading them.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id200">
+<h2>[1.0.0] - 2019-08-29<a class="headerlink" href="#id200" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id201">
+<h3>Added<a class="headerlink" href="#id201" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>New parameter <code class="docutils literal notranslate"><span class="pre">topology.replicasets[].all_rw</span></code> in clusterwide config for configuring
+all instances in the replicaset as <code class="docutils literal notranslate"><span class="pre">read_only</span> <span class="pre">=</span> <span class="pre">false</span></code>.
+It can be managed with both GraphQL and Lua API <code class="docutils literal notranslate"><span class="pre">edit_replicaset</span></code>.</p></li>
+<li><p>Remote Control server - a replacement for the <code class="docutils literal notranslate"><span class="pre">box.cfg({listen})</span></code>,
+with limited functionality, independent on <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code>.
+The server is only to be used internally for bootstrapping new
+instances.</p></li>
+<li><p>New module <code class="docutils literal notranslate"><span class="pre">argparse</span></code> for gathering configuration options from
+command-line arguments, environment variables, and configuration files.
+It is used internally and overrides <code class="docutils literal notranslate"><span class="pre">cluster.cfg</span></code> and <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> options.</p></li>
+<li><p>Auth parameter <code class="docutils literal notranslate"><span class="pre">cookie_max_age</span></code> is now configurable with GraphQL API.
+Also now it’s stored in clusterwide config, so changing it on a single server will affect
+all others in cluster.</p></li>
+<li><p>Detect that we run under systemd and switch to syslog logging from
+stderr. This allows to filter log messages by severity with
+<code class="docutils literal notranslate"><span class="pre">journalctl</span></code></p></li>
+<li><p>Redesign WebUI</p></li>
+</ul>
+</div>
+<div class="section" id="id202">
+<h3>Changed<a class="headerlink" href="#id202" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>The project renamed to <strong>cartridge</strong>.
+Use <code class="docutils literal notranslate"><span class="pre">require('cartridge')</span></code> instead of <code class="docutils literal notranslate"><span class="pre">require('cluster')</span></code>.
+All submodules are renamed too.
+<strong>(incompatible change)</strong></p></li>
+<li><p>Submodule <code class="docutils literal notranslate"><span class="pre">cluster.test_helpers</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">cartridge.test-helpers</span></code> for consistency.
+<strong>(incompatible change)</strong></p></li>
+<li><p>Modifying auth params with GraphQL before the cluster was bootstrapped is now
+forbidden and returns an error.</p></li>
+<li><p>Introducing a new auth parameter <code class="docutils literal notranslate"><span class="pre">cookie_renew_age</span></code>. When cluster handles an HTTP request
+with the cookie, whose age in older then specified, it refreshes the cookie.
+It may be useful to set <code class="docutils literal notranslate"><span class="pre">cookie_max_age</span></code> to a small value (for example 10 minutes),
+so the user will be logged out after <code class="docutils literal notranslate"><span class="pre">cookie_max_age</span></code> seconds of inactivity.
+Otherwise, if he’s active, the cookie will be updated every <code class="docutils literal notranslate"><span class="pre">cookie_renew_age</span></code> seconds
+and the session will not be interrupted.</p></li>
+<li><p>Changed configuration options for <code class="docutils literal notranslate"><span class="pre">cluster.cfg()</span></code>:
+<code class="docutils literal notranslate"><span class="pre">roles</span></code> now is a mandatory table, <code class="docutils literal notranslate"><span class="pre">workdir</span></code> is optional now (defaults to “.”)</p></li>
+<li><p>Parameter <code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code> is optional now, default value is derived as follows.
+<code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code> is a compound of <code class="docutils literal notranslate"><span class="pre">&lt;HOST&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;PORT&gt;</span></code>.
+When <code class="docutils literal notranslate"><span class="pre">&lt;HOST&gt;</span></code> isn’t specified, it’s detected as the only non-local IP address.
+If it can’t be determined or there is more than one IP address available it
+defaults to <code class="docutils literal notranslate"><span class="pre">&quot;localhost&quot;</span></code>.
+When <code class="docutils literal notranslate"><span class="pre">&lt;PORT&gt;</span></code> isn’t specified, it’s derived from numeric suffix <code class="docutils literal notranslate"><span class="pre">_&lt;N&gt;</span></code> of
+<code class="docutils literal notranslate"><span class="pre">TARANTOOL_INSTANCE_NAME</span></code>: <code class="docutils literal notranslate"><span class="pre">&lt;PORT&gt;</span> <span class="pre">=</span> <span class="pre">3300+&lt;N&gt;</span></code>.
+Otherwise default <code class="docutils literal notranslate"><span class="pre">&lt;PORT&gt;</span> <span class="pre">=</span> <span class="pre">3301</span></code> is used.</p></li>
+<li><p>Parameter <code class="docutils literal notranslate"><span class="pre">http_port</span></code> is derived from instance name too. If it can’t be derived
+it defaults to 8081. New parameter <code class="docutils literal notranslate"><span class="pre">http_enabled</span> <span class="pre">=</span> <span class="pre">false</span></code> is used to disable it
+(by default it’s enabled).</p></li>
+<li><p>Removed user <code class="docutils literal notranslate"><span class="pre">cluster</span></code>, which was used internally for orchestration over netbox.
+Tarantool built-in user <code class="docutils literal notranslate"><span class="pre">admin</span></code> is used instead now. It can also be used for HTTP
+authentication to access WebUI. Cluster cookie is used as a password in both cases.
+<strong>(incompatible change)</strong></p></li>
+</ul>
+</div>
+<div class="section" id="id203">
+<h3>Removed<a class="headerlink" href="#id203" title="Permalink to this headline">¶</a></h3>
+<p>Two-layer table structure in API, which was deprecated earlier, is now removed completely:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.service_registry.*</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.confapplier.*</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin.*</span></code></p></li>
+</ul>
+<p>Instead you can use top-level functions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.config_get_readonly</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.config_get_deepcopy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.config_patch_clusterwide</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.service_get</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_get_servers</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_get_replicasets</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_probe_server</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_join_server</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_edit_server</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_expel_server</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_enable_servers</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_disable_servers</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_edit_replicaset</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_get_failover</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_enable_failover</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.admin_disable_failover</span></code></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id204">
+<h2>[0.10.0] - 2019-08-01<a class="headerlink" href="#id204" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id205">
+<h3>Added<a class="headerlink" href="#id205" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Cluster can now operate without vshard roles (if you don’t need sharding).
+Deprecation warning about implicit vshard roles isn’t issued any more,
+they aren’t registered unless explicitly specified either in <code class="docutils literal notranslate"><span class="pre">cluster.cfg({roles=...})</span></code>
+or in <code class="docutils literal notranslate"><span class="pre">dependencies</span></code> to one of user-defined roles.</p></li>
+<li><p>New role flag <code class="docutils literal notranslate"><span class="pre">hidden</span> <span class="pre">=</span> <span class="pre">true</span></code>. Hidden roles aren’t listed in
+<code class="docutils literal notranslate"><span class="pre">cluster.admin.get_replicasets().roles</span></code> and therefore in WebUI.
+Hidden roles are supposed to be a dependency for another role, yet they still can be
+enabled with <code class="docutils literal notranslate"><span class="pre">edit_replicaset</span></code> function (both Lua and GraphQL).</p></li>
+<li><p>New role flag: <code class="docutils literal notranslate"><span class="pre">permanent</span> <span class="pre">=</span> <span class="pre">true</span></code>.
+Permanent roles are always enabled. Also they are hidden implicitly.</p></li>
+<li><p>New functions in cluster test_helpers - <code class="docutils literal notranslate"><span class="pre">Cluster:upload_config(config)</span></code> and <code class="docutils literal notranslate"><span class="pre">Cluster:download_config()</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id206">
+<h3>Fixed<a class="headerlink" href="#id206" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster.call_rpc</span></code> used to return ‘Role unavailable’ error as a first argument
+instead of <code class="docutils literal notranslate"><span class="pre">nil,</span> <span class="pre">err</span></code>. It can appear when role is specified in clusterwide config,
+but wasn’t initialized properly. There are two reasons for that: race condition,
+or prior error in either role <code class="docutils literal notranslate"><span class="pre">init</span></code> or <code class="docutils literal notranslate"><span class="pre">apply_config</span></code> methods.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id207">
+<h2>[0.9.2] - 2019-07-12<a class="headerlink" href="#id207" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id208">
+<h3>Fixed<a class="headerlink" href="#id208" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Update frontend-core dependency which used to litter
+<code class="docutils literal notranslate"><span class="pre">package.loaded</span></code> with tons of JS code</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id209">
+<h2>[0.9.1] - 2019-07-10<a class="headerlink" href="#id209" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id210">
+<h3>Added<a class="headerlink" href="#id210" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Support for vshard groups in WebUI</p></li>
+</ul>
+</div>
+<div class="section" id="id211">
+<h3>Fixed<a class="headerlink" href="#id211" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Uniform handling vshard group ‘default’ when
+multiple groups aren’t configured</p></li>
+<li><p>Requesting multiple vshard groups info before the cluster
+was bootstrapped</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id212">
+<h2>[0.9.0] - 2019-07-02<a class="headerlink" href="#id212" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id213">
+<h3>Added<a class="headerlink" href="#id213" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>User management page in WebUI</p></li>
+<li><p>Configuring multiple isolated vshard groups in a single cluster</p></li>
+<li><p>Support for joining multiple instances in a single call to config_patch_clusterwide</p></li>
+<li><p>Integration tests helpers</p></li>
+</ul>
+</div>
+<div class="section" id="id214">
+<h3>Changed<a class="headerlink" href="#id214" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>GraphQL API <code class="docutils literal notranslate"><span class="pre">known_roles</span></code> format now includes roles dependencies</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster.rpc_call</span></code> option <code class="docutils literal notranslate"><span class="pre">remote_only</span></code> renamed to <code class="docutils literal notranslate"><span class="pre">prefer_local</span></code>
+with the opposite meaning</p></li>
+</ul>
+</div>
+<div class="section" id="id215">
+<h3>Fixed<a class="headerlink" href="#id215" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Don’t display renamed or removed roles in webui</p></li>
+<li><p>Uploading config without a section removes it from clusterwide config</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id216">
+<h2>[0.8.0] - 2019-05-20<a class="headerlink" href="#id216" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id217">
+<h3>Added<a class="headerlink" href="#id217" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Specifying role dependencies</p></li>
+<li><p>Set read-only option for slave nodes</p></li>
+<li><p>Labels for servers</p></li>
+</ul>
+</div>
+<div class="section" id="id218">
+<h3>Changed<a class="headerlink" href="#id218" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Admin http endpoint changed from /graphql to /admin/api</p></li>
+<li><p>Graphql output now contains null values for empty objects</p></li>
+<li><p>Deprecate implicity of vshard roles
+<code class="docutils literal notranslate"><span class="pre">'cluster.roles.vshard-storage'</span></code>, <code class="docutils literal notranslate"><span class="pre">'cluster.roles.vshard-router'</span></code>.
+Now they should be specified explicitly in <code class="docutils literal notranslate"><span class="pre">cluster.cfg({roles</span> <span class="pre">=</span> <span class="pre">...})</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster.service_get('vshard-router')</span></code> now returns
+<code class="docutils literal notranslate"><span class="pre">cluster.roles.vshard-router</span></code> module instead of <code class="docutils literal notranslate"><span class="pre">vshard.router</span></code>
+<strong>(incompatible change)</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster.service_get('vshard-storage')</span></code> now returns
+<code class="docutils literal notranslate"><span class="pre">cluster.roles.vshard-storage</span></code> module instead of <cite>vshard.storage`</cite>
+<strong>(incompatible change)</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cluster.admin.bootstrap_vshard</span></code> now can be called on any instance</p></li>
+</ul>
+</div>
+<div class="section" id="id219">
+<h3>Fixed<a class="headerlink" href="#id219" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Operating vshard-storage roles before vshard was bootstrapped</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id220">
+<h2>[0.7.0] - 2019-04-05<a class="headerlink" href="#id220" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id221">
+<h3>Added<a class="headerlink" href="#id221" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Failover priority configuration using WebUI</p></li>
+<li><p>Remote calls across cluster instances using <code class="docutils literal notranslate"><span class="pre">cluster.rpc</span></code> module</p></li>
+<li><p>Displaying <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> and <code class="docutils literal notranslate"><span class="pre">box.info</span></code> in WebUI</p></li>
+<li><p>Authorization for HTTP API and WebUI</p></li>
+<li><p>Configuration download/upload via WebUI</p></li>
+<li><p>Lua API documentation, which you can read with <code class="docutils literal notranslate"><span class="pre">tarantoolctl</span> <span class="pre">rocks</span> <span class="pre">doc</span> <span class="pre">cluster</span></code> command.</p></li>
+</ul>
+</div>
+<div class="section" id="id222">
+<h3>Changed<a class="headerlink" href="#id222" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Instance restart now triggers config validation before roles initialization</p></li>
+<li><p>Update WebUI design</p></li>
+<li><p>Lua API changed (old functions still work, but issue warnings):
+- <code class="docutils literal notranslate"><span class="pre">cluster.confapplier.*</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">cluster.config_*</span></code>
+- <code class="docutils literal notranslate"><span class="pre">cluster.service_registry.*</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">cluster.service_*</span></code></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id223">
+<h2>[0.6.3] - 2019-02-08<a class="headerlink" href="#id223" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id224">
+<h3>Fixed<a class="headerlink" href="#id224" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Cluster used to call ‘validate()’ role method instead of documented
+‘validate_config()’, so it was added. The undocumented ‘validate()’
+still may be used for the sake of compatibility, but issues a warning
+that it was deprecated.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id225">
+<h2>[0.6.2] - 2019-02-07<a class="headerlink" href="#id225" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id226">
+<h3>Fixed<a class="headerlink" href="#id226" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Minor internal corner cases</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id227">
+<h2>[0.6.1] - 2019-02-05<a class="headerlink" href="#id227" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id228">
+<h3>Fixed<a class="headerlink" href="#id228" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>UI/UX: Replace “bootstrap vshard” button with a noticable panel</p></li>
+<li><p>UI/UX: Replace failover panel with a small button</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id229">
+<h2>[0.6.0] - 2019-01-30<a class="headerlink" href="#id229" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id230">
+<h3>Fixed<a class="headerlink" href="#id230" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Ability to disable vshard-storage role when zero-weight rebalancing finishes</p></li>
+<li><p>Active master indication during failover</p></li>
+<li><p>Other minor improvements</p></li>
+</ul>
+</div>
+<div class="section" id="id231">
+<h3>Changed<a class="headerlink" href="#id231" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>New frontend core</p></li>
+<li><p>Dependencies update</p></li>
+<li><p>Call to <code class="docutils literal notranslate"><span class="pre">join_server</span></code> automatically does <code class="docutils literal notranslate"><span class="pre">probe_server</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id232">
+<h3>Added<a class="headerlink" href="#id232" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Servers filtering by roles, uri, alias in WebUI</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id233">
+<h2>[0.5.1] - 2018-12-12<a class="headerlink" href="#id233" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id234">
+<h3>Fixed<a class="headerlink" href="#id234" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>WebUI errors</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id235">
+<h2>[0.5.0] - 2018-12-11<a class="headerlink" href="#id235" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id236">
+<h3>Fixed<a class="headerlink" href="#id236" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Graphql mutations order</p></li>
+</ul>
+</div>
+<div class="section" id="id237">
+<h3>Changed<a class="headerlink" href="#id237" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Callbacks in user-defined roles are called with <code class="docutils literal notranslate"><span class="pre">is_master</span></code> parameter,
+indicating state of the instance</p></li>
+<li><p>Combine <code class="docutils literal notranslate"><span class="pre">cluster.init</span></code> and <code class="docutils literal notranslate"><span class="pre">cluster.register_role</span></code> api calls in single <code class="docutils literal notranslate"><span class="pre">cluster.cfg</span></code></p></li>
+<li><p>Eliminate raising exceptions</p></li>
+<li><p>Absorb http server in <code class="docutils literal notranslate"><span class="pre">cluster.cfg</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="id238">
+<h3>Added<a class="headerlink" href="#id238" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Support of vshard replicaset weight parameter</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">join_server()</span></code> <code class="docutils literal notranslate"><span class="pre">timeout</span></code> parameter to make call synchronous</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id239">
+<h2>[0.4.0] - 2018-11-27<a class="headerlink" href="#id239" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fixed-improved">
+<h3>Fixed/Improved<a class="headerlink" href="#fixed-improved" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Uncaught exception in WebUI</p></li>
+<li><p>Indicate when backend is unavailable</p></li>
+<li><p>Sort servers in replicaset, put master first</p></li>
+<li><p>Cluster mutations are now synchronous, except joining new servers</p></li>
+</ul>
+</div>
+<div class="section" id="id240">
+<h3>Added<a class="headerlink" href="#id240" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Lua API for temporarily disabling servers</p></li>
+<li><p>Lua API for implementing user-defined roles</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id241">
+<h2>[0.3] - 2018-10-30<a class="headerlink" href="#id241" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id242">
+<h3>Changed<a class="headerlink" href="#id242" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Config structure <strong>incompatible</strong> with v0.2</p></li>
+</ul>
+</div>
+<div class="section" id="id243">
+<h3>Added<a class="headerlink" href="#id243" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Explicit vshard master configuration</p></li>
+<li><p>Automatic failover (switchable)</p></li>
+<li><p>Unit tests</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id244">
+<h2>[0.2] - 2018-10-01<a class="headerlink" href="#id244" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id245">
+<h3>Changed<a class="headerlink" href="#id245" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Allow vshard bootstrapping from ui</p></li>
+<li><p>Several stability improvements</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id246">
+<h2>[0.1] - 2018-09-25<a class="headerlink" href="#id246" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id247">
+<h3>Added<a class="headerlink" href="#id247" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Basic functionality</p></li>
+<li><p>Integration tests</p></li>
+<li><p>Luarock-based packaging</p></li>
+<li><p>Gitlab CI integration</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#unreleased">[Unreleased]</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">[2.7.9] - 2023-04-06</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">[2.7.8] - 2023-01-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id15">[2.7.7] - 2022-12-09</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id47">[2.7.6] - 2022-08-22</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id58">[2.7.5] - 2022-06-28</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id72">[2.7.4] - 2022-04-11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id133">[2.7.3] - 2021-10-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id135">[2.7.2] - 2021-10-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id139">[2.7.1] - 2021-08-18</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id141">[2.7.0] - 2021-08-10</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id145">[2.6.0] - 2021-04-26</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id150">[2.5.1] - 2021-03-24</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id153">[2.5.0] - 2021-03-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id156">[2.4.0] - 2020-12-29</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id161">[2.3.0] - 2020-08-26</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id165">[2.2.0] - 2020-06-23</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id169">[2.1.2] - 2020-04-24</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id171">[2.1.1] - 2020-04-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id173">[2.1.0] - 2020-04-16</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id179">[2.0.2] - 2020-03-17</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id184">[2.0.1] - 2020-01-15</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id187">[2.0.0] - 2019-12-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id191">[1.2.0] - 2019-10-21</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id195">[1.1.0] - 2019-09-24</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id200">[1.0.0] - 2019-08-29</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id204">[0.10.0] - 2019-08-01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id207">[0.9.2] - 2019-07-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id209">[0.9.1] - 2019-07-10</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id212">[0.9.0] - 2019-07-02</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id216">[0.8.0] - 2019-05-20</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id220">[0.7.0] - 2019-04-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id223">[0.6.3] - 2019-02-08</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id225">[0.6.2] - 2019-02-07</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id227">[0.6.1] - 2019-02-05</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id229">[0.6.0] - 2019-01-30</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id233">[0.5.1] - 2018-12-12</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id235">[0.5.0] - 2018-12-11</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id239">[0.4.0] - 2018-11-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id241">[0.3] - 2018-10-30</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id244">[0.2] - 2018-10-01</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id246">[0.1] - 2018-09-25</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="cartridge_api/classes/cartridge.test-helpers.stateboard.html" title="previous chapter">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/CHANGELOG.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

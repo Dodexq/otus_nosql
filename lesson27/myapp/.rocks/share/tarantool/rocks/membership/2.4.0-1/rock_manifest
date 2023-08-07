@@ -1,0 +1,22 @@
+rock_manifest = {
+   doc = {
+      ["index.html"] = "c30bed23603e46d5db85dae551110c4d",
+      ["ldoc.css"] = "e2b04e90ff648f8e00d9d4d458de59d9",
+      ["swim-paper.pdf"] = "6bb456e86e2fd516d6edcbc5fb5f5562",
+      topics = {
+         ["CHANGELOG.md.html"] = "5053edd3559bd030f4e44adb7a422a5c",
+         ["README.md.html"] = "9fda89e5365433784dc73fc72c4dd679"
+      }
+   },
+   lua = {
+      membership = {
+         ["events.lua"] = "58e7414839d94868649c7983c03789f6",
+         ["members.lua"] = "1aa1c3a65436cd8a3eb75b672c485606",
+         ["network.lua"] = "0bac9306e41901b894048ac8f5971bff",
+         ["options.lua"] = "721415f44f40c616f549c5bf5dd83966",
+         ["stash.lua"] = "a6b789b2a02603a36865bddb90cd5709"
+      },
+      ["membership.lua"] = "8b31a50a3d2d20d4469d2ed448210d5d"
+   },
+   ["membership-2.4.0-1.rockspec"] = "7e9b1b73b72251fd54a9c034cb5e2af5"
+}

@@ -1,0 +1,88 @@
+.. _cartridge.service-registry:
+
+===============================================================================
+Module *cartridge.service-registry*
+===============================================================================
+
+Inter-role interaction.
+
+
+
+These functions make
+different roles interact with each other.
+
+The registry stores initialized modules
+and accesses them within the one and only current instance.
+For cross-instance access, use the :ref:`cartridge.rpc <cartridge.rpc>` module.
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.service-registry.set:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set (module_name, instance)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Put a module into registry or drop it. 
+This function typically doesn't need to be called explicitly, the
+cluster automatically sets all the initialized roles.
+
+
+
+**Parameters:**
+
+- *module_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *instance:* (**nil** or `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+**Returns**:
+
+(**nil**) 
+
+
+.. _cartridge.service-registry.get:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get (module_name)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get a module from registry.
+
+
+**Parameters:**
+
+- *module_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+**Returns**:
+
+(**nil**) 
+
+
+**Or**
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) instance
+
+
+.. _cartridge.service-registry.list:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+list ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get a list with modules from registry.
+
+
+
+**Returns**:
+
+(**nil**) 
+
+
+**Or**
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) all modules
+
+

@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Contributing &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>The workflow for Cartridge contributors is different from that for Cartridge
+users. It implies building the project from source (documentation, Web UI)
+and running tests.</p>
+<div class="section" id="submitting-a-pull-request">
+<h2>Submitting a pull request<a class="headerlink" href="#submitting-a-pull-request" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/tarantool/cartridge/fork">Fork</a> and clone the repository.</p></li>
+<li><p><a class="reference external" href="#building-from-source">Build</a> it and <a class="reference external" href="#running-a-demo-cluster">run</a> it.</p></li>
+<li><p>Make a change, add <a class="reference external" href="#running-tests">tests</a>, and make sure they still pass.</p></li>
+<li><p>Commit the changes and push them to your fork.</p></li>
+<li><p><a class="reference external" href="https://github.com/tarantool/cartridge/compare">Submit</a> a pull request.</p></li>
+</ol>
+<p>Here are a few things you can do that will increase the likelihood of your pull
+request being accepted:</p>
+<ul class="simple">
+<li><p>Describe <em>what</em> you do in the pull request description, and <em>why</em> you do it.</p></li>
+<li><p>Add an auto-test that covers your changes.</p></li>
+<li><p>Keep your change as focused as possible. One scope – one pull request.</p></li>
+<li><p>Write a <a class="reference external" href="https://chris.beams.io/posts/git-commit/">good commit message</a>.</p></li>
+</ul>
+<p>See other related resources:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://opensource.guide/how-to-contribute/">How to Contribute to Open Source</a></p></li>
+<li><p><a class="reference external" href="https://help.github.com/articles/about-pull-requests/">Using Pull Requests</a></p></li>
+<li><p><a class="reference external" href="https://help.github.com">GitHub Help</a></p></li>
+</ul>
+</div>
+<div class="section" id="building-from-source">
+<h2>Building from source<a class="headerlink" href="#building-from-source" title="Permalink to this headline">¶</a></h2>
+<p>The fastest way to build the project is to skip building the Web UI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CMAKE_DUMMY_WEBUI</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>make
+</pre></div>
+</div>
+<p>But if you want to build the frontend too, you’ll also need
+<code class="docutils literal notranslate"><span class="pre">nodejs</span></code> &gt;= 12 and <code class="docutils literal notranslate"><span class="pre">npm</span></code> &gt;= 6, see instructions
+<a class="reference external" href="https://nodejs.org/en/download/package-manager/">here</a>.</p>
+<p>Documentation is generated from source code, but only if the <code class="docutils literal notranslate"><span class="pre">ldoc</span></code>
+and <code class="docutils literal notranslate"><span class="pre">sphinx</span></code> tools are installed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>rst/requirements.txt
+tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>install<span class="w"> </span>ldoc<span class="w"> </span>--server<span class="o">=</span>https://tarantool.github.io/LDoc/
+tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>make
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-a-demo-cluster">
+<h2>Running a demo cluster<a class="headerlink" href="#running-a-demo-cluster" title="Permalink to this headline">¶</a></h2>
+<p>There are several example entry points which are mostly used for testing,
+but can also be useful for demo purposes or experiments:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>start
+cartridge<span class="w"> </span>replicasets<span class="w"> </span>setup<span class="w"> </span>--bootstrap-vshard
+
+<span class="c1"># or select a specific entry point</span>
+<span class="c1"># cartridge start --script ./test/entrypoint/srv_vshardless.lua</span>
+</pre></div>
+</div>
+<p>It can be accessed through the Web UI (<a class="reference external" href="http://localhost:8081">http://localhost:8081</a>)
+or via the binary protocol:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tarantoolctl<span class="w"> </span>connect<span class="w"> </span>admin@localhost:3301
+
+<span class="c1"># or via console socket</span>
+<span class="c1"># tarantoolctl connect unix/:./tmp/run/cartridge.srv-1.control</span>
+</pre></div>
+</div>
+<p>If you also need the stateful failover mode, launch an external state provider
+– <code class="docutils literal notranslate"><span class="pre">stateboard</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>start<span class="w"> </span>--stateboard
+</pre></div>
+</div>
+<p>And set failover parameters according to <code class="docutils literal notranslate"><span class="pre">instances.yml</span></code>. The defaults are:</p>
+<ul class="simple">
+<li><p>State provider URI: <code class="docutils literal notranslate"><span class="pre">localhost:4401</span></code>;</p></li>
+<li><p>Password: <code class="docutils literal notranslate"><span class="pre">qwerty</span></code>.</p></li>
+</ul>
+<p>For more details about <code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>, see its
+<a class="reference external" href="https://github.com/tarantool/cartridge-cli#usage">usage</a>.</p>
+</div>
+<div class="section" id="running-tests">
+<h2>Running tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Backend</span>
+tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>install<span class="w"> </span>luacheck
+tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>install<span class="w"> </span>luatest<span class="w"> </span><span class="m">0</span>.5.7
+.rocks/bin/luacheck<span class="w"> </span>.
+.rocks/bin/luatest<span class="w"> </span>-v
+
+<span class="c1"># Frontend</span>
+npm<span class="w"> </span>install<span class="w"> </span>cypress@7.7.0
+./frontend-test.sh
+./cypress-test.sh
+
+<span class="c1"># Collect coverage</span>
+tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>install<span class="w"> </span>luacov
+tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>install<span class="w"> </span>luacov-console
+.rocks/bin/luatest<span class="w"> </span>-v<span class="w"> </span>--coverage
+.rocks/bin/luacov-console<span class="w"> </span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
+.rocks/bin/luacov-console<span class="w"> </span>-s
+</pre></div>
+</div>
+<p>Find more about testing tools here:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/tarantool/luacheck/#luacheck">luacheck</a></p></li>
+<li><p><a class="reference external" href="https://github.com/tarantool/luatest#overview">luatest</a></p></li>
+<li><p><a class="reference external" href="https://docs.cypress.io">cypress</a></p></li>
+</ul>
+</div>
+<div class="section" id="updating-auto-generated-sources">
+<h2>Updating auto-generated sources<a class="headerlink" href="#updating-auto-generated-sources" title="Permalink to this headline">¶</a></h2>
+<p>If the GraphQL API is changed, the <code class="docutils literal notranslate"><span class="pre">doc/schema.graphql</span></code> should be updated:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install<span class="w"> </span>graphql-cli@3.0.14
+./fetch-schema.sh
+</pre></div>
+</div>
+<p>If you face some issues with script run, e.g.
+<code class="docutils literal notranslate"><span class="pre">doc/schema.graphql:</span> <span class="pre">No</span> <span class="pre">such</span> <span class="pre">file</span> <span class="pre">or</span> <span class="pre">directory</span></code>, try next:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>audit<span class="w"> </span>fix<span class="w"> </span>--force
+</pre></div>
+</div>
+<p>If the UML diagrams at <code class="docutils literal notranslate"><span class="pre">rst/uml</span></code> are changed, corresponding images
+should be updated. Install <a class="reference external" href="https://plantuml.com/download">PlantUML</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>plantuml
+<span class="c1"># OR</span>
+sudo<span class="w"> </span>brew<span class="w"> </span>install<span class="w"> </span>plantuml
+</pre></div>
+</div>
+<p>And then just run the script:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cmake<span class="w"> </span>-P<span class="w"> </span>rst/BuildUML.cmake
+</pre></div>
+</div>
+<p>Cypress tests imply snapshot testing. It compares WebUI images visually.
+In order to update reference snapshots, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./cypress-test.sh<span class="w"> </span>--env<span class="w"> </span><span class="nv">failOnSnapshotDiff</span><span class="o">=</span><span class="nb">false</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/CONTRIBUTING.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

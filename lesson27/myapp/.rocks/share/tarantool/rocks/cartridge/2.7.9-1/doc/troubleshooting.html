@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Troubleshooting &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Table of contents" href="cartridge_api/index.html" />
+    <link rel="prev" title="Administrator’s guide" href="cartridge_admin.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="troubleshooting">
+<span id="cartridge-troubleshooting"></span><h1><a class="toc-backref" href="#id2">Troubleshooting</a><a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h1>
+<p>First of all, see a similar
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/admin/troubleshoot/">guide</a>
+in the Tarantool manual. Below you can find other Cartridge-specific
+problems considered.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#troubleshooting" id="id2">Troubleshooting</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problems-with-replica" id="id3">Problems with replica</a></p></li>
+<li><p><a class="reference internal" href="#editing-clusterwide-configuration-in-webui-returns-an-error" id="id4">Editing clusterwide configuration in WebUI returns an error</a></p></li>
+<li><p><a class="reference internal" href="#an-instance-is-stuck-in-the-connectingfullmesh-state-upon-restart" id="id5">An instance is stuck in the ConnectingFullmesh state upon restart</a></p></li>
+<li><p><a class="reference internal" href="#i-want-to-run-an-instance-with-a-new-advertise-uri" id="id6">I want to run an instance with a new advertise_uri</a></p></li>
+<li><p><a class="reference internal" href="#the-cluster-is-doomed-i-ve-edited-the-config-manually-how-do-i-reload-it" id="id7">The cluster is doomed, I’ve edited the config manually. How do I reload it?</a></p></li>
+<li><p><a class="reference internal" href="#repairing-cluster-using-cartridge-cli-repair-command" id="id8">Repairing cluster using Cartridge CLI repair command</a></p>
+<ul>
+<li><p><a class="reference internal" href="#changing-instance-advertise-uri" id="id9">Changing instance advertise URI</a></p></li>
+<li><p><a class="reference internal" href="#changing-replicaset-leader" id="id10">Changing replicaset leader</a></p></li>
+<li><p><a class="reference internal" href="#removing-instance-from-the-cluster" id="id11">Removing instance from the cluster</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="problems-with-replica">
+<h2><a class="toc-backref" href="#id3">Problems with replica</a><a class="headerlink" href="#problems-with-replica" title="Permalink to this headline">¶</a></h2>
+<p><strong>Examples:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Missing</span> <span class="pre">.xlog</span> <span class="pre">file</span> <span class="pre">between</span> <span class="pre">LSN</span> <span class="pre">5137088</span> <span class="pre">{1:</span> <span class="pre">240379,</span> <span class="pre">2:</span> <span class="pre">4750534,</span> <span class="pre">5:</span> <span class="pre">146175}</span>
+<span class="pre">and</span> <span class="pre">5137379</span> <span class="pre">{1:</span> <span class="pre">240379,</span> <span class="pre">2:</span> <span class="pre">4750825,</span> <span class="pre">5:</span> <span class="pre">146175}</span> <span class="pre">which</span> <span class="pre">means</span> <span class="pre">that</span> <span class="pre">master</span>
+<span class="pre">lost</span> <span class="pre">one</span> <span class="pre">or</span> <span class="pre">more</span> <span class="pre">of</span> <span class="pre">their</span> <span class="pre">xlog</span> <span class="pre">files,</span> <span class="pre">please</span> <span class="pre">check</span> <span class="pre">it</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Duplicate</span> <span class="pre">key</span> <span class="pre">exists</span> <span class="pre">in</span> <span class="pre">unique</span> <span class="pre">index</span> <span class="pre">&quot;primary&quot;</span> <span class="pre">in</span> <span class="pre">space</span> <span class="pre">&quot;T1&quot;</span> <span class="pre">with</span> <span class="pre">old</span> <span class="pre">tuple</span></code></p></li>
+</ul>
+<p><strong>Solution:</strong></p>
+<p>If you have some replication conflicts and issues that you don’t know how
+to deal with, try to rebootstrap the replica.</p>
+<p><strong>(!)</strong> Make sure that you have your data safe on the master before rebootstrap.</p>
+<ol class="arabic simple">
+<li><p>Stop the instance</p></li>
+<li><p>Delete snapshots and xlogs</p></li>
+<li><p>Preserve cluster-wide config (<code class="docutils literal notranslate"><span class="pre">config</span></code> dir)</p></li>
+<li><p>Restart the instance</p></li>
+</ol>
+</div>
+<div class="section" id="editing-clusterwide-configuration-in-webui-returns-an-error">
+<h2><a class="toc-backref" href="#id4">Editing clusterwide configuration in WebUI returns an error</a><a class="headerlink" href="#editing-clusterwide-configuration-in-webui-returns-an-error" title="Permalink to this headline">¶</a></h2>
+<p><strong>Examples</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NetboxConnectError:</span> <span class="pre">&quot;localhost:3302&quot;:</span> <span class="pre">Connection</span> <span class="pre">refused</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Prepare2pcError:</span> <span class="pre">Instance</span> <span class="pre">state</span> <span class="pre">is</span> <span class="pre">OperationError,</span>
+<span class="pre">can't</span> <span class="pre">apply</span> <span class="pre">config</span> <span class="pre">in</span> <span class="pre">this</span> <span class="pre">state</span></code>.</p></li>
+</ul>
+<p><strong>The root problem</strong>: all cluster instances are equal, and all of them store a
+copy of clusterwide configuration, which must be the same. If an
+instance degrades (can’t accept new configuration) – the quorum is lost.
+This prevents further configuration modifications to avoid inconsistency.</p>
+<p>But sometimes inconsistency is needed to repair the system, at least
+partially and temporarily. It can be achieved by disabling degraded
+instances.</p>
+<p><strong>Solution</strong>:</p>
+<ol class="arabic">
+<li><p>Connect to the console of the alive instance.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tarantoolctl<span class="w"> </span>connect<span class="w"> </span>unix/:/var/run/tarantool/&lt;app-name&gt;.&lt;instance-name&gt;.control
+</pre></div>
+</div>
+</li>
+<li><p>Inspect what’s going on.</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">cartridge</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge&#39;</span><span class="p">)</span>
+<span class="n">report</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="kr">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">srv</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">cartridge</span><span class="p">.</span><span class="n">admin_get_servers</span><span class="p">())</span> <span class="kr">do</span>
+    <span class="n">report</span><span class="p">[</span><span class="n">srv</span><span class="p">.</span><span class="n">uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">uri</span> <span class="o">=</span> <span class="n">srv</span><span class="p">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">status</span> <span class="o">=</span> <span class="n">srv</span><span class="p">.</span><span class="n">status</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="n">srv</span><span class="p">.</span><span class="n">message</span><span class="p">}</span>
+<span class="kr">end</span>
+<span class="kr">return</span> <span class="n">report</span>
+</pre></div>
+</div>
+</li>
+<li><p>If you’re ready to proceed, run the following snippet. It’ll disable
+all instances which are not healthy. After that, you can use the
+WebUI as usual.</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">disable_list</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="kr">for</span> <span class="n">uuid</span><span class="p">,</span> <span class="n">srv</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">report</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="kr">if</span> <span class="n">srv</span><span class="p">.</span><span class="n">status</span> <span class="o">~=</span> <span class="s1">&#39;healthy&#39;</span> <span class="kr">then</span>
+       <span class="nb">table.insert</span><span class="p">(</span><span class="n">disable_list</span><span class="p">,</span> <span class="n">uuid</span><span class="p">)</span>
+    <span class="kr">end</span>
+<span class="kr">end</span>
+<span class="kr">return</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">admin_disable_servers</span><span class="p">(</span><span class="n">disable_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>When it’s necessary to bring disabled instances back, re-enable
+them in a similar manner:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">cartridge</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge&#39;</span><span class="p">)</span>
+<span class="n">enable_list</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="kr">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">srv</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">cartridge</span><span class="p">.</span><span class="n">admin_get_servers</span><span class="p">())</span> <span class="kr">do</span>
+    <span class="kr">if</span> <span class="n">srv</span><span class="p">.</span><span class="n">disabled</span> <span class="kr">then</span>
+       <span class="nb">table.insert</span><span class="p">(</span><span class="n">enable_list</span><span class="p">,</span> <span class="n">srv</span><span class="p">.</span><span class="n">uuid</span><span class="p">)</span>
+    <span class="kr">end</span>
+<span class="kr">end</span>
+<span class="kr">return</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">admin_enable_servers</span><span class="p">(</span><span class="n">enable_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="an-instance-is-stuck-in-the-connectingfullmesh-state-upon-restart">
+<span id="troubleshooting-stuck-connecting-fullmesh"></span><h2><a class="toc-backref" href="#id5">An instance is stuck in the ConnectingFullmesh state upon restart</a><a class="headerlink" href="#an-instance-is-stuck-in-the-connectingfullmesh-state-upon-restart" title="Permalink to this headline">¶</a></h2>
+<p><strong>Example</strong>:</p>
+<a class="reference internal image-reference" href="_images/stuck-connecting-fullmesh.png"><img alt="_images/stuck-connecting-fullmesh.png" class="align-left" src="_images/stuck-connecting-fullmesh.png" style="width: 2318.0px; height: 440.0px;" /></a>
+<p><strong>The root problem</strong>: after restart, the instance tries to connect to all
+its replicas and remains in the <code class="docutils literal notranslate"><span class="pre">ConnectingFullmesh</span></code> state until it
+succeeds. If it can’t (due to replica URI unavailability or for any
+other reason) – it’s stuck forever.</p>
+<p><strong>Solution</strong>:</p>
+<p>Set the <a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/configuration/#cfg-replication-replication-connect-quorum">replication_connect_quorum</a>
+option to zero. It may be accomplished in two ways:</p>
+<ul>
+<li><p>By restarting it with the corresponding option set
+(in environment variables or in the
+<a class="reference internal" href="cartridge_dev.html#cartridge-run-systemctl-config"><span class="std std-ref">instance configuration file</span></a>);</p></li>
+<li><p>Or without restart – by running the following one-liner:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;box.cfg({replication_connect_quorum = 0})&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tarantoolctl<span class="w"> </span>connect<span class="w"> </span><span class="se">\</span>
+unix/:/var/run/tarantool/&lt;app-name&gt;.&lt;instance-name&gt;.control
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="i-want-to-run-an-instance-with-a-new-advertise-uri">
+<h2><a class="toc-backref" href="#id6">I want to run an instance with a new advertise_uri</a><a class="headerlink" href="#i-want-to-run-an-instance-with-a-new-advertise-uri" title="Permalink to this headline">¶</a></h2>
+<p><strong>The root problem</strong>: <code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code> parameter is persisted in the
+clusterwide configuration. Even if it changes upon restart, the rest of the
+cluster keeps using the old one, and the cluster may behave in an odd way.</p>
+<p><strong>Solution</strong>:</p>
+<p>The clusterwide configuration should be updated.</p>
+<ol class="arabic">
+<li><p>Make sure all instances are running and not stuck in the ConnectingFullmesh
+state (see <a class="reference internal" href="#troubleshooting-stuck-connecting-fullmesh"><span class="std std-ref">above</span></a>).</p></li>
+<li><p>Make sure all instances have discovered each other (i.e. they look
+healthy in the WebUI).</p></li>
+<li><p>Run the following snippet in the Tarantool console. It’ll prepare a
+patch for the clusterwide configuration.</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">cartridge</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge&#39;</span><span class="p">)</span>
+<span class="n">members</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;membership&#39;</span><span class="p">).</span><span class="n">members</span><span class="p">()</span>
+
+<span class="n">edit_list</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">changelog</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="kr">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">srv</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">cartridge</span><span class="p">.</span><span class="n">admin_get_servers</span><span class="p">())</span> <span class="kr">do</span>
+    <span class="kr">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">members</span><span class="p">)</span> <span class="kr">do</span>
+        <span class="kr">if</span> <span class="n">m</span><span class="p">.</span><span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;alive&#39;</span>
+        <span class="ow">and</span> <span class="n">m</span><span class="p">.</span><span class="n">payload</span><span class="p">.</span><span class="n">uuid</span> <span class="o">==</span> <span class="n">srv</span><span class="p">.</span><span class="n">uuid</span>
+        <span class="ow">and</span> <span class="n">m</span><span class="p">.</span><span class="n">uri</span> <span class="o">~=</span> <span class="n">srv</span><span class="p">.</span><span class="n">uri</span>
+        <span class="kr">then</span>
+            <span class="nb">table.insert</span><span class="p">(</span><span class="n">edit_list</span><span class="p">,</span> <span class="p">{</span><span class="n">uuid</span> <span class="o">=</span> <span class="n">srv</span><span class="p">.</span><span class="n">uuid</span><span class="p">,</span> <span class="n">uri</span> <span class="o">=</span> <span class="n">m</span><span class="p">.</span><span class="n">uri</span><span class="p">})</span>
+            <span class="nb">table.insert</span><span class="p">(</span><span class="n">changelog</span><span class="p">,</span> <span class="nb">string.format</span><span class="p">(</span><span class="s1">&#39;%s -&gt; %s (%s)&#39;</span><span class="p">,</span> <span class="n">srv</span><span class="p">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">uri</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">payload</span><span class="p">.</span><span class="n">alias</span><span class="p">))</span>
+            <span class="kr">break</span>
+        <span class="kr">end</span>
+    <span class="kr">end</span>
+<span class="kr">end</span>
+<span class="kr">return</span> <span class="n">changelog</span>
+</pre></div>
+</div>
+<p>As a result you’ll see a brief summary like the following one:</p>
+<div class="highlight-tarantoolsession notranslate"><div class="highlight"><pre><span></span><span class="gp">localhost:3301&gt; </span><span class="k">return</span> <span class="n">changelog</span>
+<span class="nn">---</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:13301 -&gt; localhost:3301 (srv-1)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:13302 -&gt; localhost:3302 (srv-2)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:13303 -&gt; localhost:3303 (srv-3)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:13304 -&gt; localhost:3304 (srv-4)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:13305 -&gt; localhost:3305 (srv-5)</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+</li>
+<li><p>Finally, apply the patch:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">cartridge</span><span class="p">.</span><span class="n">admin_edit_topology</span><span class="p">({</span><span class="n">servers</span> <span class="o">=</span> <span class="n">edit_list</span><span class="p">})</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="the-cluster-is-doomed-i-ve-edited-the-config-manually-how-do-i-reload-it">
+<h2><a class="toc-backref" href="#id7">The cluster is doomed, I’ve edited the config manually. How do I reload it?</a><a class="headerlink" href="#the-cluster-is-doomed-i-ve-edited-the-config-manually-how-do-i-reload-it" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Please be aware that it’s quite risky and you know what you’re doing.
+There’s some useful information about
+<a class="reference internal" href="cartridge_dev.html#cartridge-config"><span class="std std-ref">clusterwide configuration</span></a>
+anatomy and “normal” management API.</p>
+</div>
+<p>But if you’re still determined to reload the configuration manually, you can do
+(in the Tarantool console):</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kr">function</span> <span class="nf">reload_clusterwide_config</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">changelog</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="kd">local</span> <span class="n">ClusterwideConfig</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.clusterwide-config&#39;</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">confapplier</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.confapplier&#39;</span><span class="p">)</span>
+
+    <span class="c1">-- load config from filesystem</span>
+    <span class="nb">table.insert</span><span class="p">(</span><span class="n">changelog</span><span class="p">,</span> <span class="s1">&#39;Loading new config...&#39;</span><span class="p">)</span>
+
+    <span class="kd">local</span> <span class="n">cfg</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">ClusterwideConfig</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;./config&#39;</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">err</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="kr">then</span>
+        <span class="kr">return</span> <span class="n">changelog</span><span class="p">,</span> <span class="nb">string.format</span><span class="p">(</span><span class="s1">&#39;Failed to load new config: %s&#39;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+    <span class="kr">end</span>
+
+    <span class="c1">-- check instance state</span>
+    <span class="nb">table.insert</span><span class="p">(</span><span class="n">changelog</span><span class="p">,</span> <span class="s1">&#39;Checking instance config state...&#39;</span><span class="p">)</span>
+
+    <span class="kd">local</span> <span class="n">roles_configured_state</span> <span class="o">=</span> <span class="s1">&#39;RolesConfigured&#39;</span>
+    <span class="kd">local</span> <span class="n">connecting_fullmesh_state</span> <span class="o">=</span> <span class="s1">&#39;ConnectingFullmesh&#39;</span>
+
+    <span class="kd">local</span> <span class="n">state</span> <span class="o">=</span> <span class="n">confapplier</span><span class="p">.</span><span class="n">wish_state</span><span class="p">(</span><span class="n">roles_configured_state</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="kr">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">connecting_fullmesh_state</span> <span class="kr">then</span>
+        <span class="kr">return</span> <span class="n">changelog</span><span class="p">,</span> <span class="nb">string.format</span><span class="p">(</span>
+            <span class="s1">&#39;Failed to reach %s config state. Stuck in %s. &#39;</span> <span class="o">..</span>
+                <span class="s1">&#39;Call &quot;box.cfg({replication_connect_quorum = 0})&quot; in instance console and try again&#39;</span><span class="p">,</span>
+            <span class="n">roles_configured_state</span><span class="p">,</span> <span class="n">state</span>
+        <span class="p">)</span>
+    <span class="kr">end</span>
+
+    <span class="kr">if</span> <span class="n">state</span> <span class="o">~=</span> <span class="n">roles_configured_state</span> <span class="kr">then</span>
+        <span class="kr">return</span> <span class="n">changelog</span><span class="p">,</span> <span class="nb">string.format</span><span class="p">(</span>
+            <span class="s1">&#39;Failed to reach %s config state. Stuck in %s&#39;</span><span class="p">,</span>
+            <span class="n">roles_configured_state</span><span class="p">,</span> <span class="n">state</span>
+        <span class="p">)</span>
+    <span class="kr">end</span>
+
+    <span class="c1">-- apply config changes</span>
+    <span class="nb">table.insert</span><span class="p">(</span><span class="n">changelog</span><span class="p">,</span> <span class="s1">&#39;Applying config changes...&#39;</span><span class="p">)</span>
+
+    <span class="n">cfg</span><span class="p">:</span><span class="n">lock</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">confapplier</span><span class="p">.</span><span class="n">apply_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">err</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="kr">then</span>
+        <span class="kr">return</span> <span class="n">changelog</span><span class="p">,</span> <span class="nb">string.format</span><span class="p">(</span><span class="s1">&#39;Failed to apply new config: %s&#39;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+    <span class="kr">end</span>
+
+    <span class="nb">table.insert</span><span class="p">(</span><span class="n">changelog</span><span class="p">,</span> <span class="s1">&#39;Cluster-wide configuration was successfully updated&#39;</span><span class="p">)</span>
+
+    <span class="kr">return</span> <span class="n">changelog</span>
+<span class="kr">end</span>
+
+<span class="n">reload_clusterwide_config</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This snippet reloads the configuration on a single instance. All other instances
+continue operating as before.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If further configuration modifications are made with a two-phase
+commit (e.g. via the WebUI or with the Lua API), the active configuration
+of an active instance will be spread across the cluster.</p>
+</div>
+</div>
+<div class="section" id="repairing-cluster-using-cartridge-cli-repair-command">
+<h2><a class="toc-backref" href="#id8">Repairing cluster using Cartridge CLI repair command</a><a class="headerlink" href="#repairing-cluster-using-cartridge-cli-repair-command" title="Permalink to this headline">¶</a></h2>
+<p>Cartridge CLI has <a class="reference external" href="https://github.com/tarantool/cartridge-cli#repairing-a-cluster">repair</a>
+command since version
+<a class="reference external" href="https://github.com/tarantool/cartridge-cli/releases/tag/2.3.0">2.3.0</a>.</p>
+<p>It can be used to get current topology, remove instance from cluster,
+change replicaset leader or change instance advertise URI.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span></code> patches the cluster-wide configuration files of
+application instances placed ON THE LOCAL MACHINE. It means that running
+<code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span></code> on all machines is user responsibility.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It’s not enough to apply new configuration: the configuration should be
+reloaded by the instance. If your application uses <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">&gt;=</span> <span class="pre">2.0.0</span></code>,
+you can simply use <code class="docutils literal notranslate"><span class="pre">--reload</span></code> flag to reload configuration. Otherwise, you
+need to restart instances or reload configuration manually.</p>
+</div>
+<div class="section" id="changing-instance-advertise-uri">
+<h3><a class="toc-backref" href="#id9">Changing instance advertise URI</a><a class="headerlink" href="#changing-instance-advertise-uri" title="Permalink to this headline">¶</a></h3>
+<p>To change instance advertise URI you have to perform these actions:</p>
+<ol class="arabic">
+<li><p>Start instance with a new advertise URI.
+The easiest way is to change <code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code> value in the
+<a class="reference internal" href="cartridge_dev.html#cartridge-run-systemctl-config"><span class="std std-ref">instance configuration file</span></a>).</p></li>
+<li><p>Make sure instances are running and not stuck in the ConnectingFullmesh
+state (see <a class="reference internal" href="#troubleshooting-stuck-connecting-fullmesh"><span class="std std-ref">above</span></a>).</p></li>
+<li><p>Get instance UUID:</p>
+<ul class="simple">
+<li><p>open <code class="docutils literal notranslate"><span class="pre">server</span> <span class="pre">details</span></code> tab in WebUI;</p></li>
+<li><p>call <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">list-topology</span> <span class="pre">--name</span> <span class="pre">&lt;app-name&gt;</span></code>
+and find desired instance UUID:</p></li>
+<li><p>get instance <code class="docutils literal notranslate"><span class="pre">box.info().uuid</span></code>:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;return box.info().uuid&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tarantoolctl<span class="w"> </span>connect<span class="w"> </span><span class="se">\</span>
+unix/:/var/run/tarantool/&lt;app-name&gt;.&lt;instance-name&gt;.control
+</pre></div>
+</div>
+</li>
+<li><p>Now we need to update instance advertise URI in all instances cluster-wide
+configuration files on each machine. Run <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">set-advertise-uri</span></code>
+with <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> flag on each machine to check cluster-wide config changes
+computed  by <code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>repair<span class="w"> </span>set-advertise-uri<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>myapp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dry-run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&lt;instance-uuid&gt;<span class="w"> </span>&lt;new-advertise-uri&gt;
+</pre></div>
+</div>
+</li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">set-advertise-uri</span></code> without <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> flag on
+each machine to apply config changes computed by <code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>.
+If your application uses <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">&gt;=</span> <span class="pre">2.0.0</span></code>, you can specify
+<code class="docutils literal notranslate"><span class="pre">--reload</span></code> flag to load new cluter-wide configuration on instances.
+Otherwise, you need to restart instances or reload configuration manually.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>repair<span class="w"> </span>set-advertise-uri<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>myapp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--reload<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&lt;instance-uuid&gt;<span class="w"> </span>&lt;new-advertise-uri&gt;
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="changing-replicaset-leader">
+<h3><a class="toc-backref" href="#id10">Changing replicaset leader</a><a class="headerlink" href="#changing-replicaset-leader" title="Permalink to this headline">¶</a></h3>
+<p>You can change replicaset leader using <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span></code> command.</p>
+<ol class="arabic">
+<li><p>Get replicaset UUID and new leader UUID (in WebUI or by calling
+<code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">list-topology</span> <span class="pre">--name</span> <span class="pre">&lt;app-name&gt;</span></code>).</p></li>
+<li><p>Now we need to update cluster-wide config for all instances on each machine.
+Run <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">set-leader</span></code> with <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> flag on each machine
+to check cluster-wide config changes computed by `` cartridge-cli``:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>repair<span class="w"> </span>set-leader<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>myapp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dry-run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&lt;replicaset-uuid&gt;<span class="w"> </span>&lt;instance-uuid&gt;
+</pre></div>
+</div>
+</li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">set-advertise-uri</span></code> without <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> flag on
+each machine to apply config changes computed by <code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>.
+If your application uses <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">&gt;=</span> <span class="pre">2.0.0</span></code>, you can specify
+<code class="docutils literal notranslate"><span class="pre">--reload</span></code> flag to load new cluter-wide configuration on instances.
+Otherwise, you need to restart instances or reload configuration manually.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>repair<span class="w"> </span>set-leader<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>myapp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--reload<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&lt;replicaset-uuid&gt;<span class="w"> </span>&lt;instance-uuid&gt;
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="removing-instance-from-the-cluster">
+<h3><a class="toc-backref" href="#id11">Removing instance from the cluster</a><a class="headerlink" href="#removing-instance-from-the-cluster" title="Permalink to this headline">¶</a></h3>
+<p>You can remove instance from cluster using <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span></code> command.</p>
+<ol class="arabic">
+<li><p>Get instance UUID:</p>
+<ul class="simple">
+<li><p>open <code class="docutils literal notranslate"><span class="pre">server</span> <span class="pre">details</span></code> tab in WebUI;</p></li>
+<li><p>call <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">list-topology</span> <span class="pre">--name</span> <span class="pre">&lt;app-name&gt;</span></code>
+and find desired instance UUID:</p></li>
+<li><p>get instance <code class="docutils literal notranslate"><span class="pre">box.info().uuid</span></code>:</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;return box.info().uuid&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tarantoolctl<span class="w"> </span>connect<span class="w"> </span><span class="se">\</span>
+unix/:/var/run/tarantool/&lt;app-name&gt;.&lt;instance-name&gt;.control
+</pre></div>
+</div>
+</li>
+<li><p>Now we need to update cluster-wide config for all instances on each machine.
+Run <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">remove-instance</span></code> with <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> flag on each
+machine to check cluster-wide config changes computed by <code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>repair<span class="w"> </span>remove-instance<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>myapp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dry-run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&lt;replicaset-uuid&gt;
+</pre></div>
+</div>
+</li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">repair</span> <span class="pre">remove-instance</span></code> without <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> flag on each
+machine to apply config changes computed by <code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>.
+If your application uses <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">&gt;=</span> <span class="pre">2.0.0</span></code>, you can specify
+<code class="docutils literal notranslate"><span class="pre">--reload</span></code> flag to load new cluter-wide configuration on instances.
+Otherwise, you need to restart instances or reload configuration manually.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>repair<span class="w"> </span>set-leader<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>myapp<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--reload<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>&lt;replicaset-uuid&gt;<span class="w"> </span>&lt;instance-uuid&gt;
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#problems-with-replica">Problems with replica</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editing-clusterwide-configuration-in-webui-returns-an-error">Editing clusterwide configuration in WebUI returns an error</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#an-instance-is-stuck-in-the-connectingfullmesh-state-upon-restart">An instance is stuck in the ConnectingFullmesh state upon restart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#i-want-to-run-an-instance-with-a-new-advertise-uri">I want to run an instance with a new advertise_uri</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-cluster-is-doomed-i-ve-edited-the-config-manually-how-do-i-reload-it">The cluster is doomed, I’ve edited the config manually. How do I reload it?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repairing-cluster-using-cartridge-cli-repair-command">Repairing cluster using Cartridge CLI repair command</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="cartridge_admin.html" title="previous chapter">Administrator’s guide</a></li>
+      <li>Next: <a href="cartridge_api/index.html" title="next chapter">Table of contents</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/troubleshooting.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

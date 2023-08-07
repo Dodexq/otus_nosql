@@ -1,0 +1,90 @@
+.. _cartridge.lua-api.get-topology:
+
+===============================================================================
+Module *cartridge.lua-api.get-topology*
+===============================================================================
+
+Administration functions ( ``get-topology``  implementation).
+
+
+
+
+-------------------------------------------------------------------------------
+Tables
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.get-topology.ReplicasetInfo:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ReplicasetInfo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Replicaset general information.
+
+
+**Fields:**
+
+- *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) The replicaset UUID.  
+- *roles:* (`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Roles enabled on the replicaset.  
+- *status:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Replicaset health.  
+- *master:* (`ServerInfo <cartridge.lua-api.get-topology.ServerInfo_>`_) Replicaset leader according to configuration.  
+- *active_master:* (`ServerInfo <cartridge.lua-api.get-topology.ServerInfo_>`_) Active leader.  
+- *weight:* (**number**) Vshard replicaset weight.Matters only if vshard-storage role is enabled.  
+- *vshard_group:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Name of vshard group the replicaset belongs to.  
+- *all_rw:* (**boolean**) A flag indicating that all servers in the replicaset should be read-write.  
+- *alias:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Human-readable replicaset name.  
+- *servers:* (`{ServerInfo,...} <cartridge.lua-api.get-topology.ServerInfo_>`_) Circular reference to all instances in the replicaset.  
+
+
+.. _cartridge.lua-api.get-topology.ServerInfo:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ServerInfo
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Instance general information.
+
+
+**Fields:**
+
+- *alias:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Human-readable instance name.  
+- *uri:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *uuid:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *disabled:* (**boolean**)   
+- *electable:* (**boolean**)   
+- *status:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Instance health.  
+- *message:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Auxilary health status.  
+- *replicaset:* (`ReplicasetInfo <cartridge.lua-api.get-topology.ReplicasetInfo_>`_) Circular reference to a replicaset.  
+- *priority:* (**number**) Leadership priority for automatic failover.  
+- *clock_delta:* (**number**) Difference between remote clock and the current one (inseconds), obtained from the membership module (SWIM protocol).Positive values mean remote clock are ahead of local, and viceversa.  
+- *zone:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.get-topology.get_topology:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_topology ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get servers and replicasets lists.
+
+
+
+**Returns**:
+
+(**{servers={ServerInfo,...},replicasets={ReplicasetInfo,...}}**) 
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

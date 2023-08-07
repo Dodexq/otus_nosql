@@ -1,0 +1,368 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.twophase &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.failover" href="cartridge.failover.html" />
+    <link rel="prev" title="Module cartridge.argparse" href="cartridge.argparse.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-twophase">
+<span id="cartridge-twophase"></span><h1>Module <em>cartridge.twophase</em><a class="headerlink" href="#module-cartridge-twophase" title="Permalink to this headline">¶</a></h1>
+<p>Clusterwide configuration propagation two-phase algorithm.</p>
+<p>(<strong>Added</strong> in v1.2.0-19)</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="twophase-commit-opts">
+<span id="cartridge-twophase-twophase-commit"></span><h3>twophase_commit (opts)<a class="headerlink" href="#twophase-commit-opts" title="Permalink to this headline">¶</a></h3>
+<p>Execute the two-phase commit algorithm.</p>
+<ul class="simple">
+<li><p>(<em>upload</em>) If  <code class="docutils literal notranslate"><span class="pre">opts.upload_data</span></code>  isn’t  <code class="docutils literal notranslate"><span class="pre">nil</span></code> , spread it across
+the servers from  <code class="docutils literal notranslate"><span class="pre">opts.uri_list</span></code> .</p></li>
+<li><p>(<em>prepare</em>) Run the  <code class="docutils literal notranslate"><span class="pre">opts.fn_prepare</span></code>  function.</p></li>
+<li><p>(<em>commit</em>) If all the servers do  <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">true</span></code> ,
+call  <code class="docutils literal notranslate"><span class="pre">opts.fn_commit</span></code>  on every server.</p></li>
+<li><p>(<em>abort</em>) Otherwise, if at least one server does  <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">nil,</span> <span class="pre">err</span></code>
+or throws an exception, call  <code class="docutils literal notranslate"><span class="pre">opts.fn_abort</span></code>  on servers which were
+prepared successfully.</p></li>
+</ul>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>uri_list:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) array of URIs for performing twophase commit</p></li>
+<li><p><em>upload_data:</em>  any Lua object to be uploaded</p></li>
+<li><p><em>activity_name:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) understandable name of activity used for logging(default: “twophase_commit”)</p></li>
+<li><p><em>fn_prepare:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>fn_commit:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>fn_abort:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="usage">
+<h3>Usage:<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">my_2pc_data</span> <span class="o">=</span> <span class="kc">nil</span>
+
+<span class="kr">function</span> <span class="nc">_G</span><span class="p">.</span><span class="nf">my_2pc_prepare</span><span class="p">(</span><span class="n">upload_id</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">data</span> <span class="o">=</span> <span class="n">upload</span><span class="p">.</span><span class="n">inbox</span><span class="p">[</span><span class="n">upload_id</span><span class="p">]</span>
+    <span class="n">upload</span><span class="p">.</span><span class="n">inbox</span><span class="p">[</span><span class="n">upload_id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">nil</span>
+    <span class="kr">if</span> <span class="n">my_2pc_data</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="kr">then</span>
+        <span class="nb">error</span><span class="p">(</span><span class="s1">&#39;Two-phase commit is locked&#39;</span><span class="p">)</span>
+    <span class="kr">end</span>
+    <span class="n">my_2pc_data</span> <span class="o">=</span> <span class="n">data</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nc">_G</span><span class="p">.</span><span class="nf">my_2pc_commit</span><span class="p">()</span>
+    <span class="c1">-- Apply my_2pc_data</span>
+    <span class="p">...</span>
+<span class="kr">end</span>
+
+<span class="kr">function</span> <span class="nc">_G</span><span class="p">.</span><span class="nf">my_2pc_abort</span><span class="p">()</span>
+    <span class="n">twophase_data</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="kr">end</span>
+</pre></div>
+</div>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.twophase&#39;</span><span class="p">).</span><span class="n">twophase_commit</span><span class="p">({</span>
+    <span class="n">uri_list</span> <span class="o">=</span> <span class="p">{...},</span>
+    <span class="n">upload_data</span> <span class="o">=</span> <span class="p">...,</span>
+    <span class="n">activity_name</span> <span class="o">=</span> <span class="s1">&#39;my_2pc&#39;</span><span class="p">,</span>
+    <span class="n">fn_prepare</span> <span class="o">=</span> <span class="s1">&#39;_G.my_2pc_prepare&#39;</span><span class="p">,</span>
+    <span class="n">fn_commit</span> <span class="o">=</span> <span class="s1">&#39;_G.my_2pc_commit&#39;</span><span class="p">,</span>
+    <span class="n">fn_abort</span> <span class="o">=</span> <span class="s1">&#39;_G.my_2pc_abort&#39;</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="patch-clusterwide-patch">
+<span id="cartridge-twophase-patch-clusterwide"></span><h3>patch_clusterwide (patch)<a class="headerlink" href="#patch-clusterwide-patch" title="Permalink to this headline">¶</a></h3>
+<p>Edit the clusterwide configuration.
+Top-level keys are merged with the current configuration.
+To remove a top-level section, use
+<code class="docutils literal notranslate"><span class="pre">patch_clusterwide{key</span> <span class="pre">=</span> <span class="pre">box.NULL}</span></code> .</p>
+<p>The function executes following steps:</p>
+<ol class="upperroman simple">
+<li><p>Patches the current configuration.</p></li>
+<li><p>Validates topology on the current server.</p></li>
+</ol>
+<p>III. Executes two-phase commit on all servers in the cluster
+excluding expelled and disabled ones.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>patch:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="force-reapply-uuids">
+<span id="cartridge-twophase-force-reapply"></span><h3>force_reapply (uuids)<a class="headerlink" href="#force-reapply-uuids" title="Permalink to this headline">¶</a></h3>
+<p>Forcefully apply config to the given instances.</p>
+<p>In particular:</p>
+<ul class="simple">
+<li><p>Abort two-phase commit (remove  <code class="docutils literal notranslate"><span class="pre">config.prepare</span></code>  lock)</p></li>
+<li><p>Upload the active config from the current instance.</p></li>
+<li><p>Apply it (reconfigure all roles)</p></li>
+</ul>
+<p>(<strong>Added</strong> in v2.3.0-68)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uuids:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="get-schema">
+<span id="cartridge-twophase-get-schema"></span><h3>get_schema ()<a class="headerlink" href="#get-schema" title="Permalink to this headline">¶</a></h3>
+<p>Get clusterwide DDL schema.</p>
+<p>(<strong>Added</strong> in v1.2.0-28)</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Schema in YAML format</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="set-schema-schema">
+<span id="cartridge-twophase-set-schema"></span><h3>set_schema (schema)<a class="headerlink" href="#set-schema-schema" title="Permalink to this headline">¶</a></h3>
+<p>Apply clusterwide DDL schema.</p>
+<p>(<strong>Added</strong> in v1.2.0-28)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>schema:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) in YAML format</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) The same new schema</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="on-patch-trigger-new-trigger-old">
+<span id="cartridge-twophase-on-patch"></span><h3>on_patch (trigger_new, trigger_old)<a class="headerlink" href="#on-patch-trigger-new-trigger-old" title="Permalink to this headline">¶</a></h3>
+<p>Set up trigger for for patch_clusterwide.</p>
+<p>It will be executed <strong>before</strong> new new config applied.</p>
+<p>If the parameters are  <code class="docutils literal notranslate"><span class="pre">(nil,</span> <span class="pre">old_trigger)</span></code> , then the old trigger is
+deleted.</p>
+<p>The trigger function is called with two argument:
+-  <code class="docutils literal notranslate"><span class="pre">conf_new</span></code>  ( <code class="docutils literal notranslate"><span class="pre">ClusterwideConfig</span></code> )
+-  <code class="docutils literal notranslate"><span class="pre">conf_old</span></code>  ( <code class="docutils literal notranslate"><span class="pre">ClusterWideConfig</span></code> )</p>
+<p>It is allowed to modify  <code class="docutils literal notranslate"><span class="pre">conf_new</span></code> , but not  <code class="docutils literal notranslate"><span class="pre">conf_old</span></code> .
+Return values are ignored. If calling a trigger raises an error,
+<code class="docutils literal notranslate"><span class="pre">patch_clusterwide</span></code>  returns it as  <code class="docutils literal notranslate"><span class="pre">nil,</span> <span class="pre">err</span></code> .</p>
+<p>(<strong>Added</strong> in v2.1.0-4)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>trigger_new:</em> (<strong>function</strong>)</p></li>
+<li><p><em>trigger_old:</em> (<strong>function</strong>)</p></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h3>Usage:<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="kr">function</span> <span class="nf">inject_data</span><span class="p">(</span><span class="n">conf_new</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">data_yml</span> <span class="o">=</span> <span class="n">yaml</span><span class="p">.</span><span class="n">encode</span><span class="p">({</span><span class="n">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
+    <span class="n">conf_new</span><span class="p">:</span><span class="n">set_plaintext</span><span class="p">(</span><span class="s1">&#39;data.yml&#39;</span><span class="p">,</span> <span class="n">data_yml</span><span class="p">)</span>
+<span class="kr">end</span><span class="p">)</span>
+
+<span class="n">twophase</span><span class="p">.</span><span class="n">on_patch</span><span class="p">(</span><span class="n">inject_data</span><span class="p">)</span> <span class="c1">-- set custom patch modifier trigger</span>
+<span class="n">twophase</span><span class="p">.</span><span class="n">on_patch</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span> <span class="n">inject_data</span><span class="p">)</span> <span class="c1">-- drop trigger</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="local-functions">
+<h2>Local Functions<a class="headerlink" href="#local-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="wait-config-release-timeout">
+<span id="cartridge-twophase-wait-config-release"></span><h3>wait_config_release (timeout)<a class="headerlink" href="#wait-config-release-timeout" title="Permalink to this headline">¶</a></h3>
+<p>Wait until config won’t released.</p>
+<p>Two-phase commit starts with config preparation. It’s just
+config pin into “vars.prepared_config”. After it using this value
+we could determine is two-phase commit is started or not.
+This function allows to wait when two-phase commit will be
+finished (successfully or not).</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>timeout:</em> (<strong>number</strong>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true in case of success and false otherwise</p>
+</div>
+<div class="section" id="prepare-2pc-upload-id">
+<span id="cartridge-twophase-prepare-2pc"></span><h3>prepare_2pc (upload_id)<a class="headerlink" href="#prepare-2pc-upload-id" title="Permalink to this headline">¶</a></h3>
+<p>Two-phase commit - preparation stage.</p>
+<p>Validate the configuration and acquire a lock setting local variable
+and writing “config.prepare.yml” file. If the validation fails, the
+lock isn’t acquired and doesn’t have to be aborted.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>upload_id:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="commit-2pc">
+<span id="cartridge-twophase-commit-2pc"></span><h3>commit_2pc ()<a class="headerlink" href="#commit-2pc" title="Permalink to this headline">¶</a></h3>
+<p>Two-phase commit - commit stage.</p>
+<p>Back up the active configuration, commit changes to filesystem by
+renaming prepared file, release the lock, and configure roles.
+If any errors occur, configuration is not rolled back automatically.
+Any problem encountered during this call has to be solved manually.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="abort-2pc">
+<span id="cartridge-twophase-abort-2pc"></span><h3>abort_2pc ()<a class="headerlink" href="#abort-2pc" title="Permalink to this headline">¶</a></h3>
+<p>Two-phase commit - abort stage.</p>
+<p>Release the lock for further commit attempts.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.argparse.html" title="previous chapter">Module <em>cartridge.argparse</em></a></li>
+      <li>Next: <a href="cartridge.failover.html" title="next chapter">Module <em>cartridge.failover</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.twophase.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

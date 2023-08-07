@@ -1,0 +1,892 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.auth" href="cartridge.auth.html" />
+    <link rel="prev" title="Table of contents" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge">
+<span id="cartridge"></span><h1>Module <em>cartridge</em><a class="headerlink" href="#module-cartridge" title="Permalink to this headline">¶</a></h1>
+<p>Tarantool framework for distributed applications development.</p>
+<p>Cartridge provides you a simple way
+to manage distributed applications operations.
+The cluster consists of several Tarantool instances acting in concert.
+Cartridge does not care about how the instances start,
+it only cares about the configuration of already running processes.</p>
+<p>Cartridge automates vshard and replication configuration,
+simplifies custom configuration and administrative tasks.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cfg-opts-box-opts">
+<span id="cartridge-cfg"></span><h3>cfg (opts, box_opts)<a class="headerlink" href="#cfg-opts-box-opts" title="Permalink to this headline">¶</a></h3>
+<p>Initialize the cartridge module.</p>
+<p>After this call, you can operate the instance via Tarantool console.
+Notice that this call does not initialize the database -  <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code>  is not called yet.
+Do not try to call  <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code>  yourself:  <code class="docutils literal notranslate"><span class="pre">cartridge</span></code>  will do it when it is time.</p>
+<p>Both <a class="reference internal" href="#cartridge-cfg"><span class="std std-ref">cartridge.cfg</span></a> and  <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code>  options can be configured with
+command-line arguments or environment variables.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>opts:</em> Available options are:</p>
+<ul>
+<li><p><em>workdir:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) a directory where all data will be stored: snapshots, wal logs and cartridge config file.(default: “.”, overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_WORKDIR</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--workdir</span></code> )</p></li>
+<li><p><em>advertise_uri:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) either <cite>“&lt;HOST&gt;:&lt;PORT&gt;”</cite> or <cite>“&lt;HOST&gt;:”</cite> or <cite>“&lt;PORT&gt;”</cite>.Used by other instances to connect to the current one.When <cite>&lt;HOST&gt;</cite> isn’t specified, it’s detected as the only non-local IP address.If there is more than one IP address available - defaults to “localhost”.When <cite>&lt;PORT&gt;</cite> isn’t specified, it’s derived as follows:If the <cite>TARANTOOL_INSTANCE_NAME</cite> has numeric suffix <cite>_&lt;N&gt;</cite>, then <cite>&lt;PORT&gt; = 3300+&lt;N&gt;</cite>.Otherwise default <cite>&lt;PORT&gt; = 3301</cite> is used.</p></li>
+<li><p><em>cluster_cookie:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) secret used to separate unrelated applications, whichprevents them from seeing each other during broadcasts.Also used as admin password in HTTP and binary connections and forencrypting internal communications.Allowed symbols are  <code class="docutils literal notranslate"><span class="pre">[a-zA-Z0-9_.~-]</span></code> .(default: “secret-cluster-cookie”, overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_CLUSTER_COOKIE</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--cluster-cookie</span></code> )</p></li>
+<li><p><em>swim_broadcast:</em> (optional <strong>boolean</strong>) Announce own <cite>advertise_uri</cite> over UDP broadcast.Cartridge health-checks are governed by SWIM protocol. To simplifyinstances discovery on start it can UDP broadcast all networksknown from <cite>getifaddrs()</cite> C call. The broadcast is sent to severalports: default 3301, the <cite>&lt;PORT&gt;</cite> from the <cite>advertise_uri</cite> option,and its neighbours <cite>&lt;PORT&gt;+1</cite> and <cite>&lt;PORT&gt;-1</cite>.(<strong>Added</strong> in v2.3.0-23,default: true, overridden byenv <cite>TARANTOOL_SWIM_BROADCAST</cite>,args <cite>–swim-broadcast</cite>)</p></li>
+<li><p><em>bucket_count:</em> (optional <strong>number</strong>) bucket count for vshard cluster. See vshard doc for more details.Can be set only <strong>once</strong>, before the first run of Cartridge application, and can’t bechanged after that.(default: 30000, overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_BUCKET_COUNT</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--bucket-count</span></code> )</p></li>
+<li><p><em>vshard_groups:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) vshard storage groups.``{group_name = VshardGroup, …}`` ,  <code class="docutils literal notranslate"><span class="pre">{'group1',</span> <span class="pre">'group2',</span> <span class="pre">...}</span></code>  or``{group1 = VshardGroup, ‘group2’, …}`` .default group name:  <code class="docutils literal notranslate"><span class="pre">default</span></code></p></li>
+<li><p><em>http_enabled:</em> (optional <strong>boolean</strong>) whether http server should be started(default: true, overridden byenv <cite>TARANTOOL_HTTP_ENABLED</cite>,args <cite>–http-enabled</cite>)</p></li>
+<li><p><em>webui_enabled:</em> (optional <strong>boolean</strong>) whether WebUI and corresponding API (HTTP + GraphQL) should beinitialized. Ignored if  <code class="docutils literal notranslate"><span class="pre">http_enabled</span></code>  is  <code class="docutils literal notranslate"><span class="pre">false</span></code> . Doesn’taffect  <code class="docutils literal notranslate"><span class="pre">auth_enabled</span></code> .(<strong>Added</strong> in v2.4.0-38,default: true, overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_WEBUI_ENABLED</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--webui-enabled</span></code> )</p></li>
+<li><p><em>http_port:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <strong>number</strong>) port to open administrative UI and API on(default: 8081, derived from`TARANTOOL_INSTANCE_NAME`,overridden byenv <cite>TARANTOOL_HTTP_PORT</cite>,args <cite>–http-port</cite>)</p></li>
+<li><p><em>http_host:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) host to open administrative UI and API on(<strong>Added</strong> in v2.4.0-42,default: “0.0.0.0”, overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_HTTP_HOST</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--http-host</span></code> )</p></li>
+<li><p><em>webui_prefix:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) modify WebUI and cartridge HTTP API routes(<strong>Added</strong> in v2.6.0-18,default: “”, overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_WEBUI_PREFIX</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--webui-prefix</span></code> )</p></li>
+<li><p><em>webui_enforce_root_redirect:</em> (optional <strong>boolean</strong>) respond on <cite>GET /</cite> with a redirect to <cite>&lt;WEBUI_PREFIX&gt;/admin</cite>.(<strong>Added</strong> in v2.6.0-18,default: true, overridden byenv <cite>TARANTOOL_WEBUI_ENFORCE_ROOT_REDIRECT</cite>,args <cite>–webui-enforce-root-redirect</cite>)</p></li>
+<li><p><em>alias:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) human-readable instance name that will be available in administrative UI(default: argparse instance name, overridden byenv <cite>TARANTOOL_ALIAS</cite>,args <cite>–alias</cite>)</p></li>
+<li><p><em>roles:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) list of user-defined roles that will be availableto enable on the instance_uuid</p></li>
+<li><p><em>auth_enabled:</em> (optional <strong>boolean</strong>) toggle authentication in administrative UI and API(default: false)</p></li>
+<li><p><em>auth_backend_name:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) user-provided set of callbacks related to authentication</p></li>
+<li><p><em>console_sock:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Socket to start console listening on.(default: nil, overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_CONSOLE_SOCK</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--console-sock</span></code> )</p></li>
+<li><p><em>webui_blacklist:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) List of pages to be hidden in WebUI.(<strong>Added</strong> in v2.0.1-54, default:  <code class="docutils literal notranslate"><span class="pre">{}</span></code> )</p></li>
+<li><p><em>upgrade_schema:</em> (optional <strong>boolean</strong>) Run schema upgrade on the leader instance.(<strong>Added</strong> in v2.0.2-3,default:  <code class="docutils literal notranslate"><span class="pre">false</span></code> , overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_UPGRADE_SCHEMA</span></code> args  <code class="docutils literal notranslate"><span class="pre">--upgrade-schema</span></code> )</p></li>
+<li><p><em>roles_reload_allowed:</em> (optional <strong>boolean</strong>) Allow calling <a class="reference internal" href="#cartridge-reload-roles"><span class="std std-ref">cartridge.reload_roles</span></a>.(<strong>Added</strong> in v2.3.0-73, default:  <code class="docutils literal notranslate"><span class="pre">false</span></code> )</p></li>
+<li><p><em>upload_prefix:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Temporary directory used for saving files during clusterwideconfig upload. If relative path is specified, it’s evaluatedrelative to the  <code class="docutils literal notranslate"><span class="pre">workdir</span></code> .(<strong>Added</strong> in v2.4.0-43,default:  <code class="docutils literal notranslate"><span class="pre">/tmp</span></code> , overridden byenv  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_UPLOAD_PREFIX</span></code> ,args  <code class="docutils literal notranslate"><span class="pre">--upload-prefix</span></code> )</p></li>
+</ul>
+</li>
+<li><p><em>box_opts:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) tarantool extra box.cfg options (e.g. memtx_memory),that may require additional tuning</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="reload-roles">
+<span id="cartridge-reload-roles"></span><h3>reload_roles ()<a class="headerlink" href="#reload-roles" title="Permalink to this headline">¶</a></h3>
+<p>Perform hot-reload of cartridge roles code.</p>
+<p>This is an experimental feature, it’s only allowed if the application
+enables it explicitly:  <code class="docutils literal notranslate"><span class="pre">cartridge.cfg({roles_reload_allowed</span> <span class="pre">=</span>
+<span class="pre">true})</span></code> .</p>
+<p>Reloading starts by stopping all roles and restoring the initial
+state. It’s supposed that a role cleans up the global state when
+stopped, but even if it doesn’t, cartridge kills all fibers and
+removes global variables and HTTP routes.</p>
+<p>All Lua modules that were loaded during <a class="reference internal" href="#cartridge-cfg"><span class="std std-ref">cartridge.cfg</span></a> are unloaded,
+including supplementary modules required by a role. Modules, loaded
+before <a class="reference internal" href="#cartridge-cfg"><span class="std std-ref">cartridge.cfg</span></a> aren’t affected.</p>
+<p>Instance performs roles reload in a dedicated state  <code class="docutils literal notranslate"><span class="pre">ReloadingRoles</span></code> .
+If reload fails, the instance enters the  <code class="docutils literal notranslate"><span class="pre">ReloadError</span></code>  state, which
+can later be retried. Otherwise, if reload succeeds, instance
+proceeds to the  <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code>  state and initializes them as
+usual with  <code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> ,  <code class="docutils literal notranslate"><span class="pre">init()</span></code> , and  <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code>
+callbacks.</p>
+<p>Hot-reload could be forbidden in runtime with  <code class="docutils literal notranslate"><span class="pre">forbid_reload</span></code>  function.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="is-healthy">
+<span id="cartridge-is-healthy"></span><h3>is_healthy ()<a class="headerlink" href="#is-healthy" title="Permalink to this headline">¶</a></h3>
+<p>Check the cluster health.
+It is healthy if all instances are healthy.</p>
+<p>The function is designed mostly for testing purposes.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+</div>
+<div class="section" id="tables">
+<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vshardgroup">
+<span id="cartridge-vshardgroup"></span><h3>VshardGroup<a class="headerlink" href="#vshardgroup" title="Permalink to this headline">¶</a></h3>
+<p>Vshard storage group configuration.</p>
+<p>Every vshard storage must be assigned to a group.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>bucket_count:</em> (<strong>number</strong>) Bucket count for the storage group.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="global-functions">
+<h2>Global functions<a class="headerlink" href="#global-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="g-cartridge-get-schema">
+<span id="cartridge-g-cartridge-get-schema"></span><h3>_G.cartridge_get_schema ()<a class="headerlink" href="#g-cartridge-get-schema" title="Permalink to this headline">¶</a></h3>
+<p>Get clusterwide DDL schema.</p>
+<p>(<strong>Added</strong> in v1.2.0-28)</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Schema in YAML format</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="g-cartridge-set-schema-schema">
+<span id="cartridge-g-cartridge-set-schema"></span><h3>_G.cartridge_set_schema (schema)<a class="headerlink" href="#g-cartridge-set-schema-schema" title="Permalink to this headline">¶</a></h3>
+<p>Apply clusterwide DDL schema.</p>
+<p>(<strong>Added</strong> in v1.2.0-28)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>schema:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) in YAML format</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) The same new schema</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+<div class="section" id="clusterwide-ddl-schema">
+<h2>Clusterwide DDL schema<a class="headerlink" href="#clusterwide-ddl-schema" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-schema">
+<span id="cartridge-get-schema"></span><h3>get_schema ()<a class="headerlink" href="#get-schema" title="Permalink to this headline">¶</a></h3>
+<p>Get clusterwide DDL schema.
+It’s like <strong>_G.cartridge_get_schema</strong>,
+but isn’t a global variable.</p>
+<p>(<strong>Added</strong> in v2.0.1-54)</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Schema in YAML format</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="set-schema-schema">
+<span id="cartridge-set-schema"></span><h3>set_schema (schema)<a class="headerlink" href="#set-schema-schema" title="Permalink to this headline">¶</a></h3>
+<p>Apply clusterwide DDL schema.
+It’s like <strong>_G.cartridge_set_schema</strong>,
+but isn’t a global variable.</p>
+<p>(<strong>Added</strong> in v2.0.1-54)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>schema:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) in YAML format</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) The same new schema</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+<div class="section" id="cluster-administration">
+<h2>Cluster administration<a class="headerlink" href="#cluster-administration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="serverinfo">
+<span id="cartridge-serverinfo"></span><h3>ServerInfo<a class="headerlink" href="#serverinfo" title="Permalink to this headline">¶</a></h3>
+<p>Instance general information.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>alias:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Human-readable instance name.</p></li>
+<li><p><em>uri:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>disabled:</em> (<strong>boolean</strong>)</p></li>
+<li><p><em>electable:</em> (<strong>boolean</strong>)</p></li>
+<li><p><em>status:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Instance health.</p></li>
+<li><p><em>message:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Auxilary health status.</p></li>
+<li><p><em>replicaset:</em> (<a class="reference internal" href="#cartridge-replicasetinfo">ReplicasetInfo</a>) Circular reference to a replicaset.</p></li>
+<li><p><em>priority:</em> (<strong>number</strong>) Leadership priority for automatic failover.</p></li>
+<li><p><em>clock_delta:</em> (<strong>number</strong>) Difference between remote clock and the current one (inseconds), obtained from the membership module (SWIM protocol).Positive values mean remote clock are ahead of local, and viceversa.</p></li>
+<li><p><em>zone:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+</div>
+<div class="section" id="replicasetinfo">
+<span id="cartridge-replicasetinfo"></span><h3>ReplicasetInfo<a class="headerlink" href="#replicasetinfo" title="Permalink to this headline">¶</a></h3>
+<p>Replicaset general information.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) The replicaset UUID.</p></li>
+<li><p><em>roles:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) Roles enabled on the replicaset.</p></li>
+<li><p><em>status:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Replicaset health.</p></li>
+<li><p><em>master:</em> (<a class="reference internal" href="#cartridge-serverinfo">ServerInfo</a>) Replicaset leader according to configuration.</p></li>
+<li><p><em>active_master:</em> (<a class="reference internal" href="#cartridge-serverinfo">ServerInfo</a>) Active leader.</p></li>
+<li><p><em>weight:</em> (<strong>number</strong>) Vshard replicaset weight.Matters only if vshard-storage role is enabled.</p></li>
+<li><p><em>vshard_group:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Name of vshard group the replicaset belongs to.</p></li>
+<li><p><em>all_rw:</em> (<strong>boolean</strong>) A flag indicating that all servers in the replicaset should be read-write.</p></li>
+<li><p><em>alias:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Human-readable replicaset name.</p></li>
+<li><p><em>servers:</em> (<a class="reference internal" href="#cartridge-serverinfo">{ServerInfo,…}</a>) Circular reference to all instances in the replicaset.</p></li>
+</ul>
+</div>
+<div class="section" id="admin-get-servers-uuid">
+<span id="cartridge-admin-get-servers"></span><h3>admin_get_servers ([uuid])<a class="headerlink" href="#admin-get-servers-uuid" title="Permalink to this headline">¶</a></h3>
+<p>Get servers list.
+Optionally filter out the server with the given uuid.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)  (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference internal" href="#cartridge-serverinfo">{ServerInfo,…}</a>)</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-get-replicasets-uuid">
+<span id="cartridge-admin-get-replicasets"></span><h3>admin_get_replicasets ([uuid])<a class="headerlink" href="#admin-get-replicasets-uuid" title="Permalink to this headline">¶</a></h3>
+<p>Get replicasets list.
+Optionally filter out the replicaset with given uuid.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)  (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference internal" href="#cartridge-replicasetinfo">{ReplicasetInfo,…}</a>)</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-probe-server-uri">
+<span id="cartridge-admin-probe-server"></span><h3>admin_probe_server (uri)<a class="headerlink" href="#admin-probe-server-uri" title="Permalink to this headline">¶</a></h3>
+<p>Discover an instance.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uri:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+</div>
+<div class="section" id="admin-enable-servers-uuids">
+<span id="cartridge-admin-enable-servers"></span><h3>admin_enable_servers (uuids)<a class="headerlink" href="#admin-enable-servers-uuids" title="Permalink to this headline">¶</a></h3>
+<p>Enable nodes after they were disabled.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uuids:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference internal" href="#cartridge-serverinfo">{ServerInfo,…}</a>)</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-disable-servers-uuids">
+<span id="cartridge-admin-disable-servers"></span><h3>admin_disable_servers (uuids)<a class="headerlink" href="#admin-disable-servers-uuids" title="Permalink to this headline">¶</a></h3>
+<p>Temporarily disable nodes.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uuids:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference internal" href="#cartridge-serverinfo">{ServerInfo,…}</a>)</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-restart-replication">
+<span id="cartridge-admin-restart-replication"></span><h3>admin_restart_replication (…)<a class="headerlink" href="#admin-restart-replication" title="Permalink to this headline">¶</a></h3>
+<p>Restart replication on specified instances.</p>
+<p>(added in v2.6.0-43)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>…:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,</a>) } uuids</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-bootstrap-vshard">
+<span id="cartridge-admin-bootstrap-vshard"></span><h3>admin_bootstrap_vshard ()<a class="headerlink" href="#admin-bootstrap-vshard" title="Permalink to this headline">¶</a></h3>
+<p>Call  <code class="docutils literal notranslate"><span class="pre">vshard.router.bootstrap()</span></code> .
+This function distributes all buckets across the replica sets.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) <cite>true</cite></p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+<div class="section" id="automatic-failover-management">
+<h2>Automatic failover management<a class="headerlink" href="#automatic-failover-management" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="failoverparams">
+<span id="cartridge-failoverparams"></span><h3>FailoverParams<a class="headerlink" href="#failoverparams" title="Permalink to this headline">¶</a></h3>
+<p>Failover parameters.</p>
+<p>(<strong>Added</strong> in v2.0.2-2)</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>mode:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Supported modes are “disabled”, “eventual”, “stateful” or “raft”</p></li>
+<li><p><em>state_provider:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Supported state providers are “tarantool” and “etcd2”.</p></li>
+<li><p><em>failover_timeout:</em> (<strong>number</strong>) (added in v2.3.0-52)Timeout (in seconds), used by membership tomark  <code class="docutils literal notranslate"><span class="pre">suspect</span></code>  members as  <code class="docutils literal notranslate"><span class="pre">dead</span></code>  (default: 20)</p></li>
+<li><p><em>tarantool_params:</em> (added in v2.0.2-2)</p>
+<ul>
+<li><p><em>uri:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>password:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+</li>
+<li><p><em>etcd2_params:</em> (added in v2.1.2-26)</p>
+<ul>
+<li><p><em>prefix:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Prefix used for etcd keys: <cite>&lt;prefix&gt;/lock</cite> and`&lt;prefix&gt;/leaders`</p></li>
+<li><p><em>lock_delay:</em> (optional <strong>number</strong>) Timeout (in seconds), determines lock’s time-to-live (default: 10)</p></li>
+<li><p><em>endpoints:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) URIs that are used to discover and to access etcd cluster instances.(default:  <code class="docutils literal notranslate"><span class="pre">{'http://localhost:2379',</span> <span class="pre">'http://localhost:4001'}</span></code> )</p></li>
+<li><p><em>username:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) (default: “”)</p></li>
+<li><p><em>password:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) (default: “”)</p></li>
+</ul>
+</li>
+<li><p><em>fencing_enabled:</em> (<strong>boolean</strong>) (added in v2.3.0-57)Abandon leadership when both the state provider quorum and atleast one replica are lost (suitable in stateful mode only,default: false)</p></li>
+<li><p><em>fencing_timeout:</em> (<strong>number</strong>) (added in v2.3.0-57)Time (in seconds) to actuate fencing after the check fails(default: 10)</p></li>
+<li><p><em>fencing_pause:</em> (<strong>number</strong>) (added in v2.3.0-57)The period (in seconds) of performing the check(default: 2)</p></li>
+<li><p><em>leader_autoreturn:</em> (<strong>boolean</strong>) (added in v2.7.7)If enabled, then switched leader will return after ` <code class="docutils literal notranslate"><span class="pre">autoreturn_delay</span></code> <a href="#id56"><span class="problematic" id="id57">`</span></a>(default: false)</p></li>
+<li><p><em>autoreturn_delay:</em> (<strong>number</strong>) (added in v2.7.7)Time (in seconds) until failover try to return leader to the first nodein ` <code class="docutils literal notranslate"><span class="pre">failover_priority</span></code> <a href="#id58"><span class="problematic" id="id59">`</span></a>(default: 300)</p></li>
+<li><p><em>check_cookie_hash:</em> (<strong>boolean</strong>) (added in v2.7.8)If enabled, then check that nobody else uses this stateboard(default: true)</p></li>
+</ul>
+</div>
+<div class="section" id="failover-get-params">
+<span id="cartridge-failover-get-params"></span><h3>failover_get_params ()<a class="headerlink" href="#failover-get-params" title="Permalink to this headline">¶</a></h3>
+<p>Get failover configuration.</p>
+<p>(<strong>Added</strong> in v2.0.2-2)</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference internal" href="#cartridge-failoverparams">FailoverParams</a>)</p>
+</div>
+<div class="section" id="failover-set-params-opts">
+<span id="cartridge-failover-set-params"></span><h3>failover_set_params (opts)<a class="headerlink" href="#failover-set-params-opts" title="Permalink to this headline">¶</a></h3>
+<p>Configure automatic failover.</p>
+<p>(<strong>Added</strong> in v2.0.2-2)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>mode:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>state_provider:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>failover_timeout:</em> (optional <strong>number</strong>) (added in v2.3.0-52)</p></li>
+<li><p><em>tarantool_params:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>etcd2_params:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) (added in v2.1.2-26)</p></li>
+<li><p><em>fencing_enabled:</em> (optional <strong>boolean</strong>) (added in v2.3.0-57)</p></li>
+<li><p><em>fencing_timeout:</em> (optional <strong>number</strong>) (added in v2.3.0-57)</p></li>
+<li><p><em>fencing_pause:</em> (optional <strong>number</strong>) (added in v2.3.0-57)</p></li>
+<li><p><em>leader_autoreturn:</em> (optional <strong>boolean</strong>) (added in v2.7.7)</p></li>
+<li><p><em>autoreturn_delay:</em> (optional <strong>number</strong>) (added in v2.7.7)</p></li>
+<li><p><em>check_cookie_hash:</em> (optional <strong>boolean</strong>) (added in v2.7.8)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) <cite>true</cite> if config applied successfully</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="failover-promote-replicaset-uuid-opts">
+<span id="cartridge-failover-promote"></span><h3>failover_promote (replicaset_uuid[, opts])<a class="headerlink" href="#failover-promote-replicaset-uuid-opts" title="Permalink to this headline">¶</a></h3>
+<p>Promote leaders in replicasets.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>replicaset_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) ] = leader_uuid }</p></li>
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>force_inconsistency:</em> (optional <strong>boolean</strong>) (default: <strong>false</strong>)</p></li>
+<li><p><em>skip_error_on_change:</em> (optional <strong>boolean</strong>) Skip etcd error if vclockkeeper was changed between calls (default: <strong>false</strong>)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true On success</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-get-failover">
+<span id="cartridge-admin-get-failover"></span><h3>admin_get_failover ()<a class="headerlink" href="#admin-get-failover" title="Permalink to this headline">¶</a></h3>
+<p>Get current failover state.</p>
+<p>(<strong>Deprecated</strong> since v2.0.2-2)</p>
+</div>
+<div class="section" id="admin-enable-failover">
+<span id="cartridge-admin-enable-failover"></span><h3>admin_enable_failover ()<a class="headerlink" href="#admin-enable-failover" title="Permalink to this headline">¶</a></h3>
+<p>Enable failover.
+(<strong>Deprecated</strong> since v2.0.1-95 in favor of
+<a class="reference internal" href="#cartridge-failover-set-params"><span class="std std-ref">cartridge.failover_set_params</span></a>)</p>
+</div>
+<div class="section" id="admin-disable-failover">
+<span id="cartridge-admin-disable-failover"></span><h3>admin_disable_failover ()<a class="headerlink" href="#admin-disable-failover" title="Permalink to this headline">¶</a></h3>
+<p>Disable failover.
+(<strong>Deprecated</strong> since v2.0.1-95 in favor of
+<a class="reference internal" href="#cartridge-failover-set-params"><span class="std std-ref">cartridge.failover_set_params</span></a>)</p>
+</div>
+</div>
+<div class="section" id="managing-cluster-topology">
+<h2>Managing cluster topology<a class="headerlink" href="#managing-cluster-topology" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="admin-edit-topology-args">
+<span id="cartridge-admin-edit-topology"></span><h3>admin_edit_topology (args)<a class="headerlink" href="#admin-edit-topology-args" title="Permalink to this headline">¶</a></h3>
+<p>Edit cluster topology.
+This function can be used for:</p>
+<ul class="simple">
+<li><p>bootstrapping cluster from scratch</p></li>
+<li><p>joining a server to an existing replicaset</p></li>
+<li><p>creating new replicaset with one or more servers</p></li>
+<li><p>editing uri/labels of servers</p></li>
+<li><p>disabling and expelling servers</p></li>
+</ul>
+<p>(<strong>Added</strong> in v1.0.0-17)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>args:</em></p>
+<ul>
+<li><p><em>servers:</em> (optional <a class="reference internal" href="#cartridge-editserverparams">{EditServerParams,..}</a>)</p></li>
+<li><p><em>replicasets:</em> (optional <a class="reference internal" href="#cartridge-editreplicasetparams">{EditReplicasetParams,..}</a>)</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="editreplicasetparams">
+<span id="cartridge-editreplicasetparams"></span><h3>EditReplicasetParams<a class="headerlink" href="#editreplicasetparams" title="Permalink to this headline">¶</a></h3>
+<p>Replicatets modifications.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>uuid:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>alias:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>roles:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+<li><p><em>all_rw:</em> (optional <strong>boolean</strong>)</p></li>
+<li><p><em>weight:</em> (optional <strong>number</strong>)</p></li>
+<li><p><em>failover_priority:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) array of uuids specifying servers failover priority</p></li>
+<li><p><em>vshard_group:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>join_servers:</em> (optional <a class="reference internal" href="#cartridge-joinserverparams">{JoinServerParams,…}</a>)</p></li>
+</ul>
+</div>
+<div class="section" id="editserverparams">
+<span id="cartridge-editserverparams"></span><h3>EditServerParams<a class="headerlink" href="#editserverparams" title="Permalink to this headline">¶</a></h3>
+<p>Servers modifications.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>uri:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>zone:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+<li><p><em>disabled:</em> (optional <strong>boolean</strong>)</p></li>
+<li><p><em>electable:</em> (optional <strong>boolean</strong>)</p></li>
+<li><p><em>expelled:</em> (optional <strong>boolean</strong>) Expelling an instance is permanent and can’t be undone.It’s suitable for situations when the hardware is destroyed,snapshots are lost and there is no hope to bring it back to life.</p></li>
+</ul>
+</div>
+<div class="section" id="joinserverparams">
+<span id="cartridge-joinserverparams"></span><h3>JoinServerParams<a class="headerlink" href="#joinserverparams" title="Permalink to this headline">¶</a></h3>
+<p>Parameters required for joining a new server.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>uri:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>uuid:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>zone:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) (<strong>Added</strong> in v2.4.0-14)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="clusterwide-configuration">
+<h2>Clusterwide configuration<a class="headerlink" href="#clusterwide-configuration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="config-get-readonly-section-name">
+<span id="cartridge-config-get-readonly"></span><h3>config_get_readonly ([section_name])<a class="headerlink" href="#config-get-readonly-section-name" title="Permalink to this headline">¶</a></h3>
+<p>Get a read-only view on the clusterwide configuration.</p>
+<p>Returns either  <code class="docutils literal notranslate"><span class="pre">conf[section_name]</span></code>  or entire  <code class="docutils literal notranslate"><span class="pre">conf</span></code> .
+Any attempt to modify the section or its children
+will raise an error.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>section_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)  (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p>
+</div>
+<div class="section" id="config-get-deepcopy-section-name">
+<span id="cartridge-config-get-deepcopy"></span><h3>config_get_deepcopy ([section_name])<a class="headerlink" href="#config-get-deepcopy-section-name" title="Permalink to this headline">¶</a></h3>
+<p>Get a read-write deep copy of the clusterwide configuration.</p>
+<p>Returns either  <code class="docutils literal notranslate"><span class="pre">conf[section_name]</span></code>  or entire  <code class="docutils literal notranslate"><span class="pre">conf</span></code> .
+Changing it has no effect
+unless it’s used to patch clusterwide configuration.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>section_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)  (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p>
+</div>
+<div class="section" id="config-patch-clusterwide-patch">
+<span id="cartridge-config-patch-clusterwide"></span><h3>config_patch_clusterwide (patch)<a class="headerlink" href="#config-patch-clusterwide-patch" title="Permalink to this headline">¶</a></h3>
+<p>Edit the clusterwide configuration.
+Top-level keys are merged with the current configuration.
+To remove a top-level section, use
+<code class="docutils literal notranslate"><span class="pre">patch_clusterwide{key</span> <span class="pre">=</span> <span class="pre">box.NULL}</span></code> .</p>
+<p>The function executes following steps:</p>
+<ol class="upperroman simple">
+<li><p>Patches the current configuration.</p></li>
+<li><p>Validates topology on the current server.</p></li>
+</ol>
+<p>III. Executes two-phase commit on all servers in the cluster
+excluding expelled and disabled ones.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>patch:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="config-force-reapply-uuids">
+<span id="cartridge-config-force-reapply"></span><h3>config_force_reapply (uuids)<a class="headerlink" href="#config-force-reapply-uuids" title="Permalink to this headline">¶</a></h3>
+<p>Forcefully apply config to the given instances.</p>
+<p>In particular:</p>
+<ul class="simple">
+<li><p>Abort two-phase commit (remove  <code class="docutils literal notranslate"><span class="pre">config.prepare</span></code>  lock)</p></li>
+<li><p>Upload the active config from the current instance.</p></li>
+<li><p>Apply it (reconfigure all roles)</p></li>
+</ul>
+<p>(<strong>Added</strong> in v2.3.0-68)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uuids:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+<div class="section" id="inter-role-interaction">
+<h2>Inter-role interaction<a class="headerlink" href="#inter-role-interaction" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="service-get-module-name">
+<span id="cartridge-service-get"></span><h3>service_get (module_name)<a class="headerlink" href="#service-get-module-name" title="Permalink to this headline">¶</a></h3>
+<p>Get a module from registry.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>module_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>nil</strong>)</p>
+<p><strong>Or</strong></p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) instance</p>
+</div>
+<div class="section" id="service-set-module-name-instance">
+<span id="cartridge-service-set"></span><h3>service_set (module_name, instance)<a class="headerlink" href="#service-set-module-name-instance" title="Permalink to this headline">¶</a></h3>
+<p>Put a module into registry or drop it.
+This function typically doesn’t need to be called explicitly, the
+cluster automatically sets all the initialized roles.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>module_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>instance:</em> (<strong>nil</strong> or <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>nil</strong>)</p>
+</div>
+</div>
+<div class="section" id="cross-instance-calls">
+<h2>Cross-instance calls<a class="headerlink" href="#cross-instance-calls" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="rpc-call-role-name-fn-name-args-opts">
+<span id="cartridge-rpc-call"></span><h3>rpc_call (role_name, fn_name[, args[, opts]])<a class="headerlink" href="#rpc-call-role-name-fn-name-args-opts" title="Permalink to this headline">¶</a></h3>
+<p>Perform a remote procedure call.
+Find a suitable healthy instance with an enabled role and
+perform a [ <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code> ](
+<a class="reference external" href="https://tarantool.io/en/doc/latest/reference/reference_lua/net_box/#net-box-call">https://tarantool.io/en/doc/latest/reference/reference_lua/net_box/#net-box-call</a>)
+on it.  <code class="docutils literal notranslate"><span class="pre">rpc.call()</span></code>  can only be used for functions defined in role return table
+unlike  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call()</span></code> , which is used for global functions as well.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>role_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>fn_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>args:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)  (optional)</p></li>
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>prefer_local:</em> (optional <strong>boolean</strong>) Don’t perform a remote call if possible. When the role is enabledlocally and current instance is healthy the remote netbox call issubstituted with a local Lua function call. When the option isdisabled it never tries to perform call locally and always usesnetbox connection, even to connect self.(default: <strong>true</strong>)</p></li>
+<li><p><em>leader_only:</em> (optional <strong>boolean</strong>) Perform a call only on the replica set leaders.(default: <strong>false</strong>)</p></li>
+<li><p><em>uri:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Force a call to be performed on this particular uri.Disregards member status and  <code class="docutils literal notranslate"><span class="pre">opts.prefer_local</span></code> .Conflicts with  <code class="docutils literal notranslate"><span class="pre">opts.leader_only</span> <span class="pre">=</span> <span class="pre">true</span></code> .(added in v1.2.0-63)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Filter instances that have the specified labels. Adding labels is possible via theedit_topology method or via graphql.Example: rpc.call(‘role’, ‘func’, {}, { labels = { [‘msk’] = ‘dc’ } })</p></li>
+<li><p><em>remote_only:</em>  (<em>deprecated</em>) Use  <code class="docutils literal notranslate"><span class="pre">prefer_local</span></code>  instead.</p></li>
+<li><p><em>timeout:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+<li><p><em>buffer:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+<li><p><em>on_push:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+<li><p><em>on_push_ctx:</em>  passed to  <code class="docutils literal notranslate"><span class="pre">net.box</span></code>   <code class="docutils literal notranslate"><span class="pre">conn:call</span></code>  options.</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p><cite>conn:call()</cite> result</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="usage">
+<h3>Usage:<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- myrole.lua</span>
+<span class="kr">return</span> <span class="p">{</span>
+    <span class="n">role_name</span> <span class="o">=</span> <span class="s1">&#39;myrole&#39;</span><span class="p">,</span>
+    <span class="n">add</span> <span class="o">=</span> <span class="kr">function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="kr">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="kr">end</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- call it as follows:</span>
+<span class="n">cartridge</span><span class="p">.</span><span class="n">rpc_call</span><span class="p">(</span><span class="s1">&#39;myrole&#39;</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">})</span> <span class="c1">-- returns 4</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rpc-get-candidates-role-name-opts">
+<span id="cartridge-rpc-get-candidates"></span><h3>rpc_get_candidates (role_name[, opts])<a class="headerlink" href="#rpc-get-candidates-role-name-opts" title="Permalink to this headline">¶</a></h3>
+<p>List candidates suitable for performing a remote call.
+Candidates are deduced from a local config and membership, which may
+differ from replica to replica (e.g. during  <code class="docutils literal notranslate"><span class="pre">patch_clusterwide</span></code> ). It
+may produce invalid candidates.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>role_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>opts:</em></p>
+<ul>
+<li><p><em>leader_only:</em> (optional <strong>boolean</strong>) Filter instances which are leaders now.(default: <strong>false</strong>)</p></li>
+<li><p><em>healthy_only:</em> (optional <strong>boolean</strong>) The member is considered healthy ifit reports either  <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code>  or  <code class="docutils literal notranslate"><span class="pre">RolesConfigured</span></code>  stateand its SWIM status is either  <code class="docutils literal notranslate"><span class="pre">alive</span></code>  or  <code class="docutils literal notranslate"><span class="pre">suspect</span></code> (added in v1.1.0-11, default: <strong>true</strong>)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Filter instances that have the specified labels. Adding labels is possible via theedit_topology method or via graphqlExample: rpc.get_candidates(‘role’, { labels = {[‘msk’] = ‘dc’} })</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) URIs</p>
+</div>
+</div>
+<div class="section" id="authentication-and-authorization">
+<h2>Authentication and authorization<a class="headerlink" href="#authentication-and-authorization" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="http-authorize-request-request">
+<span id="cartridge-http-authorize-request"></span><h3>http_authorize_request (request)<a class="headerlink" href="#http-authorize-request-request" title="Permalink to this headline">¶</a></h3>
+<p>Authorize an HTTP request.</p>
+<p>Get username from cookies or basic HTTP authentication.</p>
+<p>(<strong>Added</strong> in v1.1.0-4)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>request:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) Access granted</p>
+</div>
+<div class="section" id="http-render-response-response">
+<span id="cartridge-http-render-response"></span><h3>http_render_response (response)<a class="headerlink" href="#http-render-response-response" title="Permalink to this headline">¶</a></h3>
+<p>Render HTTP response.</p>
+<p>Inject set-cookie headers into response in order to renew or reset
+the cookie.</p>
+<p>(<strong>Added</strong> in v1.1.0-4)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>response:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) The same response with cookies injected</p>
+</div>
+<div class="section" id="http-get-username">
+<span id="cartridge-http-get-username"></span><h3>http_get_username ()<a class="headerlink" href="#http-get-username" title="Permalink to this headline">¶</a></h3>
+<p>Get username for the current HTTP session.</p>
+<p>(<strong>Added</strong> in v1.1.0-4)</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a> or <strong>nil</strong>)</p>
+</div>
+</div>
+<div class="section" id="deprecated-functions">
+<h2>Deprecated functions<a class="headerlink" href="#deprecated-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="admin-edit-replicaset-args">
+<span id="cartridge-admin-edit-replicaset"></span><h3>admin_edit_replicaset (args)<a class="headerlink" href="#admin-edit-replicaset-args" title="Permalink to this headline">¶</a></h3>
+<p>Edit replicaset parameters (<em>deprecated</em>).</p>
+<p>(<strong>Deprecated</strong> since v1.0.0-17 in favor of <a class="reference internal" href="#cartridge-admin-edit-topology"><span class="std std-ref">cartridge.admin_edit_topology</span></a>)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>args:</em></p>
+<ul>
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>alias:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>roles:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+<li><p><em>master:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>) Failover order</p></li>
+<li><p><em>weight:</em> (optional <strong>number</strong>)</p></li>
+<li><p><em>vshard_group:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>all_rw:</em> (optional <strong>boolean</strong>)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-edit-server-args">
+<span id="cartridge-admin-edit-server"></span><h3>admin_edit_server (args)<a class="headerlink" href="#admin-edit-server-args" title="Permalink to this headline">¶</a></h3>
+<p>Edit an instance (<em>deprecated</em>).</p>
+<p>(<strong>Deprecated</strong> since v1.0.0-17 in favor of <a class="reference internal" href="#cartridge-admin-edit-topology"><span class="std std-ref">cartridge.admin_edit_topology</span></a>)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>args:</em></p>
+<ul>
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>uri:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{[string]=string,…}</a>)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-join-server-args">
+<span id="cartridge-admin-join-server"></span><h3>admin_join_server (args)<a class="headerlink" href="#admin-join-server-args" title="Permalink to this headline">¶</a></h3>
+<p>Join an instance to the cluster (<em>deprecated</em>).</p>
+<p>(<strong>Deprecated</strong> since v1.0.0-17 in favor of <a class="reference internal" href="#cartridge-admin-edit-topology"><span class="std std-ref">cartridge.admin_edit_topology</span></a>)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>args:</em></p>
+<ul>
+<li><p><em>uri:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>instance_uuid:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>replicaset_uuid:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>roles:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{string,…}</a>)</p></li>
+<li><p><em>timeout:</em> (optional <strong>number</strong>)</p></li>
+<li><p><em>zone:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) (<strong>Added</strong> in v2.4.0-14)</p></li>
+<li><p><em>labels:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{[string]=string,…}</a>)</p></li>
+<li><p><em>vshard_group:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>replicaset_alias:</em> (optional <a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+<li><p><em>replicaset_weight:</em> (optional <strong>number</strong>)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="admin-expel-server-uuid">
+<span id="cartridge-admin-expel-server"></span><h3>admin_expel_server (uuid)<a class="headerlink" href="#admin-expel-server-uuid" title="Permalink to this headline">¶</a></h3>
+<p>Expel an instance (<em>deprecated</em>).
+Forever.</p>
+<p>(<strong>Deprecated</strong> since v1.0.0-17 in favor of <a class="reference internal" href="#cartridge-admin-edit-topology"><span class="std std-ref">cartridge.admin_edit_topology</span></a>)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Table of contents</a></li>
+      <li>Next: <a href="cartridge.auth.html" title="next chapter">Module <em>cartridge.auth</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

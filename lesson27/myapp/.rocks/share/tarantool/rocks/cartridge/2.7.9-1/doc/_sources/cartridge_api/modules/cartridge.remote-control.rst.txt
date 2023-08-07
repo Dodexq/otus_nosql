@@ -1,0 +1,133 @@
+.. _cartridge.remote-control:
+
+===============================================================================
+Module *cartridge.remote-control*
+===============================================================================
+
+Tarantool remote control server.
+
+
+
+Allows to control an instance over TCP by  ``net.box``   ``call``  and  ``eval`` .
+The server is designed as a partial replacement for the **iproto** protocol.
+It's most useful when  ``box.cfg``  wasn't configured yet.
+
+Other  ``net.box``  features aren't supported and will never be.
+
+(**Added** in v0.10.0-2)
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.remote-control.bind:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+bind (host, port)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Init remote control server. 
+
+Bind the port but don't start serving connections yet.
+
+
+
+**Parameters:**
+
+- *host:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *port:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_ or **number**)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.remote-control.accept:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+accept (credentials)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Start remote control server. 
+To connect the server use regular  ``net.box``  connection.
+
+Access is restricted to the user with specified credentials,
+which can be passed as  ``net_box.connect('username:password@host:port')`` .
+
+
+
+**Parameters:**
+
+- *credentials:* 
+
+  - *username:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *password:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+
+
+.. _cartridge.remote-control.unbind:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+unbind ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Stop the server. 
+
+It doesn't interrupt any existing connections.
+
+
+
+
+
+.. _cartridge.remote-control.drop_connections:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drop_connections ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Explicitly drop all established connections. 
+
+Close all the sockets except the one that triggered the function.
+The last socket will be closed when all requests are processed.
+
+
+
+
+
+.. _cartridge.remote-control.suspend:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+suspend ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pause to handle requests for all clients. 
+
+It doesn't interrupt any existing connections.
+
+
+
+
+
+.. _cartridge.remote-control.suspend:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+suspend ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Resume to handle requests for all clients. 
+
+It doesn't interrupt any existing connections.
+
+
+
+
+

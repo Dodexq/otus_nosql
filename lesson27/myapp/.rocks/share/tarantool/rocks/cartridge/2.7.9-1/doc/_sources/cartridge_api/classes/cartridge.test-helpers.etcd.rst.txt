@@ -1,0 +1,65 @@
+.. _cartridge.test-helpers.etcd:
+
+===============================================================================
+Class *cartridge.test-helpers.etcd*
+===============================================================================
+
+Class to run and manage etcd node.
+
+
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.test-helpers.etcd.Etcd:new:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Etcd:new (object)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Build etcd node object.
+
+
+**Parameters:**
+
+- *object:* 
+
+  - *name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Human-readable node name.  
+  - *workdir:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Path to the data directory.  
+  - *etcd_path:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Path to the etcd executable.  
+  - *peer_url:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) URL to listen on for peer traffic.  
+  - *client_url:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) URL to listen on for client traffic.  
+  - *env:* (**tab**) Environment variables passed to the process. (optional) 
+  - *args:* (**tab**) Command-line arguments passed to the process. (optional) 
+
+
+**Returns**:
+
+object
+
+
+.. _cartridge.test-helpers.etcd.Etcd:start:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Etcd:start ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Start the node.
+
+
+
+
+.. _cartridge.test-helpers.etcd.Etcd:stop:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Etcd:stop ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Stop the node.
+
+
+
+

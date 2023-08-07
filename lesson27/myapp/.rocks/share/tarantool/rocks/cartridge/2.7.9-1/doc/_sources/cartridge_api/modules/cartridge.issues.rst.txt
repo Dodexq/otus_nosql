@@ -1,0 +1,180 @@
+.. _cartridge.issues:
+
+===============================================================================
+Module *cartridge.issues*
+===============================================================================
+
+Monitor issues across cluster instances.
+
+
+
+Cartridge detects the following problems:
+
+Replication:
+
+* critical: "Replication from ... to ... isn't running" -
+  when  ``box.info.replication.upstream == nil`` ;
+* critical: "Replication from ... to ... state "stopped"/"orphan"/etc. (...)";
+* warning: "Replication from ... to ...: high lag" -
+  when  ``upstream.lag > box.cfg.replication_sync_lag`` ;
+* warning: "Replication from ... to ...: long idle" -
+  when  ``upstream.idle > 2 * box.cfg.replication_timeout`` ;
+
+
+Failover:
+
+* warning: "Can't obtain failover coordinator (...)";
+* warning: "There is no active failover coordinator";
+* warning: "Failover is stuck on ...: Error fetching appointments (...)";
+* warning: "Failover is stuck on ...: Failover fiber is dead" -
+  this is likely a bug;
+
+
+Switchover:
+
+* warning: "Consistency on ... isn't reached yet";
+
+
+Clock:
+
+* warning: "Clock difference between ... and ... exceed threshold"
+  ``limits.clock_delta_threshold_warning`` ;
+
+
+Memory:
+
+* critical: "Running out of memory on ..." - when all 3 metrics
+  `items_used_ratio`, `arena_used_ratio`, `quota_used_ratio` from
+  ``box.slab.info()``  exceed  ``limits.fragmentation_threshold_critical`` ;
+* warning: "Memory is highly fragmented on ..." - when
+  ``items_used_ratio > limits.fragmentation_threshold_warning``  and
+  both `arena_used_ratio`, `quota_used_ratio` exceed critical limit;
+
+
+Configuration:
+
+* warning: "Configuration checksum mismatch on ...";
+* warning: "Configuration is prepared and locked on ...";
+* warning: "Advertise URI (...) differs from clusterwide config (...)";
+* warning: "Configuring roles is stuck on ... and hangs for ... so far";
+
+
+Alien members:
+
+* warning: "Instance ... with alien uuid is in the membership" -
+  when two separate clusters share the same cluster cookie;
+
+
+Deprecated space format:
+
+* warning: "Instance ... has spaces with deprecated format: space1, ..."
+
+
+Custom issues (defined by user):
+
+* Custom roles can announce more issues with their own level, topic
+  and message. See :ref:`custom-role.get_issues <custom-role.get_issues>`.
+
+
+GraphQL request:
+
+You can get info about cluster issues using the following GrapQL request:
+
+.. code-block:: lua 
+ 
+    {
+        cluster {
+            issues {
+                level
+                message
+                replicaset_uuid
+                instance_uuid
+                topic
+             }
+         }
+     }
+    
+
+
+
+-------------------------------------------------------------------------------
+Tables
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.issues.limits:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+limits
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Thresholds for issuing warnings. 
+All settings are local, not clusterwide. They can be changed with
+corresponding environment variables ( ``TARANTOOL_*`` ) or command-line
+arguments. See :ref:`cartridge.argparse <cartridge.argparse>` module for details.
+
+
+
+**Fields:**
+
+- *fragmentation_threshold_critical:* (**number**) *default*: 0.85.  
+- *fragmentation_threshold_full:* (**number**) *default*: 1.0.  
+- *fragmentation_threshold_warning:* (**number**) *default*: 0.6.  
+- *clock_delta_threshold_warning:* (**number**) *default*: 5.  
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.issues.validate_limits:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+validate_limits (limits)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Validate limits configuration.
+
+
+**Parameters:**
+
+- *limits:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.issues.set_limits:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set_limits (limits)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Update limits configuration.
+
+
+**Parameters:**
+
+- *limits:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

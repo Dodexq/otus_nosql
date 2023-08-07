@@ -1,0 +1,3 @@
+#!/bin/sh
+
+LUAROCKS_SYSCONFDIR='/etc/tarantool/rocks' exec '/usr/bin/tarantool' -e 'package.path="/home/vagrant/tarantool/myapp/.rocks/share/tarantool/?.lua;/home/vagrant/tarantool/myapp/.rocks/share/tarantool/?/init.lua;"..package.path;package.cpath="/home/vagrant/tarantool/myapp/.rocks/lib/tarantool/?.so;"..package.cpath;local k,l,_=pcall(require,"luarocks.loader") _=k and l.add_context("cartridge","2.7.9-1")' '/home/vagrant/tarantool/myapp/.rocks/share/tarantool/rocks/cartridge/2.7.9-1/bin/stateboard' "$@"

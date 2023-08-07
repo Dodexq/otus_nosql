@@ -1,0 +1,788 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions </a></li>
+<li><a href="#Functions__shortcuts_">Functions (shortcuts) </a></li>
+<li><a href="#Class_error_class">Class error_class </a></li>
+<li><a href="#Class_error_object">Class error_object </a></li>
+<li><a href="#Tools_for_API_deprecation">Tools for API deprecation </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>errors</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="topics/README.md.html">README</a></li>
+  <li><a href="topics/CHANGELOG.md.html">CHANGELOG</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>errors</code></h1>
+<p>Convenient error handling in Tarantool.</p>
+<p>
+
+</p>
+
+
+<h2><a href="#Functions">Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#is_error_object">is_error_object (obj)</a></td>
+	<td class="summary">Check if the argument is an error object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#new_class">new_class (class_name[, options])</a></td>
+	<td class="summary">Create new error class.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#netbox_eval">netbox_eval (conn, code[, arguments[, options]])</a></td>
+	<td class="summary">Do protected net.box evaluation.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#netbox_call">netbox_call (conn, function_name[, arguments[, options]])</a></td>
+	<td class="summary">Perform protected net.box call.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#netbox_wait_async">netbox_wait_async (future, timeout)</a></td>
+	<td class="summary">Wait for result from async net.box call / eval.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#wrap">wrap ([...])</a></td>
+	<td class="summary">Postprocess arguments.</td>
+	</tr>
+</table>
+<h2><a href="#Functions__shortcuts_">Functions (shortcuts) </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#new">new (class_name[, level], fmt[, ...])</a></td>
+	<td class="summary">Shortcut for <a href="index.html#error_class:new">error_class:new</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pcall">pcall (class_name, fn[, ...])</a></td>
+	<td class="summary">Shortcut for <a href="index.html#error_class:pcall">error_class:pcall</a>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#assert">assert (class_name, cond[, ...])</a></td>
+	<td class="summary">Shortcut for <a href="index.html#error_class:assert">error_class:assert</a>.</td>
+	</tr>
+</table>
+<h2><a href="#Class_error_class">Class error_class </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#error_class:new">error_class:new ([level], fmt[, ...])</a></td>
+	<td class="summary">Create error object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#error_class:pcall">error_class:pcall (fn[, ...])</a></td>
+	<td class="summary">Perform protected Lua call, gathering error as object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#error_class:assert">error_class:assert (cond[, ...])</a></td>
+	<td class="summary">Raise an error object unless condition is true.</td>
+	</tr>
+</table>
+<h2><a href="#Class_error_object">Class error_object </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#error_object:tostring">error_object:tostring ()</a></td>
+	<td class="summary">Get string representation.</td>
+	</tr>
+</table>
+<h2><a href="#Tools_for_API_deprecation">Tools for API deprecation </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#deprecate">deprecate (message)</a></td>
+	<td class="summary">Issue deprecation error.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set_deprecation_handler">set_deprecation_handler (fn)</a></td>
+	<td class="summary">Set new deprecation handler.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "is_error_object"></a>
+    <strong>is_error_object (obj)</strong>
+    </dt>
+    <dd>
+    Check if the argument is an error object. </p>
+
+<p> The check is positive if it's a table with mandatory fields:
+ <code>err</code>, <code>str</code>, <code>line</code>, <code>file</code>, <code>class_name</code>. Their types aren't
+ checked. Other fields are ignored.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">obj</span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        true/false
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "new_class"></a>
+    <strong>new_class (class_name[, options])</strong>
+    </dt>
+    <dd>
+    Create new error class.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">class_name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">options</span>
+
+
+        <ul>
+        <li><span class="parameter">capture_stack</span>
+            <span class="types"><span class="type">boolean</span></span>
+           Capture backtrace at creation.
+   (default: <strong>true</strong>)
+        </li>
+        <li><span class="parameter">log_on_creation</span>
+            <span class="types"><span class="type">boolean</span></span>
+           Produce error log at creation.
+   (default: <strong>false</strong>)
+        </li>
+        </li></ul>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#pdf-error">error_class</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "netbox_eval"></a>
+    <strong>netbox_eval (conn, code[, arguments[, options]])</strong>
+    </dt>
+    <dd>
+    Do protected net.box evaluation.
+ Execute code on remote server using Tarantool built-in <a href="
+ https://tarantool.io/en/doc/latest/reference/reference_lua/net_box/#net-box-eval"><code>net.box</code> <code>conn:eval</code></a>.
+ Additionally postprocess returned values with <a href="index.html#wrap">wrap</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">conn</span>
+         net.box connection object
+        </li>
+        <li><span class="parameter">code</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">arguments</span>
+         passed to <code>net.box</code> <code>eval</code>
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">options</span>
+         passed to <code>net.box</code> <code>eval</code>
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Postprocessed <code>conn:eval()</code> result
+    </ol>
+     <h3>Or</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">nil</span></span>
+
+
+</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#pdf-error">error_object</a></span>
+        Error description</li>
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#netbox_call">netbox_call</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "netbox_call"></a>
+    <strong>netbox_call (conn, function_name[, arguments[, options]])</strong>
+    </dt>
+    <dd>
+    Perform protected net.box call.
+ Similar to <a href="index.html#netbox_eval">netbox_eval</a>,
+ execute code on remote server using Tarantool built-in <a href="
+ https://tarantool.io/en/doc/latest/reference/reference_lua/net_box/#net-box-call"><code>net.box</code> <code>conn:call</code></a>.
+ Additionally postprocess returned values with <a href="index.html#wrap">wrap</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">conn</span>
+         net.box connection object
+        </li>
+        <li><span class="parameter">function_name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">arguments</span>
+         passed to <code>net.box</code> <code>call</code>
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">options</span>
+         passed to <code>net.box</code> <code>call</code>
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Postprocessed <code>conn:call()</code> result
+    </ol>
+     <h3>Or</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">nil</span></span>
+
+
+</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#pdf-error">error_object</a></span>
+        Error description</li>
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#netbox_eval">netbox_eval</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "netbox_wait_async"></a>
+    <strong>netbox_wait_async (future, timeout)</strong>
+    </dt>
+    <dd>
+    Wait for result from async net.box call / eval. </p>
+
+<p> Additionally postprocess returned values with <a href="index.html#wrap">wrap</a>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">future</span>
+         net.box future object
+        </li>
+        <li><span class="parameter">timeout</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Postprocessed <code>future:wait_result()</code> result
+    </ol>
+     <h3>Or</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">nil</span></span>
+
+
+</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#pdf-error">error_object</a></span>
+        Error description</li>
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <li><a href="index.html#netbox_call">netbox_call</a></li>
+         <li><a href="index.html#netbox_eval">netbox_eval</a></li>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "wrap"></a>
+    <strong>wrap ([...])</strong>
+    </dt>
+    <dd>
+
+<p>Postprocess arguments.
+ Mostly useful for postprocessing net.box and vshard call results.</p>
+
+<ul>
+    <li>Substitute all <code>box.NULL</code> with <code>nil</code>;</li>
+    <li>Repair metatables of error objects because they are not transfered over network;</li>
+    <li>Extend stacktrace of remote call if possible;</li>
+</ul>
+
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">...</span>
+
+
+
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Postprocessed values
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Functions__shortcuts_"></a>Functions (shortcuts) </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "new"></a>
+    <strong>new (class_name[, level], fmt[, ...])</strong>
+    </dt>
+    <dd>
+
+<p>Shortcut for <a href="index.html#error_class:new">error_class:new</a>. </p>
+<pre><code>errors.new_class(class_name):new(...)
+</code></pre>
+
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">class_name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">level</span>
+            <span class="types"><span class="type">number</span></span>
+
+
+
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">fmt</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">...</span>
+
+
+
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pcall"></a>
+    <strong>pcall (class_name, fn[, ...])</strong>
+    </dt>
+    <dd>
+
+<p>Shortcut for <a href="index.html#error_class:pcall">error_class:pcall</a>.
+ Equivalent for</p>
+<pre><code>errors.new_class(class_name):pcall(...)
+</code></pre>
+
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">class_name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">fn</span>
+            <span class="types"><span class="type">function</span></span>
+
+
+
+        </li>
+        <li><span class="parameter">...</span>
+
+
+
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "assert"></a>
+    <strong>assert (class_name, cond[, ...])</strong>
+    </dt>
+    <dd>
+
+<p>Shortcut for <a href="index.html#error_class:assert">error_class:assert</a>. </p>
+<pre><code>errors.new_class(class_name):assert(...)
+</code></pre>
+
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">class_name</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+        <li><span class="parameter">cond</span>
+         condition to be checked
+        </li>
+        <li><span class="parameter">...</span>
+         <code>error_class:new</code> args
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Class_error_class"></a>Class error_class </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "error_class:new"></a>
+    <strong>error_class:new ([level], fmt[, ...])</strong>
+    </dt>
+    <dd>
+    Create error object.
+ Error payload is formatted by <a href="https://www.lua.org/manual/5.1/manual.html#pdf-string.format">string.format</a>
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">level</span>
+            <span class="types"><span class="type">number</span></span>
+         within the meaning of Lua <code>debug.getinfo(level)</code>
+         (<em>optional</em>)
+        </li>
+        <li><span class="parameter">fmt</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         used for <code>string.format(fmt, ...)</code>
+        </li>
+        <li><span class="parameter">...</span>
+         formatting arguments
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#pdf-error">error_object</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "error_class:pcall"></a>
+    <strong>error_class:pcall (fn[, ...])</strong>
+    </dt>
+    <dd>
+    Perform protected Lua call, gathering error as object.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+            <span class="types"><span class="type">function</span></span>
+         called function
+        </li>
+        <li><span class="parameter">...</span>
+         call arguments
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>fn(...)</code> if the call succeeds without errors
+    </ol>
+     <h3>Or</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">nil</span></span>
+
+
+</li>
+        <li>
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#pdf-error">error_object</a></span>
+
+
+</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "error_class:assert"></a>
+    <strong>error_class:assert (cond[, ...])</strong>
+    </dt>
+    <dd>
+    Raise an error object unless condition is true.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cond</span>
+         condition to be checked
+        </li>
+        <li><span class="parameter">...</span>
+         <code>error_class:new</code> args
+         (<em>optional</em>)
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        cond</li>
+        <li>
+        ...</li>
+    </ol>
+
+    <h3>Raises:</h3>
+    (<a href="index.html#error_object">error_object</a>) <code>error_class:new(...)</code>
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Class_error_object"></a>Class error_object </h2>
+
+          <div class="section-description">
+
+<p>A particular error object.
+ Represented as a Lua table with the following fields:</p>
+
+<ul>
+    <li>class_name: (<a href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</li>
+    <li>err: (<a href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</li>
+    <li>file: (<a href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</li>
+    <li>line: (<code>number</code>)</li>
+    <li>stack: (<a href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)</li>
+</ul>
+
+
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "error_object:tostring"></a>
+    <strong>error_object:tostring ()</strong>
+    </dt>
+    <dd>
+    Get string representation.
+ Including <code>class_name</code> and <code>err</code>.
+ And optional <code>stack</code>, if it was not disabled for this class.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tools_for_API_deprecation"></a>Tools for API deprecation </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "deprecate"></a>
+    <strong>deprecate (message)</strong>
+    </dt>
+    <dd>
+    Issue deprecation error.
+ Do it once for every location in code,
+ which points on the second-level caller.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">message</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#pdf-error">error_object</a></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "set_deprecation_handler"></a>
+    <strong>set_deprecation_handler (fn)</strong>
+    </dt>
+    <dd>
+    Set new deprecation handler.
+ It may be used in tests and development environment
+ to turn warnings into noticable errors.</p>
+
+<p> By default (if handler is <code>nil</code>) all errors are logged using <code>log.warn()</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">fn</span>
+            <span class="types"><span class="type">nil</span> or <span class="type">functon</span></span>
+
+
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-08-16 14:59:27 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

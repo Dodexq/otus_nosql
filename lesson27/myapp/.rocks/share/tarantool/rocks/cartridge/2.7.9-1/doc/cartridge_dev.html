@@ -1,0 +1,2262 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Developer’s guide &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Administrator’s guide" href="cartridge_admin.html" />
+    <link rel="prev" title="Tarantool Cartridge" href="README.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="developer-s-guide">
+<span id="cartridge-dev"></span><h1>Developer’s guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
+<p>For a quick start, skip the details below and jump right away to the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/getting_started/getting_started_cartridge/">Cartridge getting started guide</a>.</p>
+<p>For a deep dive into what you can develop with Tarantool Cartridge,
+go on with the Cartridge developer’s guide.</p>
+<div class="section" id="introduction">
+<span id="cartridge-intro-dev"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>To develop and start an application, you need to go through the
+following steps:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#cartridge-install-dev"><span class="std std-ref">Install</span></a> Tarantool Cartridge and other
+components of the development environment.</p></li>
+<li><p><a class="reference internal" href="#cartridge-project"><span class="std std-ref">Create a project</span></a>.</p></li>
+<li><p>Develop the application.
+In case it is a cluster-aware application, implement its logic in
+a custom (user-defined) <a class="reference internal" href="#cartridge-roles"><span class="std std-ref">cluster role</span></a>
+to initialize the database in a cluster environment.</p></li>
+<li><p><a class="reference internal" href="#cartridge-deploy"><span class="std std-ref">Deploy</span></a> the application to target server(s).
+This includes <a class="reference internal" href="#cartridge-config"><span class="std std-ref">configuring</span></a> and
+<a class="reference internal" href="#cartridge-run"><span class="std std-ref">starting</span></a> the instance(s).</p></li>
+<li><p>In case it is a cluster-aware application,
+<a class="reference internal" href="cartridge_admin.html#cartridge-deployment"><span class="std std-ref">deploy the cluster</span></a>.</p></li>
+</ol>
+<p>The following sections provide details for each of these steps.</p>
+</div>
+<div class="section" id="installing-tarantool-cartridge">
+<span id="cartridge-install-dev"></span><h2>Installing Tarantool Cartridge<a class="headerlink" href="#installing-tarantool-cartridge" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/tarantool/cartridge-cli#installation">Install</a>
+<code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>, a command-line tool for developing, deploying, and
+managing Tarantool applications.</p></li>
+<li><p><a class="reference external" href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">Install</a>
+<code class="docutils literal notranslate"><span class="pre">git</span></code>, a version control system.</p></li>
+<li><p><a class="reference external" href="https://www.npmjs.com/get-npm">Install</a>
+<code class="docutils literal notranslate"><span class="pre">npm</span></code>, a package manager for <code class="docutils literal notranslate"><span class="pre">node.js</span></code>.</p></li>
+<li><p><a class="reference external" href="https://linuxize.com/post/how-to-unzip-files-in-linux/">Install</a>
+the <code class="docutils literal notranslate"><span class="pre">unzip</span></code> utility.</p></li>
+</ol>
+</div>
+<div class="section" id="creating-a-project">
+<span id="cartridge-project"></span><span id="cartridge-templates"></span><h2>Creating a project<a class="headerlink" href="#creating-a-project" title="Permalink to this headline">¶</a></h2>
+<p>To set up your development environment, create a project using the
+Tarantool Cartridge project template. In any directory, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>&lt;app_name&gt;<span class="w"> </span>/path/to/
+</pre></div>
+</div>
+<p>This will automatically set up a Git repository in a new <code class="docutils literal notranslate"><span class="pre">/path/to/&lt;app_name&gt;/</span></code>
+directory, tag it with <a class="reference internal" href="#cartridge-versioning"><span class="std std-ref">version</span></a> <code class="docutils literal notranslate"><span class="pre">0.1.0</span></code>,
+and put the necessary files into it.</p>
+<p>In this Git repository, you can develop the application (by simply editing
+the default files provided by the template), plug the necessary
+modules, and then easily pack everything to deploy on your server(s).</p>
+<p>The project template creates the <code class="docutils literal notranslate"><span class="pre">&lt;app_name&gt;/</span></code> directory with the following
+contents:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;app_name&gt;-scm-1.rockspec</span></code> file where you can specify the application
+dependencies.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deps.sh</span></code> script that resolves dependencies from the <code class="docutils literal notranslate"><span class="pre">.rockspec</span></code> file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">init.lua</span></code> file which is the entry point for your application.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.git</span></code> file necessary for a Git repository.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> file to ignore the unnecessary files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">env.lua</span></code> file that sets common rock paths so that the application can be
+started from any directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">custom-role.lua</span></code> file that is a placeholder for a custom (user-defined)
+<a class="reference internal" href="#cartridge-roles"><span class="std std-ref">cluster role</span></a>.</p></li>
+</ul>
+<p>The entry point file (<code class="docutils literal notranslate"><span class="pre">init.lua</span></code>), among other things, loads the <code class="docutils literal notranslate"><span class="pre">cartridge</span></code>
+module and calls its initialization function:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="p">...</span>
+<span class="kd">local</span> <span class="n">cartridge</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge&#39;</span><span class="p">)</span>
+<span class="p">...</span>
+<span class="n">cartridge</span><span class="p">.</span><span class="n">cfg</span><span class="p">({</span>
+<span class="c1">-- cartridge options example</span>
+ <span class="n">workdir</span> <span class="o">=</span> <span class="s1">&#39;/var/lib/tarantool/app&#39;</span><span class="p">,</span>
+ <span class="n">advertise_uri</span> <span class="o">=</span> <span class="s1">&#39;localhost:3301&#39;</span><span class="p">,</span>
+ <span class="n">cluster_cookie</span> <span class="o">=</span> <span class="s1">&#39;super-cluster-cookie&#39;</span><span class="p">,</span>
+ <span class="p">...</span>
+<span class="p">},</span> <span class="p">{</span>
+<span class="c1">-- box options example</span>
+ <span class="n">memtx_memory</span> <span class="o">=</span> <span class="mi">1000000000</span><span class="p">,</span>
+ <span class="p">...</span> <span class="p">})</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code> call renders the instance operable via the administrative
+console but does not call <code class="docutils literal notranslate"><span class="pre">box.cfg()</span></code> to configure instances.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Calling the <code class="docutils literal notranslate"><span class="pre">box.cfg()</span></code> function is forbidden.</p>
+</div>
+<p>The cluster itself will do it for you when it is time to:</p>
+<ul class="simple">
+<li><p>bootstrap the current instance once you:</p>
+<ul>
+<li><p>run <code class="docutils literal notranslate"><span class="pre">cartridge.bootstrap()</span></code> via the administrative console, or</p></li>
+<li><p>click <strong>Create</strong> in the web interface;</p></li>
+</ul>
+</li>
+<li><p>join the instance to an existing cluster once you:</p>
+<ul>
+<li><p>run <code class="docutils literal notranslate"><span class="pre">cartridge.join_server({uri</span> <span class="pre">=</span> <span class="pre">'other_instance_uri'})</span></code> via the console, or</p></li>
+<li><p>click <strong>Join</strong> (an existing replica set) or <strong>Create</strong> (a new replica set)
+in the web interface.</p></li>
+</ul>
+</li>
+</ul>
+<p>Notice that you can specify a cookie for the cluster (<code class="docutils literal notranslate"><span class="pre">cluster_cookie</span></code> parameter)
+if you need to run several clusters in the same network. The cookie can be any
+string value.</p>
+<p>Now you can develop an application that will run on a single or multiple
+independent Tarantool instances (e.g. acting as a proxy to third-party databases)
+– or will run in a cluster.</p>
+<p>If you plan to develop a cluster-aware application, first familiarize yourself
+with the notion of <a class="reference internal" href="#cartridge-roles"><span class="std std-ref">cluster roles</span></a>.</p>
+</div>
+<div class="section" id="cluster-roles">
+<span id="cartridge-roles"></span><h2>Cluster roles<a class="headerlink" href="#cluster-roles" title="Permalink to this headline">¶</a></h2>
+<p><strong>Cluster roles</strong> are Lua modules that implement some specific
+functions and/or logic. In other words, a Tarantool Cartridge cluster
+segregates instance functionality in a role-based way.</p>
+<p>Since all instances running cluster applications use the same source code and are
+aware of all the defined roles (and plugged modules), you can dynamically enable
+and disable multiple different roles without restarts, even during cluster operation.</p>
+<p>Note that every instance in a replica set performs the same roles and you cannot
+enable/disable roles individually on some instances. In other words, configuration
+of enabled roles is set up <em>per replica set</em>. See a step-by-step configuration example
+in <a class="reference internal" href="cartridge_admin.html#cartridge-deployment"><span class="std std-ref">this guide</span></a>.</p>
+<div class="section" id="built-in-roles">
+<span id="cartridge-built-in-roles"></span><h3>Built-in roles<a class="headerlink" href="#built-in-roles" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> module comes with two <em>built-in</em> roles that implement
+automatic sharding:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">vshard-router</span></code> that handles the <code class="docutils literal notranslate"><span class="pre">vshard</span></code>’s <em>compute-intensive</em> workload:
+routes requests to storage nodes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> that handles the <code class="docutils literal notranslate"><span class="pre">vshard</span></code>’s <em>transaction-intensive</em>
+workload: stores and manages a subset of a dataset.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more information on sharding, see the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/reference_rock/vshard/">vshard module documentation</a>.</p>
+</div>
+</li>
+</ul>
+<p>With the built-in and <a class="reference internal" href="#cartridge-custom-roles"><span class="std std-ref">custom roles</span></a>, you can
+develop applications with separated compute and transaction handling – and
+enable relevant workload-specific roles on different instances running
+on physical servers with workload-dedicated hardware.</p>
+</div>
+<div class="section" id="custom-roles">
+<span id="cartridge-custom-roles"></span><h3>Custom roles<a class="headerlink" href="#custom-roles" title="Permalink to this headline">¶</a></h3>
+<p>You can implement custom roles for any purposes, for example:</p>
+<ul class="simple">
+<li><p>define stored procedures;</p></li>
+<li><p>implement extra features on top of <code class="docutils literal notranslate"><span class="pre">vshard</span></code>;</p></li>
+<li><p>go without <code class="docutils literal notranslate"><span class="pre">vshard</span></code> at all;</p></li>
+<li><p>implement one or multiple supplementary services such as
+e-mail notifier, replicator, etc.</p></li>
+</ul>
+<p>To implement a custom cluster role, do the following:</p>
+<ol class="arabic">
+<li><p>Take the <code class="docutils literal notranslate"><span class="pre">app/roles/custom.lua</span></code> file in your project as a sample.
+Rename this file as you wish, e.g. <code class="docutils literal notranslate"><span class="pre">app/roles/custom-role.lua</span></code>,
+and implement the role’s logic. For example:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Implement a custom role in app/roles/custom-role.lua</span>
+<span class="kd">local</span> <span class="n">role_name</span> <span class="o">=</span> <span class="s1">&#39;custom-role&#39;</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">init</span><span class="p">()</span>
+<span class="p">...</span>
+<span class="kr">end</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">stop</span><span class="p">()</span>
+<span class="p">...</span>
+<span class="kr">end</span>
+
+<span class="kr">return</span> <span class="p">{</span>
+    <span class="n">role_name</span> <span class="o">=</span> <span class="n">role_name</span><span class="p">,</span>
+    <span class="n">init</span> <span class="o">=</span> <span class="n">init</span><span class="p">,</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="n">stop</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here the <code class="docutils literal notranslate"><span class="pre">role_name</span></code> value may differ from the module name passed to the
+<code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code> function. If the <code class="docutils literal notranslate"><span class="pre">role_name</span></code> variable is not specified,
+the module name is the default value.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Role names must be unique as it is impossible to register multiple
+roles with the same name.</p>
+</div>
+</li>
+<li><p>Register the new role in the cluster by modifying the <code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code>
+call in the <code class="docutils literal notranslate"><span class="pre">init.lua</span></code> entry point file:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Register a custom role in init.lua</span>
+<span class="p">...</span>
+<span class="kd">local</span> <span class="n">cartridge</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge&#39;</span><span class="p">)</span>
+<span class="p">...</span>
+<span class="n">cartridge</span><span class="p">.</span><span class="n">cfg</span><span class="p">({</span>
+    <span class="n">workdir</span> <span class="o">=</span> <span class="p">...,</span>
+    <span class="n">advertise_uri</span> <span class="o">=</span> <span class="p">...,</span>
+<span class="hll">    <span class="n">roles</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;custom-role&#39;</span><span class="p">},</span>
+</span><span class="p">})</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">custom-role</span></code> is the name of the Lua module to be loaded.</p>
+</li>
+</ol>
+<p>The role module does not have required functions, but the cluster may execute the
+following ones during the <a class="reference internal" href="#cartridge-role-lifecycle"><span class="std std-ref">role’s life cycle</span></a>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">init()</span></code> is the role’s <em>initialization</em> function.</p>
+<p>Inside the function’s body you can call any
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/reference_lua/box/">box</a>
+functions: create spaces, indexes, grant permissions, etc.
+Here is what the initialization function may look like:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span> <span class="kd">local</span> <span class="kr">function</span> <span class="nf">init</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+     <span class="c1">-- The cluster passes an &#39;opts&#39; Lua table containing an &#39;is_master&#39; flag.</span>
+<span class="hll">     <span class="kr">if</span> <span class="n">opts</span><span class="p">.</span><span class="n">is_master</span> <span class="kr">then</span>
+</span>         <span class="kd">local</span> <span class="n">customer</span> <span class="o">=</span> <span class="n">box</span><span class="p">.</span><span class="n">schema</span><span class="p">.</span><span class="n">space</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;customer&#39;</span><span class="p">,</span>
+             <span class="p">{</span> <span class="n">if_not_exists</span> <span class="o">=</span> <span class="kc">true</span> <span class="p">}</span>
+         <span class="p">)</span>
+         <span class="n">customer</span><span class="p">:</span><span class="n">format</span><span class="p">({</span>
+             <span class="p">{</span><span class="s1">&#39;customer_id&#39;</span><span class="p">,</span> <span class="s1">&#39;unsigned&#39;</span><span class="p">},</span>
+             <span class="p">{</span><span class="s1">&#39;bucket_id&#39;</span><span class="p">,</span> <span class="s1">&#39;unsigned&#39;</span><span class="p">},</span>
+             <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">},</span>
+         <span class="p">})</span>
+         <span class="n">customer</span><span class="p">:</span><span class="n">create_index</span><span class="p">(</span><span class="s1">&#39;customer_id&#39;</span><span class="p">,</span> <span class="p">{</span>
+             <span class="n">parts</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;customer_id&#39;</span><span class="p">},</span>
+             <span class="n">if_not_exists</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+         <span class="p">})</span>
+     <span class="kr">end</span>
+ <span class="kr">end</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>Neither <code class="docutils literal notranslate"><span class="pre">vshard-router</span></code> nor <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> manage spaces, indexes,
+or formats. You should do it within a <em>custom</em> role: add
+a <code class="docutils literal notranslate"><span class="pre">box.schema.space.create()</span></code> call to your first cluster role, as shown
+in the example above.</p></li>
+<li><p>The function’s body is wrapped in a conditional statement that
+lets you call <code class="docutils literal notranslate"><span class="pre">box</span></code> functions on masters only. This protects
+against replication collisions as data propagates to replicas
+automatically.</p></li>
+</ul>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stop()</span></code> is the role’s <em>termination</em> function. Implement it if
+initialization starts a fiber that has to be stopped or does any job that
+needs to be undone on termination.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> and <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> are functions that <em>validate</em> and
+<em>apply</em> the role’s configuration.
+Implement them if some configuration data needs to be stored cluster-wide.</p></li>
+</ul>
+<p>Next, get a grip on the <a class="reference internal" href="#cartridge-role-lifecycle"><span class="std std-ref">role’s life cycle</span></a> to
+implement the functions you need.</p>
+</div>
+<div class="section" id="defining-role-dependencies">
+<span id="cartridge-role-dependencies"></span><h3>Defining role dependencies<a class="headerlink" href="#defining-role-dependencies" title="Permalink to this headline">¶</a></h3>
+<p>You can instruct the cluster to apply some other roles if your custom role
+is enabled.</p>
+<p>For example:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Role dependencies defined in app/roles/custom-role.lua</span>
+<span class="kd">local</span> <span class="n">role_name</span> <span class="o">=</span> <span class="s1">&#39;custom-role&#39;</span>
+<span class="p">...</span>
+<span class="kr">return</span> <span class="p">{</span>
+    <span class="n">role_name</span> <span class="o">=</span> <span class="n">role_name</span><span class="p">,</span>
+    <span class="n">dependencies</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cartridge.roles.vshard-router&#39;</span><span class="p">},</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Here <code class="docutils literal notranslate"><span class="pre">vshard-router</span></code> role will be initialized automatically for every
+instance with <code class="docutils literal notranslate"><span class="pre">custom-role</span></code> enabled.</p>
+</div>
+<div class="section" id="using-multiple-vshard-storage-groups">
+<span id="cartridge-vshard-groups"></span><h3>Using multiple vshard storage groups<a class="headerlink" href="#using-multiple-vshard-storage-groups" title="Permalink to this headline">¶</a></h3>
+<p>Replica sets with <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> roles can belong to different <em>groups</em>.
+For example, <code class="docutils literal notranslate"><span class="pre">hot</span></code> or <code class="docutils literal notranslate"><span class="pre">cold</span></code> groups meant to independently process hot and
+cold data.</p>
+<p>Groups are specified in the cluster’s configuration:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Specify groups in init.lua</span>
+<span class="n">cartridge</span><span class="p">.</span><span class="n">cfg</span><span class="p">({</span>
+    <span class="n">vshard_groups</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;hot&#39;</span><span class="p">,</span> <span class="s1">&#39;cold&#39;</span><span class="p">},</span>
+    <span class="p">...</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>If no groups are specified, the cluster assumes that all replica sets belong
+to the <code class="docutils literal notranslate"><span class="pre">default</span></code> group.</p>
+<p>With multiple groups enabled, every replica set with a <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> role
+enabled must be assigned to a particular group.
+The assignment can never be changed.</p>
+<p>Another limitation is that you cannot add groups dynamically
+(this will become available in future).</p>
+<p>Finally, mind the syntax for router access.
+Every instance with a <code class="docutils literal notranslate"><span class="pre">vshard-router</span></code> role enabled initializes multiple
+routers. All of them are accessible through the role:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">router_role</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">service_get</span><span class="p">(</span><span class="s1">&#39;vshard-router&#39;</span><span class="p">)</span>
+<span class="n">router_role</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;hot&#39;</span><span class="p">):</span><span class="n">call</span><span class="p">(...)</span>
+</pre></div>
+</div>
+<p>If you have no roles specified, you can access a static router as before
+(when Tarantool Cartridge was unaware of groups):</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">vshard</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;vshard&#39;</span><span class="p">)</span>
+<span class="n">vshard</span><span class="p">.</span><span class="n">router</span><span class="p">.</span><span class="n">call</span><span class="p">(...)</span>
+</pre></div>
+</div>
+<p>However, when using the current group-aware API, you must call a static router
+with a colon:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">router_role</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">service_get</span><span class="p">(</span><span class="s1">&#39;vshard-router&#39;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">default_router</span> <span class="o">=</span> <span class="n">router_role</span><span class="p">.</span><span class="n">get</span><span class="p">()</span> <span class="c1">-- or router_role.get(&#39;default&#39;)</span>
+<span class="n">default_router</span><span class="p">:</span><span class="n">call</span><span class="p">(...)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="role-s-life-cycle-and-the-order-of-function-execution">
+<span id="cartridge-role-lifecycle"></span><h3>Role’s life cycle (and the order of function execution)<a class="headerlink" href="#role-s-life-cycle-and-the-order-of-function-execution" title="Permalink to this headline">¶</a></h3>
+<p>The cluster displays the names of all custom roles along with the built-in <code class="docutils literal notranslate"><span class="pre">vshard-*</span></code>
+roles in the <a class="reference internal" href="cartridge_admin.html#cartridge-deployment"><span class="std std-ref">web interface</span></a>.
+Cluster administrators can enable and disable them for particular instances –
+either via the web interface or via the cluster
+<a class="reference external" href="https://www.tarantool.io/en/rocks/cartridge/1.0/modules/cartridge.admin/#edit-topology-args">public API</a>.
+For example:</p>
+<div class="highlight-kconfig notranslate"><div class="highlight"><pre><span></span>cartridge.admin.edit_replicaset(&#39;replicaset-uuid&#39;,<span class="w"> </span>{roles<span class="w"> </span><span class="o">=</span><span class="w"> </span>{&#39;vshard-router&#39;,<span class="w"> </span><span class="s1">&#39;custom-role&#39;</span>}})
+</pre></div>
+</div>
+<p>If you enable multiple roles on an instance at the same time, the cluster first
+initializes the built-in roles (if any) and then the custom ones (if any) in the
+order the latter were listed in <code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code>.</p>
+<p>If a custom role has dependent roles, the dependencies are registered and
+validated first, <em>prior</em> to the role itself.</p>
+<p>The cluster calls the role’s functions in the following circumstances:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">init()</span></code> function, typically, once: either when the role is enabled by
+the administrator or at the instance restart. Enabling a role once is normally
+enough.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">stop()</span></code> function – only when the administrator disables the
+role, not on instance termination.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> function, first, before the automatic <code class="docutils literal notranslate"><span class="pre">box.cfg()</span></code>
+call (database initialization), then – upon every configuration update.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> function upon every configuration update.</p></li>
+</ul>
+<p>As a tryout, let’s task the cluster with some actions and see the order of
+executing the role’s functions:</p>
+<ul class="simple">
+<li><p>Join an instance or create a replica set, both with an enabled role:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_config()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">init()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_config()</span></code></p></li>
+</ol>
+</li>
+<li><p>Restart an instance with an enabled role:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_config()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">init()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_config()</span></code></p></li>
+</ol>
+</li>
+<li><p>Disable role: <code class="docutils literal notranslate"><span class="pre">stop()</span></code>.</p></li>
+<li><p>Upon the <code class="docutils literal notranslate"><span class="pre">cartridge.confapplier.patch_clusterwide()</span></code> call:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_config()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_config()</span></code></p></li>
+</ol>
+</li>
+<li><p>Upon a triggered failover:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_config()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_config()</span></code></p></li>
+</ol>
+</li>
+</ul>
+<p>Considering the described behavior:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">init()</span></code> function may:</p>
+<ul>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">box</span></code> functions.</p></li>
+<li><p>Start a fiber and, in this case, the <code class="docutils literal notranslate"><span class="pre">stop()</span></code> function should
+take care of the fiber’s termination.</p></li>
+<li><p>Configure the built-in <a class="reference internal" href="#cartridge-httpd-instance"><span class="std std-ref">HTTP server</span></a>.</p></li>
+<li><p>Execute any code related to the role’s initialization.</p></li>
+</ul>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">stop()</span></code> functions must undo any job that needs to be undone on role’s
+termination.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> function must validate any configuration change.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> function may execute any code related to a configuration
+change, e.g., take care of an <code class="docutils literal notranslate"><span class="pre">expirationd</span></code> fiber.</p></li>
+</ul>
+<p>The validation and application functions together allow you to change the
+cluster-wide configuration as described in the
+<a class="reference internal" href="#cartridge-role-config"><span class="std std-ref">next section</span></a>.</p>
+</div>
+<div class="section" id="configuring-custom-roles">
+<span id="cartridge-role-config"></span><h3>Configuring custom roles<a class="headerlink" href="#configuring-custom-roles" title="Permalink to this headline">¶</a></h3>
+<p>You can:</p>
+<ul>
+<li><p>Store configurations for your custom roles as sections in cluster-wide
+configuration, for example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># in YAML configuration file</span>
+<span class="nt">my_role</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">notify_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://localhost:8080&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- in init.lua file</span>
+<span class="kd">local</span> <span class="n">notify_url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost&#39;</span>
+<span class="kr">function</span> <span class="nc">my_role</span><span class="p">.</span><span class="nf">apply_config</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;my_role&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">notify_url</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">notify_url</span> <span class="ow">or</span> <span class="s1">&#39;default&#39;</span>
+<span class="kr">end</span>
+</pre></div>
+</div>
+</li>
+<li><p>Download and upload cluster-wide configuration using the
+<a class="reference internal" href="cartridge_admin.html#cartridge-ui-configuration"><span class="std std-ref">web interface</span></a> or
+API (via GET/PUT queries to <code class="docutils literal notranslate"><span class="pre">admin/config</span></code> endpoint like
+<code class="docutils literal notranslate"><span class="pre">curl</span> <span class="pre">localhost:8081/admin/config</span></code> and
+<code class="docutils literal notranslate"><span class="pre">curl</span> <span class="pre">-X</span> <span class="pre">PUT</span> <span class="pre">-d</span> <span class="pre">&quot;{'my_parameter':</span> <span class="pre">'value'}&quot;</span> <span class="pre">localhost:8081/admin/config</span></code>).</p></li>
+<li><p>Utilize it in your role’s <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> function.</p></li>
+</ul>
+<p>Every instance in the cluster stores a copy of the configuration file in its
+working directory (configured by <code class="docutils literal notranslate"><span class="pre">cartridge.cfg({workdir</span> <span class="pre">=</span> <span class="pre">...})</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">/var/lib/tarantool/&lt;instance_name&gt;/config.yml</span></code> for instances deployed from
+RPM packages and managed by <code class="docutils literal notranslate"><span class="pre">systemd</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/home/&lt;username&gt;/tarantool_state/var/lib/tarantool/config.yml</span></code> for
+instances deployed from tar+gz archives.</p></li>
+</ul>
+<p>The cluster’s configuration is a Lua table, downloaded and uploaded as YAML.
+If some application-specific configuration data, e.g. a database schema as
+defined by DDL (data definition language), needs to be stored on every instance
+in the cluster, you can implement your own API by adding a custom section to
+the table. The cluster will help you spread it safely across all instances.</p>
+<p>Such section goes in the same file with topology-specific
+and <code class="docutils literal notranslate"><span class="pre">vshard</span></code>-specific sections that the cluster generates automatically.
+Unlike the generated, the custom section’s modification, validation, and
+application logic has to be defined.</p>
+<p>The common way is to define two functions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">validate_config(conf_new,</span> <span class="pre">conf_old)</span></code> to validate changes made in the
+new configuration (<code class="docutils literal notranslate"><span class="pre">conf_new</span></code>) versus the old configuration (<code class="docutils literal notranslate"><span class="pre">conf_old</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">apply_config(conf,</span> <span class="pre">opts)</span></code> to execute any code related to a configuration
+change. As input, this function takes the configuration to apply (<code class="docutils literal notranslate"><span class="pre">conf</span></code>,
+which is actually the new configuration that you validated earlier with
+<code class="docutils literal notranslate"><span class="pre">validate_config()</span></code>) and options (the <code class="docutils literal notranslate"><span class="pre">opts</span></code> argument that includes
+<code class="docutils literal notranslate"><span class="pre">is_master</span></code>, a Boolean flag described later).</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> function must detect all configuration
+problems that may lead to <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> errors. For more information,
+see the <a class="reference internal" href="#cartridge-role-config-apply"><span class="std std-ref">next section</span></a>.</p>
+</div>
+<p>When implementing validation and application functions that call <code class="docutils literal notranslate"><span class="pre">box</span></code>
+ones for some reason, mind the following precautions:</p>
+<ul>
+<li><p>Due to the <a class="reference internal" href="#cartridge-role-lifecycle"><span class="std std-ref">role’s life cycle</span></a>, the cluster
+does not guarantee an automatic <code class="docutils literal notranslate"><span class="pre">box.cfg()</span></code> call prior to calling
+<code class="docutils literal notranslate"><span class="pre">validate_config()</span></code>.</p>
+<p>If the validation function calls any <code class="docutils literal notranslate"><span class="pre">box</span></code> functions (e.g., to check
+a format), make sure the calls are wrapped in a protective conditional
+statement that checks if <code class="docutils literal notranslate"><span class="pre">box.cfg()</span></code> has already happened:</p>
+<div class="highlight-Lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Inside the validate_config() function:</span>
+<span class="kr">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">box</span><span class="p">.</span><span class="n">cfg</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;table&#39;</span> <span class="kr">then</span>
+<span class="hll">    <span class="c1">-- Here you can call box functions</span>
+</span><span class="kr">end</span>
+</pre></div>
+</div>
+</li>
+<li><p>Unlike the validation function,
+<code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> can call <code class="docutils literal notranslate"><span class="pre">box</span></code> functions freely as the cluster applies
+custom configuration after the automatic <code class="docutils literal notranslate"><span class="pre">box.cfg()</span></code> call.</p>
+<p>However, creating spaces, users, etc., can cause replication collisions when
+performed on both master and replica instances simultaneously. The appropriate
+way is to call such <code class="docutils literal notranslate"><span class="pre">box</span></code> functions <em>on masters only</em> and let the changes
+propagate to replicas automatically.</p>
+<p>Upon the <code class="docutils literal notranslate"><span class="pre">apply_config(conf,</span> <span class="pre">opts)</span></code> execution, the cluster passes an
+<code class="docutils literal notranslate"><span class="pre">is_master</span></code> flag in the <code class="docutils literal notranslate"><span class="pre">opts</span></code> table which you can use to wrap
+collision-inducing <code class="docutils literal notranslate"><span class="pre">box</span></code> functions in a protective conditional statement:</p>
+<div class="highlight-Lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Inside the apply_config() function:</span>
+<span class="kr">if</span> <span class="n">opts</span><span class="p">.</span><span class="n">is_master</span> <span class="kr">then</span>
+<span class="hll">    <span class="c1">-- Here you can call box functions</span>
+</span><span class="kr">end</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="section" id="custom-configuration-example">
+<span id="cartridge-role-config-example"></span><h4>Custom configuration example<a class="headerlink" href="#custom-configuration-example" title="Permalink to this headline">¶</a></h4>
+<p>Consider the following code as part of the role’s module (<code class="docutils literal notranslate"><span class="pre">custom-role.lua</span></code>)
+implementation:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Custom role implementation</span>
+
+<span class="kd">local</span> <span class="n">cartridge</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge&#39;</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="n">role_name</span> <span class="o">=</span> <span class="s1">&#39;custom-role&#39;</span>
+
+<span class="c1">-- Modify the config by implementing some setter (an alternative to HTTP PUT)</span>
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">set_secret</span><span class="p">(</span><span class="n">secret</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">custom_role_cfg</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">confapplier</span><span class="p">.</span><span class="n">get_deepcopy</span><span class="p">(</span><span class="n">role_name</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">custom_role_cfg</span><span class="p">.</span><span class="n">secret</span> <span class="o">=</span> <span class="n">secret</span>
+    <span class="n">cartridge</span><span class="p">.</span><span class="n">confapplier</span><span class="p">.</span><span class="n">patch_clusterwide</span><span class="p">({</span>
+        <span class="p">[</span><span class="n">role_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">custom_role_cfg</span><span class="p">,</span>
+    <span class="p">})</span>
+<span class="kr">end</span>
+<span class="c1">-- Validate</span>
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">validate_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">custom_role_cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">role_name</span><span class="p">]</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="kr">if</span> <span class="n">custom_role_cfg</span><span class="p">.</span><span class="n">secret</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="kr">then</span>
+        <span class="nb">assert</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">custom_role_cfg</span><span class="p">.</span><span class="n">secret</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;custom-role.secret must be a string&#39;</span><span class="p">)</span>
+    <span class="kr">end</span>
+    <span class="kr">return</span> <span class="kc">true</span>
+<span class="kr">end</span>
+<span class="c1">-- Apply</span>
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">apply_config</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">custom_role_cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="n">role_name</span><span class="p">]</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="kd">local</span> <span class="n">secret</span> <span class="o">=</span> <span class="n">custom_role_cfg</span><span class="p">.</span><span class="n">secret</span> <span class="ow">or</span> <span class="s1">&#39;default-secret&#39;</span>
+    <span class="c1">-- Make use of it</span>
+<span class="kr">end</span>
+
+<span class="kr">return</span> <span class="p">{</span>
+    <span class="n">role_name</span> <span class="o">=</span> <span class="n">role_name</span><span class="p">,</span>
+    <span class="n">set_secret</span> <span class="o">=</span> <span class="n">set_secret</span><span class="p">,</span>
+    <span class="n">validate_config</span> <span class="o">=</span> <span class="n">validate_config</span><span class="p">,</span>
+    <span class="n">apply_config</span> <span class="o">=</span> <span class="n">apply_config</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Once the configuration is customized, do one of the following:</p>
+<ul class="simple">
+<li><p>continue developing your application and pay attention to its
+<a class="reference internal" href="#cartridge-versioning"><span class="std std-ref">versioning</span></a>;</p></li>
+<li><p>(optional) <a class="reference internal" href="#cartridge-auth-enable"><span class="std std-ref">enable authorization</span></a> in the web interface.</p></li>
+<li><p>in case the cluster is already deployed,
+<a class="reference internal" href="#cartridge-role-config-apply"><span class="std std-ref">apply the configuration</span></a> cluster-wide.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="applying-custom-role-s-configuration">
+<span id="cartridge-role-config-apply"></span><h3>Applying custom role’s configuration<a class="headerlink" href="#applying-custom-role-s-configuration" title="Permalink to this headline">¶</a></h3>
+<p>With the implementation showed by the <a class="reference internal" href="#cartridge-role-config-example"><span class="std std-ref">example</span></a>,
+you can call the <code class="docutils literal notranslate"><span class="pre">set_secret()</span></code> function to apply the new configuration via
+the administrative console – or an HTTP endpoint if the role exports one.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">set_secret()</span></code> function calls <code class="docutils literal notranslate"><span class="pre">cartridge.confapplier.patch_clusterwide()</span></code>
+which performs a two-phase commit:</p>
+<ol class="arabic simple">
+<li><p>It patches the active configuration in memory: copies the table and replaces
+the <code class="docutils literal notranslate"><span class="pre">&quot;custom-role&quot;</span></code> section in the copy with the one given by the
+<code class="docutils literal notranslate"><span class="pre">set_secret()</span></code> function.</p></li>
+<li><p>The cluster checks if the new configuration can be applied on all instances
+except disabled and expelled. All instances subject to update must be healthy
+and <code class="docutils literal notranslate"><span class="pre">alive</span></code> according to the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/reference_rock/membership/">membership module</a>.</p></li>
+<li><p>(<strong>Preparation phase</strong>) The cluster propagates the patched configuration.
+Every instance validates it with the <code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> function of
+every registered role. Depending on the validation’s result:</p>
+<ul class="simple">
+<li><p>If successful (i.e., returns <code class="docutils literal notranslate"><span class="pre">true</span></code>), the instance saves the new
+configuration to a temporary file named <code class="docutils literal notranslate"><span class="pre">config.prepare.yml</span></code> within the
+working directory.</p></li>
+<li><p>(<strong>Abort phase</strong>) Otherwise, the instance reports an error and all the other
+instances roll back the update: remove the file they may have already
+prepared.</p></li>
+</ul>
+</li>
+<li><p>(<strong>Commit phase</strong>) Upon successful preparation of all instances, the cluster
+commits the changes. Every instance:</p>
+<ol class="arabic simple">
+<li><p>Creates the active configuration’s hard-link.</p></li>
+<li><p>Atomically replaces the active configuration file with the prepared one.
+The atomic replacement is indivisible – it can either succeed or fail
+entirely, never partially.</p></li>
+<li><p>Calls the <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> function of every registered role.</p></li>
+</ol>
+</li>
+</ol>
+<p>If any of these steps fail, an error pops up in the web interface next to the
+corresponding instance. The cluster does not handle such errors automatically,
+they require manual repair.</p>
+<p>You will avoid the repair if the <code class="docutils literal notranslate"><span class="pre">validate_config()</span></code> function can detect all
+configuration problems that may lead to <code class="docutils literal notranslate"><span class="pre">apply_config()</span></code> errors.</p>
+</div>
+</div>
+<div class="section" id="using-the-built-in-http-server">
+<span id="cartridge-httpd-instance"></span><h2>Using the built-in HTTP server<a class="headerlink" href="#using-the-built-in-http-server" title="Permalink to this headline">¶</a></h2>
+<p>The cluster launches an <code class="docutils literal notranslate"><span class="pre">httpd</span></code> server instance during initialization
+(<code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code>). You can bind a port to the instance via an environmental
+variable:</p>
+<div class="highlight-Lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- Get the port from an environmental variable or the default one:</span>
+<span class="kd">local</span> <span class="n">http_port</span> <span class="o">=</span> <span class="nb">os.getenv</span><span class="p">(</span><span class="s1">&#39;HTTP_PORT&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="s1">&#39;8080&#39;</span>
+
+<span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">cfg</span><span class="p">({</span>
+    <span class="p">...</span>
+    <span class="c1">-- Pass the port to the cluster:</span>
+    <span class="n">http_port</span> <span class="o">=</span> <span class="n">http_port</span><span class="p">,</span>
+    <span class="p">...</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>To make use of the <code class="docutils literal notranslate"><span class="pre">httpd</span></code> instance, access it and configure routes inside
+the <code class="docutils literal notranslate"><span class="pre">init()</span></code> function of some role, e.g. a role that exposes API over HTTP:</p>
+<div class="highlight-Lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="kr">function</span> <span class="nf">init</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+
+<span class="p">...</span>
+
+    <span class="c1">-- Get the httpd instance:</span>
+    <span class="kd">local</span> <span class="n">httpd</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">service_get</span><span class="p">(</span><span class="s1">&#39;httpd&#39;</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">httpd</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="kr">then</span>
+        <span class="c1">-- Configure a route to, for example, metrics:</span>
+        <span class="n">httpd</span><span class="p">:</span><span class="n">route</span><span class="p">({</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/metrics&#39;</span><span class="p">,</span>
+            <span class="n">public</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="kr">function</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+            <span class="kr">return</span> <span class="n">req</span><span class="p">:</span><span class="n">render</span><span class="p">({</span><span class="n">json</span> <span class="o">=</span> <span class="n">stat</span><span class="p">.</span><span class="n">stat</span><span class="p">()})</span>
+        <span class="kr">end</span>
+        <span class="p">)</span>
+    <span class="kr">end</span>
+<span class="kr">end</span>
+</pre></div>
+</div>
+<p>For more information on using Tarantool’s HTTP server, see
+<a class="reference external" href="https://github.com/tarantool/http">its documentation</a>.</p>
+</div>
+<div class="section" id="implementing-authorization-in-the-web-interface">
+<span id="cartridge-auth-enable"></span><h2>Implementing authorization in the web interface<a class="headerlink" href="#implementing-authorization-in-the-web-interface" title="Permalink to this headline">¶</a></h2>
+<p>To implement authorization in the web interface of every instance in a Tarantool
+cluster:</p>
+<ol class="arabic">
+<li><p>Implement a new, say, <code class="docutils literal notranslate"><span class="pre">auth</span></code> module with a <code class="docutils literal notranslate"><span class="pre">check_password</span></code> function. It
+should check the credentials of any user trying to log in to the web interface.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">check_password</span></code> function accepts a username and password and returns
+an authentication success or failure.</p>
+<div class="highlight-Lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- auth.lua</span>
+
+<span class="c1">-- Add a function to check the credentials</span>
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">check_password</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+
+    <span class="c1">-- Check the credentials any way you like</span>
+
+    <span class="c1">-- Return an authentication success or failure</span>
+    <span class="kr">if</span> <span class="ow">not</span> <span class="n">ok</span> <span class="kr">then</span>
+        <span class="kr">return</span> <span class="kc">false</span>
+    <span class="kr">end</span>
+    <span class="kr">return</span> <span class="kc">true</span>
+<span class="kr">end</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+</li>
+<li><p>Pass the implemented <code class="docutils literal notranslate"><span class="pre">auth</span></code> module name as a parameter to <code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code>,
+so the cluster can use it:</p>
+<div class="highlight-Lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- init.lua</span>
+
+<span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">cfg</span><span class="p">({</span>
+    <span class="n">auth_backend_name</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span>
+    <span class="c1">-- The cluster will automatically call &#39;require()&#39; on the &#39;auth&#39; module.</span>
+    <span class="p">...</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>This adds a <strong>Log in</strong> button to the upper right corner of the
+web interface but still lets the unsigned users interact with the interface.
+This is convenient for testing.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Also, to authorize requests to cluster API, you can use the HTTP basic
+authorization header.</p>
+</div>
+</li>
+<li><p>To require the authorization of every user in the web interface even before
+the cluster bootstrap, add the following line:</p>
+<div class="highlight-Lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- init.lua</span>
+
+<span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">cfg</span><span class="p">({</span>
+    <span class="n">auth_backend_name</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span>
+<span class="hll">    <span class="n">auth_enabled</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+</span>    <span class="p">...</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>With the authentication enabled and the <code class="docutils literal notranslate"><span class="pre">auth</span></code> module implemented, the user
+will not be able to even bootstrap the cluster without logging in.
+After the successful login and bootstrap, the authentication can be enabled
+and disabled cluster-wide in the web interface and the <code class="docutils literal notranslate"><span class="pre">auth_enabled</span></code> parameter
+is ignored.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="application-versioning">
+<span id="cartridge-versioning"></span><h2>Application versioning<a class="headerlink" href="#application-versioning" title="Permalink to this headline">¶</a></h2>
+<p>Tarantool Cartridge understands semantic versioning as described at
+<a class="reference external" href="https://semver.org">semver.org</a>.
+When developing an application, create new Git branches and tag them appropriately.
+These tags are used to calculate version increments for subsequent packing.</p>
+<p>For example, if your application has version 1.2.1, tag your current branch with
+<code class="docutils literal notranslate"><span class="pre">1.2.1</span></code> (annotated or not).</p>
+<p>To retrieve the current version from Git, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>describe<span class="w"> </span>--long<span class="w"> </span>--tags
+<span class="m">1</span>.2.1-12-g74864f2
+</pre></div>
+</div>
+<p>This output shows that we are 12 commits after the version 1.2.1. If we are
+to package the application at this point, it will have a full version of
+<code class="docutils literal notranslate"><span class="pre">1.2.1-12</span></code> and its package will be named <code class="docutils literal notranslate"><span class="pre">&lt;app_name&gt;-1.2.1-12.rpm</span></code>.</p>
+<p>Non-semantic tags are prohibited. You will not be able to create a package from
+a branch with the latest tag being non-semantic.</p>
+<p>Once you <a class="reference internal" href="#cartridge-deploy"><span class="std std-ref">package</span></a> your application, the version
+is saved in a <code class="docutils literal notranslate"><span class="pre">VERSION</span></code> file in the package root.</p>
+</div>
+<div class="section" id="using-cartridge-ignore-files">
+<span id="cartridge-app-ignore"></span><h2>Using .cartridge.ignore files<a class="headerlink" href="#using-cartridge-ignore-files" title="Permalink to this headline">¶</a></h2>
+<p>You can add a <code class="docutils literal notranslate"><span class="pre">.cartridge.ignore</span></code> file to your application repository to
+exclude particular files and/or directories from package builds.</p>
+<p>For the most part, the logic is similar to that of <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> files.
+The major difference is that in <code class="docutils literal notranslate"><span class="pre">.cartridge.ignore</span></code> files the order of
+exceptions relative to the rest of the templates does not matter, while in
+<code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> files the order does matter.</p>
+<div class="table docutils container">
+<table class="left-align-column-1 left-align-column-2 docutils align-default">
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>.cartridge.ignore</strong> entry</p></th>
+<th class="head"><p>ignores every…</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target/</span></code></p></td>
+<td><p><strong>folder</strong> (due to the trailing <code class="docutils literal notranslate"><span class="pre">/</span></code>)
+named <code class="docutils literal notranslate"><span class="pre">target</span></code>, recursively</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+<td><p><strong>file or folder</strong> named <code class="docutils literal notranslate"><span class="pre">target</span></code>,
+recursively</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/target</span></code></p></td>
+<td><p><strong>file or folder</strong> named <code class="docutils literal notranslate"><span class="pre">target</span></code> in the
+top-most directory (due to the leading <code class="docutils literal notranslate"><span class="pre">/</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/target/</span></code></p></td>
+<td><p><strong>folder</strong> named <code class="docutils literal notranslate"><span class="pre">target</span></code> in the top-most
+directory (leading and trailing <code class="docutils literal notranslate"><span class="pre">/</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">*.class</span></code></p></td>
+<td><p>every <strong>file or folder</strong> ending with
+<code class="docutils literal notranslate"><span class="pre">.class</span></code>, recursively</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#comment</span></code></p></td>
+<td><p>nothing, this is a comment (the first
+character is a <code class="docutils literal notranslate"><span class="pre">#</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">\#comment</span></code></p></td>
+<td><p>every <strong>file or folder</strong> with name
+<code class="docutils literal notranslate"><span class="pre">#comment</span></code> (<code class="docutils literal notranslate"><span class="pre">\</span></code> for escaping)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target/logs/</span></code></p></td>
+<td><p>every <strong>folder</strong> named <code class="docutils literal notranslate"><span class="pre">logs</span></code> which is
+a subdirectory of a folder named <code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target/*/logs/</span></code></p></td>
+<td><p>every <strong>folder</strong> named <code class="docutils literal notranslate"><span class="pre">logs</span></code> two levels
+under a folder named <code class="docutils literal notranslate"><span class="pre">target</span></code> (<code class="docutils literal notranslate"><span class="pre">*</span></code> doesn’t
+include <code class="docutils literal notranslate"><span class="pre">/</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target/**/logs/</span></code></p></td>
+<td><p>every <strong>folder</strong> named <code class="docutils literal notranslate"><span class="pre">logs</span></code> somewhere
+under a folder named <code class="docutils literal notranslate"><span class="pre">target</span></code> (<code class="docutils literal notranslate"><span class="pre">**</span></code>
+includes <code class="docutils literal notranslate"><span class="pre">/</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">*.py[co]</span></code></p></td>
+<td><p>every <strong>file or folder</strong> ending in <code class="docutils literal notranslate"><span class="pre">.pyc</span></code> or
+<code class="docutils literal notranslate"><span class="pre">.pyo</span></code>; however, it doesn’t match <code class="docutils literal notranslate"><span class="pre">.py!</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">*.py[!co]</span></code></p></td>
+<td><p>every <strong>file or folder</strong> ending in anything
+other than <code class="docutils literal notranslate"><span class="pre">c</span></code> or <code class="docutils literal notranslate"><span class="pre">o</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">*.file[0-9]</span></code></p></td>
+<td><p>every <strong>file or folder</strong> ending in digit</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">*.file[!0-9]</span></code></p></td>
+<td><p>every <strong>file or folder</strong> ending in anything
+other than digit</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">*</span></code></p></td>
+<td><p><strong>every</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/*</span></code></p></td>
+<td><p><strong>everything</strong> in the top-most directory (due
+to the leading <code class="docutils literal notranslate"><span class="pre">/</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">**/*.tar.gz</span></code></p></td>
+<td><p>every <code class="docutils literal notranslate"><span class="pre">*.tar.gz</span></code> file or folder which is
+<strong>one or more</strong> levels under the starting
+folder</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">!file</span></code></p></td>
+<td><p>every <strong>file or folder</strong> will be ignored even
+if it matches other patterns</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="failover-architecture">
+<span id="cartridge-failover"></span><h2>Failover architecture<a class="headerlink" href="#failover-architecture" title="Permalink to this headline">¶</a></h2>
+<p>An important concept in cluster topology is appointing <strong>a leader</strong>.
+Leader is an instance which is responsible for performing key
+operations. To keep things simple, you can think of a leader as of the only
+writable master. Every replica set has its own leader, and there’s usually not
+more than one.</p>
+<p>Which instance will become a leader depends on topology settings and
+failover configuration.</p>
+<p>An important topology parameter is the <strong>failover priority</strong> within
+a replica set. This is an ordered list of instances. By default, the first
+instance in the list becomes a leader, but with the failover enabled it
+may be changed automatically if the first one is malfunctioning.</p>
+<div class="section" id="instance-configuration-upon-a-leader-change">
+<h3>Instance configuration upon a leader change<a class="headerlink" href="#instance-configuration-upon-a-leader-change" title="Permalink to this headline">¶</a></h3>
+<p>When Cartridge configures roles, it takes into account the <strong>leadership map</strong>
+(consolidated in the <code class="docutils literal notranslate"><span class="pre">failover.lua</span></code> module). The leadership map is composed when
+the instance enters the <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code> state for the first time. Later
+the map is updated according to the failover mode.</p>
+<p>Every change in the leadership map is accompanied by instance
+re-configuration. When the map changes, Cartridge updates the <code class="docutils literal notranslate"><span class="pre">read_only</span></code>
+setting and calls the <code class="docutils literal notranslate"><span class="pre">apply_config</span></code> callback for every role. It also
+specifies the <code class="docutils literal notranslate"><span class="pre">is_master</span></code> flag (which actually means <code class="docutils literal notranslate"><span class="pre">is_leader</span></code>, but hasn’t
+been renamed yet due to historical reasons).</p>
+<p>It’s important to say that we discuss a <em>distributed</em> system where every
+instance has its own opinion. Even if all opinions coincide, there still
+may be races between instances, and you (as an application developer)
+should take them into account when designing roles and their
+interaction.</p>
+</div>
+<div class="section" id="leader-appointment-rules">
+<h3>Leader appointment rules<a class="headerlink" href="#leader-appointment-rules" title="Permalink to this headline">¶</a></h3>
+<p>The logic behind leader election depends on the <strong>failover mode</strong>:
+disabled, eventual, or stateful.</p>
+<div class="section" id="disabled-mode">
+<h4>Disabled mode<a class="headerlink" href="#disabled-mode" title="Permalink to this headline">¶</a></h4>
+<p>This is the simplest case. The leader is always the first instance in
+the failover priority. No automatic switching is performed. When it’s dead,
+it’s dead.</p>
+</div>
+<div class="section" id="eventual-failover">
+<h4>Eventual failover<a class="headerlink" href="#eventual-failover" title="Permalink to this headline">¶</a></h4>
+<p>In the <code class="docutils literal notranslate"><span class="pre">eventual</span></code> mode, the leader isn’t elected consistently. Instead, every
+instance in the cluster thinks that the leader is the first <strong>healthy</strong> instance
+in the failover priority list, while instance health is determined according to
+the membership status (the SWIM protocol).
+<strong>Not recommended</strong> to use on large clusters in production. If you have highload
+production cluster, use stateful failover with <code class="docutils literal notranslate"><span class="pre">etcd</span></code> instead.</p>
+<p>The member is considered healthy if both are true:</p>
+<ol class="arabic simple">
+<li><p>It reports either <code class="docutils literal notranslate"><span class="pre">ConfiguringRoles</span></code> or <code class="docutils literal notranslate"><span class="pre">RolesConfigured</span></code> state;</p></li>
+<li><p>Its SWIM status is either <code class="docutils literal notranslate"><span class="pre">alive</span></code> or <code class="docutils literal notranslate"><span class="pre">suspect</span></code>.</p></li>
+</ol>
+<p>A <code class="docutils literal notranslate"><span class="pre">suspect</span></code> member becomes <code class="docutils literal notranslate"><span class="pre">dead</span></code> after the <code class="docutils literal notranslate"><span class="pre">failover_timout</span></code> expires.</p>
+<p>Leader election is done as follows.
+Suppose there are two replica sets in the cluster:</p>
+<ul class="simple">
+<li><p>a single router “R”,</p></li>
+<li><p>two storages, “S1” and “S2”.</p></li>
+</ul>
+<p>Then we can say: all the three instances (R, S1, S2) agree that S1 is the leader.</p>
+<p>The SWIM protocol guarantees that <em>eventually</em> all instances will find a
+common ground, but it’s not guaranteed for every intermediate moment of
+time. So we may get a conflict.</p>
+<p>For example, soon after S1 goes down, R is already informed and thinks
+that S2 is the leader, but S2 hasn’t received the gossip yet and still thinks
+he’s not. This is a conflict.</p>
+<p>Similarly, when S1 recovers and takes the leadership, S2 may be unaware of
+that yet. So, both S1 and S2 consider themselves as leaders.</p>
+<p>Moreover, SWIM protocol isn’t perfect and still can produce
+false-negative gossips (announce the instance is dead when it’s not).
+It may cause “failover storms”, when failover triggers too many times per minute
+under a high load. You can pause failover at runtime using Lua API
+(<code class="docutils literal notranslate"><span class="pre">require('cartridge.lua-api.failover').pause()</span></code>) or GraphQL mutation
+(<code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{</span> <span class="pre">cluster</span> <span class="pre">{</span> <span class="pre">failover_pause</span> <span class="pre">}</span> <span class="pre">}</span></code>). Those functions will pause
+failover on every instance they can reach. To see if failover is paused,
+check the logs or use the function <code class="docutils literal notranslate"><span class="pre">require('cartridge.failover').is_paused()</span></code>.
+Don’t forget to resume failover using Lua API
+(<code class="docutils literal notranslate"><span class="pre">require('cartridge.lua-api.failover').resume()</span></code>) or GraphQL mutation
+(<code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{</span> <span class="pre">cluster</span> <span class="pre">{</span> <span class="pre">failover_resume</span> <span class="pre">}</span> <span class="pre">}</span></code>).</p>
+<p>You can also enable failover suppressing by <code class="docutils literal notranslate"><span class="pre">cartridge.cfg</span></code> parameter
+<code class="docutils literal notranslate"><span class="pre">enable_failover_suppressing</span></code>. It allows to automatically pause failover
+in runtime if failover triggers too many times per minute. It could be
+configured by argparse parameters <code class="docutils literal notranslate"><span class="pre">failover_suppress_threshold</span></code>
+(count of times than failover triggers per <code class="docutils literal notranslate"><span class="pre">failover_suppress_timeout</span></code> to
+be suppressed) and <code class="docutils literal notranslate"><span class="pre">failover_suppress_timeout</span></code> (time in seconds, if failover
+triggers more than <code class="docutils literal notranslate"><span class="pre">failover_suppress_threshold</span></code>, it’ll be suppressed and
+released after <code class="docutils literal notranslate"><span class="pre">failover_suppress_timeout</span></code> sec).</p>
+</div>
+<div class="section" id="stateful-failover">
+<span id="cartridge-stateful-failover"></span><h4>Stateful failover<a class="headerlink" href="#stateful-failover" title="Permalink to this headline">¶</a></h4>
+<p>Similarly to the eventual mode, every instance composes its own leadership map,
+but now the map is fetched from an <strong>external state provider</strong>
+(that’s why this failover mode called “stateful”). Nowadays there are two state
+providers supported – <code class="docutils literal notranslate"><span class="pre">etcd</span></code> and <code class="docutils literal notranslate"><span class="pre">stateboard</span></code> (standalone Tarantool instance).
+State provider serves as a domain-specific key-value storage (simply
+<code class="docutils literal notranslate"><span class="pre">replicaset_uuid</span> <span class="pre">-&gt;</span> <span class="pre">leader_uuid</span></code>) and a locking mechanism.</p>
+<p>Changes in the leadership map are obtained from the state provider with the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Push_technology#Long_polling">long polling technique</a>.</p>
+<p>All decisions are made by <strong>the coordinator</strong> – the one that holds the
+lock. The coordinator is implemented as a built-in Cartridge role. There may
+be many instances with the coordinator role enabled, but only one of
+them can acquire the lock at the same time. We call this coordinator the “active”
+one.</p>
+<p>The lock is released automatically when the TCP connection is closed, or it
+may expire if the coordinator becomes unresponsive (in <code class="docutils literal notranslate"><span class="pre">stateboard</span></code> it’s set
+by the stateboard’s <code class="docutils literal notranslate"><span class="pre">--lock_delay</span></code> option, for <code class="docutils literal notranslate"><span class="pre">etcd</span></code> it’s a part of
+clusterwide configuration), so the coordinator renews the lock from
+time to time in order to be considered alive.</p>
+<p>The coordinator makes a decision based on the SWIM data, but the decision
+algorithm is slightly different from that in case of eventual failover:</p>
+<ul class="simple">
+<li><p>Right after acquiring the lock from the state provider, the coordinator
+fetches the leadership map.</p></li>
+<li><p>If there is no leader appointed for the replica set, the coordinator
+appoints the first leader according to the failover priority, regardless of
+the SWIM status.</p></li>
+<li><p>If a leader becomes <code class="docutils literal notranslate"><span class="pre">dead</span></code>, the coordinator makes a decision. A new
+leader is the first healthy instance from the failover priority list.
+If an old leader recovers, no leader change is made until the current
+leader down. Changing failover priority doesn’t affect this.</p></li>
+<li><p>Every appointment (self-made or fetched) is immune for a while
+(controlled by the <code class="docutils literal notranslate"><span class="pre">IMMUNITY_TIMEOUT</span></code> option).</p></li>
+</ul>
+<p>You can also enable <code class="docutils literal notranslate"><span class="pre">leader_autoreturn</span></code> to return leadership to the
+first leader in <code class="docutils literal notranslate"><span class="pre">failover_priority</span></code> list after failover was triggered.
+It might be useful when you have active and passive data centers.
+The time before failover will try to return the leader is configured by
+<code class="docutils literal notranslate"><span class="pre">autoreturn_delay</span></code> option in a failover configuration.</p>
+<p>Stateful failover automatically checks if there is a registered cluster
+in a state provider. Check is performed on a first stateful failover
+configuration and every time when cluster is restarted. You can disable that
+option by using <code class="docutils literal notranslate"><span class="pre">check_cookie_hash</span> <span class="pre">=</span> <span class="pre">false</span></code> in failover configuration.</p>
+<div class="section" id="case-external-provider-outage">
+<h5>Case: external provider outage<a class="headerlink" href="#case-external-provider-outage" title="Permalink to this headline">¶</a></h5>
+<p>In this case, instances do nothing: the leader remains a leader,
+read-only instances remain read-only. If any instance restarts during an
+external state provider outage, it composes an empty leadership map:
+it doesn’t know who actually is a leader and thinks there is none.</p>
+</div>
+<div class="section" id="case-coordinator-outage">
+<h5>Case: coordinator outage<a class="headerlink" href="#case-coordinator-outage" title="Permalink to this headline">¶</a></h5>
+<p>An active coordinator may be absent in a cluster either because of a failure
+or due to disabling the role on all instances. Just like in the previous case,
+instances do nothing about it: they keep fetching the leadership map from the
+state provider. But it will remain the same until a coordinator appears.</p>
+</div>
+</div>
+<div class="section" id="raft-failover-beta">
+<span id="cartridge-raft-failover"></span><h4>Raft failover (beta)<a class="headerlink" href="#raft-failover-beta" title="Permalink to this headline">¶</a></h4>
+<p>Raft failover in Cartridge based on built-in Tarantool Raft failover, the
+<code class="docutils literal notranslate"><span class="pre">box.ctl.on_election</span></code> trigger that was introduced in Tarantool 2.10.0, and
+eventual failover mechanisms. The replicaset leader is chosen by built-in Raft,
+then the other replicasets get information about leader change from membership.
+It’s needed to use Cartridge RPC calls. The user can control an instance’s
+election mode using the argparse option <code class="docutils literal notranslate"><span class="pre">TARANTOOL_ELECTION_MODE</span></code> or
+<code class="docutils literal notranslate"><span class="pre">--election-mode</span></code> or use <code class="docutils literal notranslate"><span class="pre">box.cfg{election_mode</span> <span class="pre">=</span> <span class="pre">...}</span></code> API in runtime.</p>
+<p>Raft failover can be enabled only on replicasets of 3 or more instances
+and can’t be enabled with <code class="docutils literal notranslate"><span class="pre">ALL_RW</span></code> replicasets.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Raft failover in Cartridge is in beta. Don’t use it in production.</p>
+</div>
+</div>
+</div>
+<div class="section" id="manual-leader-promotion">
+<h3>Manual leader promotion<a class="headerlink" href="#manual-leader-promotion" title="Permalink to this headline">¶</a></h3>
+<p>It differs a lot depending on the failover mode.</p>
+<p>In the disabled and eventual modes, you can only promote a leader by changing
+the failover priority (and applying a new clusterwide configuration).</p>
+<p>In the stateful mode, the failover priority doesn’t make much sense (except for
+the first appointment). Instead, you should use the promotion API
+(the Lua <a class="reference internal" href="cartridge_api/modules/cartridge.html#cartridge-failover-promote"><span class="std std-ref">cartridge.failover_promote</span></a> or
+the GraphQL <code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{cluster{failover_promote()}}</span></code>)
+which pushes manual appointments to the state provider.</p>
+<p>The stateful failover mode implies <strong>consistent promotion</strong>: before becoming
+writable, each instance performs the <code class="docutils literal notranslate"><span class="pre">wait_lsn</span></code> operation to sync up with the
+previous one.</p>
+<p>Information about the previous leader (we call it a <em>vclockkeeper</em>) is also
+stored on the external storage. Even when the old leader is demoted, it remains the
+vclockkeeper until the new leader successfully awaits and persists its vclock on
+the external storage.</p>
+<p>If replication is stuck and consistent promotion isn’t possible, a user has two
+options: to revert promotion (to re-promote the old leader) or to force it
+inconsistently (all kinds of <code class="docutils literal notranslate"><span class="pre">failover_promote</span></code> API has
+<code class="docutils literal notranslate"><span class="pre">force_inconsistency</span></code> flag).</p>
+<p>Consistent promotion doesn’t work for replicasets with <cite>all_rw</cite> flag enabled
+and for single-instance replicasets. In these two cases an instance doesn’t
+even try to query <cite>vclockkeeper</cite> and to perform <cite>wait_lsn</cite>. But the coordinator
+still appoints a new leader if the current one dies.</p>
+<p>In the Raft failover mode, the user can also use the promotion API:
+<a class="reference internal" href="cartridge_api/modules/cartridge.html#cartridge-failover-promote"><span class="std std-ref">cartridge.failover_promote</span></a> in Lua or
+<code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{cluster{failover_promote()}}</span></code> in GraphQL,
+which calls <code class="docutils literal notranslate"><span class="pre">box.ctl.promote</span></code> on the specified instances.
+Note that <code class="docutils literal notranslate"><span class="pre">box.ctl.promote</span></code> starts fair elections, so some other instance may
+become the leader in the replicaset.</p>
+</div>
+<div class="section" id="unelectable-nodes">
+<h3>Unelectable nodes<a class="headerlink" href="#unelectable-nodes" title="Permalink to this headline">¶</a></h3>
+<p>You can restrict the election of a particular node in the <code class="docutils literal notranslate"><span class="pre">stateful</span></code>
+failover mode by GraphQL or Lua API. An “unelectable” node can’t become a
+leader in a replicaset. It could be useful for nodes that could only be used
+for election process and for routers that shouldn’t store the data.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">edit_topology</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">   </span><span class="nt">&quot;replicasets&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;alias&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;storage&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aaaaaaaa-aaaa-0000-0000-000000000000&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;join_servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">             </span><span class="p">{</span>
+<span class="w">                 </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;localhost:3301&quot;</span><span class="p">,</span>
+<span class="w">                 </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;aaaaaaaa-aaaa-0000-0000-000000000001&quot;</span><span class="p">,</span>
+<span class="w">                 </span><span class="nt">&quot;electable&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">             </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;roles&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w">   </span><span class="p">]</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>In Lua API:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- to make nodes unelectable:</span>
+<span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.lua-api.topology&#39;</span><span class="p">).</span><span class="n">api_topology</span><span class="p">.</span><span class="n">set_unelectable_servers</span><span class="p">(</span><span class="n">uuids</span><span class="p">)</span>
+<span class="c1">-- to make nodes electable:</span>
+<span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.lua-api.topology&#39;</span><span class="p">).</span><span class="n">api_topology</span><span class="p">.</span><span class="n">set_electable_servers</span><span class="p">(</span><span class="n">uuids</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also make a node unelectable in WebUI:</p>
+<a class="reference internal image-reference" href="../images/set_non_electable.png"><img alt="../images/set_non_electable.png" class="align-left" src="../images/set_non_electable.png" /></a>
+<p> </p>
+<p>If everything is ok, you will see a crossed-out crown to the left of the instance name.</p>
+<a class="reference internal image-reference" href="../images/non_electable.png"><img alt="../images/non_electable.png" class="align-left" src="../images/non_electable.png" /></a>
+<p> </p>
+</div>
+<div class="section" id="fencing">
+<h3>Fencing<a class="headerlink" href="#fencing" title="Permalink to this headline">¶</a></h3>
+<p>Neither <code class="docutils literal notranslate"><span class="pre">eventual</span></code> nor <code class="docutils literal notranslate"><span class="pre">stateful</span></code> failover mode protects a replicaset
+from the presence of multiple leaders when the network is partitioned.
+But fencing does. It enforces at-most-one leader policy in a replicaset.</p>
+<p>Fencing operates as a fiber that occasionally checks connectivity with
+the state provider and with replicas. Fencing fiber runs on
+vclockkeepers; it starts right after consistent promotion succeeds.
+Replicasets which don’t need consistency (single-instance and
+<code class="docutils literal notranslate"><span class="pre">all_rw</span></code>) don’t defend, though.</p>
+<p>The condition for fencing actuation is the loss of both the state
+provider quorum and at least one replica. Otherwise, if either state
+provider is healthy or all replicas are alive, the fencing fiber waits
+and doesn’t intervene.</p>
+<p>When fencing is actuated, it generates a fake appointment locally and
+sets the leader to <code class="docutils literal notranslate"><span class="pre">nil</span></code>. Consequently, the instance becomes
+read-only. Subsequent recovery is only possible when the quorum
+reestablishes; replica connection isn’t a must for recovery. Recovery is
+performed according to the rules of consistent switchover unless some
+other instance has already been promoted to a new leader.</p>
+<p>Raft failover supports fencing too. Check <code class="docutils literal notranslate"><span class="pre">election_fencing_mode</span></code> parameter
+of <code class="docutils literal notranslate"><span class="pre">box.cfg{}</span></code></p>
+</div>
+<div class="section" id="failover-configuration">
+<span id="id1"></span><h3>Failover configuration<a class="headerlink" href="#failover-configuration" title="Permalink to this headline">¶</a></h3>
+<p>These are clusterwide parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: “disabled” / “eventual” / “stateful” / “raft”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">state_provider</span></code>: “tarantool” / “etcd”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">failover_timeout</span></code> – time (in seconds) to mark <code class="docutils literal notranslate"><span class="pre">suspect</span></code> members
+as <code class="docutils literal notranslate"><span class="pre">dead</span></code> and trigger failover (default: 20).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tarantool_params</span></code>: <code class="docutils literal notranslate"><span class="pre">{uri</span> <span class="pre">=</span> <span class="pre">&quot;...&quot;,</span> <span class="pre">password</span> <span class="pre">=</span> <span class="pre">&quot;...&quot;}</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">etcd2_params</span></code>: <code class="docutils literal notranslate"><span class="pre">{endpoints</span> <span class="pre">=</span> <span class="pre">{...},</span> <span class="pre">prefix</span> <span class="pre">=</span> <span class="pre">&quot;/&quot;,</span> <span class="pre">lock_delay</span> <span class="pre">=</span> <span class="pre">10,</span> <span class="pre">username</span> <span class="pre">=</span> <span class="pre">&quot;&quot;,</span> <span class="pre">password</span> <span class="pre">=</span> <span class="pre">&quot;&quot;}</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fencing_enabled</span></code>: <code class="docutils literal notranslate"><span class="pre">true</span></code> / <code class="docutils literal notranslate"><span class="pre">false</span></code> (default: false).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fencing_timeout</span></code> – time to actuate fencing after the check fails (default: 10).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fencing_pause</span></code> – the period of performing the check (default: 2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">leader_autoreturn</span></code>: <code class="docutils literal notranslate"><span class="pre">true</span></code> / <code class="docutils literal notranslate"><span class="pre">false</span></code> (default: false).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">autoreturn_delay</span></code> – the time before failover will try to return leader
+in replicaset to the first instance in <code class="docutils literal notranslate"><span class="pre">failover_priority</span></code> list (default: 300).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check_cookie_hash</span></code> – enable check that nobody else uses this stateboard.</p></li>
+</ul>
+<p>It’s required that <code class="docutils literal notranslate"><span class="pre">failover_timeout</span> <span class="pre">&gt;</span> <span class="pre">fencing_timeout</span> <span class="pre">&gt;=</span> <span class="pre">fencing_pause</span></code>.</p>
+<div class="section" id="lua-api">
+<h4>Lua API<a class="headerlink" href="#lua-api" title="Permalink to this headline">¶</a></h4>
+<p>See:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="cartridge_api/modules/cartridge.html#cartridge-failover-get-params"><span class="std std-ref">cartridge.failover_get_params</span></a>,</p></li>
+<li><p><a class="reference internal" href="cartridge_api/modules/cartridge.html#cartridge-failover-set-params"><span class="std std-ref">cartridge.failover_set_params</span></a>,</p></li>
+<li><p><a class="reference internal" href="cartridge_api/modules/cartridge.html#cartridge-failover-promote"><span class="std std-ref">cartridge.failover_promote</span></a>.</p></li>
+</ul>
+</div>
+<div class="section" id="graphql-api">
+<h4>GraphQL API<a class="headerlink" href="#graphql-api" title="Permalink to this headline">¶</a></h4>
+<p>Use your favorite GraphQL client (e.g.
+<a class="reference external" href="https://altair.sirmuel.design/">Altair</a>) for requests introspection:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">query</span> <span class="pre">{cluster{failover_params{}}}</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{cluster{failover_params(){}}}</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mutation</span> <span class="pre">{cluster{failover_promote()}}</span></code>.</p></li>
+</ul>
+<p>Here is an example of how to setup stateful failover:</p>
+<div class="highlight-graphql notranslate"><div class="highlight"><pre><span></span>mutation {
+  cluster { failover_params(
+    mode: &quot;stateful&quot;
+    failover_timeout: 20
+    state_provider: &quot;etcd2&quot;
+    etcd2_params: {
+        endpoints: [&quot;http://127.0.0.1:4001&quot;]
+        prefix: &quot;etcd-prefix&quot;
+    }) {
+        mode
+        }
+    }
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="stateboard-configuration">
+<span id="id2"></span><h3>Stateboard configuration<a class="headerlink" href="#stateboard-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Like other Cartridge instances, the stateboard supports <code class="docutils literal notranslate"><span class="pre">cartridge.argprase</span></code>
+options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">listen</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">workdir</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">password</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lock_delay</span></code></p></li>
+</ul>
+<p>Similarly to other <code class="docutils literal notranslate"><span class="pre">argparse</span></code> options, they can be passed via
+command-line arguments or via environment variables, e.g.:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.rocks/bin/stateboard<span class="w"> </span>--workdir<span class="w"> </span>./dev/stateboard<span class="w"> </span>--listen<span class="w"> </span><span class="m">4401</span><span class="w"> </span>--password<span class="w"> </span>qwerty
+</pre></div>
+</div>
+</div>
+<div class="section" id="fine-tuning-failover-behavior">
+<h3>Fine-tuning failover behavior<a class="headerlink" href="#fine-tuning-failover-behavior" title="Permalink to this headline">¶</a></h3>
+<p>Besides failover priority and mode, there are some other private options
+that influence failover operation:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LONGPOLL_TIMEOUT</span></code> (<code class="docutils literal notranslate"><span class="pre">failover</span></code>) – the long polling timeout (in seconds) to
+fetch new appointments (default: 30);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NETBOX_CALL_TIMEOUT</span></code> (<code class="docutils literal notranslate"><span class="pre">failover/coordinator</span></code>) – stateboard client’s
+connection timeout (in seconds) applied to all communications (default: 1);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RECONNECT_PERIOD</span></code> (<code class="docutils literal notranslate"><span class="pre">coordinator</span></code>) – time (in seconds) to reconnect to the
+state provider if it’s unreachable (default: 5);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IMMUNITY_TIMEOUT</span></code> (<code class="docutils literal notranslate"><span class="pre">coordinator</span></code>) – minimal amount of time (in seconds)
+to wait before overriding an appointment (default: 15).</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="configuring-instances">
+<span id="cartridge-config"></span><h2>Configuring instances<a class="headerlink" href="#configuring-instances" title="Permalink to this headline">¶</a></h2>
+<p>Cartridge orchestrates a distributed system of Tarantool instances – a
+cluster. One of the core concepts is <strong>clusterwide configuration</strong>.
+Every instance in a cluster stores a copy of it.</p>
+<p>Clusterwide configuration contains options that must be identical on
+every cluster node, such as the topology of the cluster, failover and vshard
+configuration, authentication parameters and ACLs, and user-defined
+configuration.</p>
+<p>Clusterwide configuration doesn’t provide instance-specific parameters:
+ports, workdirs, memory settings, etc.</p>
+<div class="section" id="configuration-basics">
+<span id="cartridge-config-basic"></span><h3>Configuration basics<a class="headerlink" href="#configuration-basics" title="Permalink to this headline">¶</a></h3>
+<p>Instance configuration includes two sets of parameters:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="cartridge_api/modules/cartridge.argparse.html#cartridge-argparse-cluster-opts"><span class="std std-ref">cartridge.cfg() parameters</span></a>;</p></li>
+<li><p><a class="reference internal" href="cartridge_api/modules/cartridge.argparse.html#cartridge-argparse-box-opts"><span class="std std-ref">box.cfg() parameters</span></a>.</p></li>
+</ul>
+<p>You can set any of these parameters in:</p>
+<ol class="arabic simple">
+<li><p>Command line arguments.</p></li>
+<li><p>Environment variables.</p></li>
+<li><p>YAML configuration file.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">init.lua</span></code> file.</p></li>
+</ol>
+<p>The order here indicates the priority: command-line arguments override
+environment variables, and so forth.</p>
+<p>No matter how you <a class="reference internal" href="#cartridge-run"><span class="std std-ref">start the instances</span></a>, you need to set
+the following <code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code> parameters for each instance:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">advertise_uri</span></code> – either <code class="docutils literal notranslate"><span class="pre">&lt;HOST&gt;:&lt;PORT&gt;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&lt;HOST&gt;:</span></code>, or <code class="docutils literal notranslate"><span class="pre">&lt;PORT&gt;</span></code>.
+Used by other instances to connect to the current one.
+<strong>DO NOT</strong> specify <code class="docutils literal notranslate"><span class="pre">0.0.0.0</span></code> – this must be
+an external IP address, not a socket bind.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http_port</span></code> – port to open administrative web interface and API on.
+Defaults to <code class="docutils literal notranslate"><span class="pre">8081</span></code>.
+To disable it, specify <code class="docutils literal notranslate"><span class="pre">&quot;http_enabled&quot;:</span> <span class="pre">False</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">workdir</span></code> – a directory where all data will be stored:
+snapshots, wal logs, and <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> configuration file.
+Defaults to <code class="docutils literal notranslate"><span class="pre">.</span></code>.</p></li>
+</ul>
+<p id="cartridge-config-systemctl"><span id="cartridge-config-cartridge-cli"></span>If you start instances using <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> CLI or <code class="docutils literal notranslate"><span class="pre">systemctl</span></code>,
+save the configuration as a YAML file, for example:</p>
+<div class="highlight-kconfig notranslate"><div class="highlight"><pre><span></span>my_app.router:<span class="w"> </span>{&quot;advertise_uri&quot;:<span class="w"> </span><span class="s2">&quot;localhost:3301&quot;</span>,<span class="w"> </span><span class="s2">&quot;http_port&quot;</span>:<span class="w"> </span><span class="mi">8080</span>}
+my_app.storage_A:<span class="w"> </span>{&quot;advertise_uri&quot;:<span class="w"> </span><span class="s2">&quot;localhost:3302&quot;</span>,<span class="w"> </span><span class="s2">&quot;http_enabled&quot;</span>:<span class="w"> </span>False}
+my_app.storage_B:<span class="w"> </span>{&quot;advertise_uri&quot;:<span class="w"> </span><span class="s2">&quot;localhost:3303&quot;</span>,<span class="w"> </span><span class="s2">&quot;http_enabled&quot;</span>:<span class="w"> </span>False}
+</pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> CLI, you can pass the path to this file as the <code class="docutils literal notranslate"><span class="pre">--cfg</span></code>
+command-line argument to the <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">start</span></code> command – or specify the path
+in <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> CLI configuration (in <code class="docutils literal notranslate"><span class="pre">./.cartridge.yml</span></code> or <code class="docutils literal notranslate"><span class="pre">~/.cartridge.yml</span></code>):</p>
+<div class="highlight-kconfig notranslate"><div class="highlight"><pre><span></span>cfg:<span class="w"> </span>cartridge.yml
+run-dir:<span class="w"> </span>tmp/run
+</pre></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">systemctl</span></code>, save the YAML file to <code class="docutils literal notranslate"><span class="pre">/etc/tarantool/conf.d/</span></code>
+(the default <code class="docutils literal notranslate"><span class="pre">systemd</span></code> path) or to a location set in the <code class="docutils literal notranslate"><span class="pre">TARANTOOL_CFG</span></code>
+environment variable.</p>
+<p id="cartridge-config-tarantool">If you start instances with <code class="docutils literal notranslate"><span class="pre">tarantool</span> <span class="pre">init.lua</span></code>,
+you need to pass other configuration options as command-line parameters and
+environment variables, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tarantool<span class="w"> </span>init.lua<span class="w"> </span>--alias<span class="w"> </span>router<span class="w"> </span>--memtx-memory<span class="w"> </span><span class="m">100</span><span class="w"> </span>--workdir<span class="w"> </span><span class="s2">&quot;~/db/3301&quot;</span><span class="w"> </span>--advertise_uri<span class="w"> </span><span class="s2">&quot;localhost:3301&quot;</span><span class="w"> </span>--http_port<span class="w"> </span><span class="s2">&quot;8080&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="internal-representation-of-clusterwide-configuration">
+<h3>Internal representation of clusterwide configuration<a class="headerlink" href="#internal-representation-of-clusterwide-configuration" title="Permalink to this headline">¶</a></h3>
+<p>In the file system, clusterwide configuration is represented by a <strong>file tree</strong>.
+Inside <code class="docutils literal notranslate"><span class="pre">workdir</span></code> of any configured instance you can find the following
+directory:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>config/
+├── auth.yml
+├── topology.yml
+└── vshard_groups.yml
+</pre></div>
+</div>
+<p>This is the clusterwide configuration with three default <strong>config sections</strong> –
+<code class="docutils literal notranslate"><span class="pre">auth</span></code>, <code class="docutils literal notranslate"><span class="pre">topology</span></code>, and <code class="docutils literal notranslate"><span class="pre">vshard_groups</span></code>.</p>
+<p>Due to historical reasons clusterwide configuration has two appearances:</p>
+<ul class="simple">
+<li><p>old-style single-file <code class="docutils literal notranslate"><span class="pre">config.yml</span></code> with all sections combined, and</p></li>
+<li><p>modern multi-file representation mentioned above.</p></li>
+</ul>
+<p>Before cartridge v2.0 it used to look as follows, and this representation is
+still used in HTTP API and <code class="docutils literal notranslate"><span class="pre">luatest</span></code> helpers.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yml</span>
+<span class="nn">---</span>
+<span class="nt">auth</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
+<span class="nt">topology</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
+<span class="nt">vshard_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nv">...</span><span class="p p-Indicator">}</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+<p>Beyond these essential sections, clusterwide configuration may be used
+for storing some other role-specific data. Clusterwide configuration
+supports YAML as well as plain text sections. It can also be organized
+in nested subdirectories.</p>
+<p>In Lua it’s represented by the <code class="docutils literal notranslate"><span class="pre">ClusterwideConfig</span></code> object (a table with
+metamethods). Refer to the <code class="docutils literal notranslate"><span class="pre">cartridge.clusterwide-config</span></code> module
+documentation for more details.</p>
+</div>
+<div class="section" id="two-phase-commit">
+<h3>Two-phase commit<a class="headerlink" href="#two-phase-commit" title="Permalink to this headline">¶</a></h3>
+<p>Cartridge manages clusterwide configuration to be identical everywhere
+using the two-phase commit algorithm implemented in the <code class="docutils literal notranslate"><span class="pre">cartridge.twophase</span></code>
+module. Changes in clusterwide configuration imply applying it on
+every instance in the cluster.</p>
+<p>Almost every change in cluster parameters triggers a two-phase commit:
+joining/expelling a server, editing replica set roles, managing users,
+setting failover and vshard configuration.</p>
+<p>Two-phase commit requires all instances to be alive and healthy,
+otherwise it returns an error.</p>
+<p>For more details, please, refer to the
+<code class="docutils literal notranslate"><span class="pre">cartridge.config_patch_clusterwide</span></code> API reference.</p>
+</div>
+<div class="section" id="managing-role-specific-data">
+<h3>Managing role-specific data<a class="headerlink" href="#managing-role-specific-data" title="Permalink to this headline">¶</a></h3>
+<p>Beside system sections, clusterwide configuration may be used for storing
+some other <strong>role-specific data</strong>. It supports YAML as well as plain
+text sections. And it can also be organized in nested subdirectories.</p>
+<p>Role-specific sections are used by some third-party roles, i.e.
+<a class="reference external" href="https://github.com/tarantool/sharded-queue">sharded-queue</a> and
+<a class="reference external" href="https://github.com/tarantool/cartridge-extensions">cartridge-extensions</a>.</p>
+<p>A user can influence clusterwide configuration in various ways. You can
+alter configuration using Lua, HTTP or GraphQL API. Also there are
+<a class="reference external" href="https://github.com/tarantool/luatest">luatest</a> helpers available.</p>
+<div class="section" id="http-api">
+<span id="cartridge-config-http-api"></span><h4>HTTP API<a class="headerlink" href="#http-api" title="Permalink to this headline">¶</a></h4>
+<p>It works with old-style single-file representation only. It’s useful
+when there are only few sections needed.</p>
+<p>Example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span>&gt;<span class="w"> </span>config.yml<span class="w"> </span><span class="s">&lt;&lt; CONFIG</span>
+<span class="s">---</span>
+<span class="s">custom_section: {}</span>
+<span class="s">...</span>
+<span class="s">CONFIG</span>
+</pre></div>
+</div>
+<p>Upload new config:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;localhost:8081/admin/config&quot;</span><span class="w"> </span>-X<span class="w"> </span>PUT<span class="w"> </span>--data-binary<span class="w"> </span>@config.yml
+</pre></div>
+</div>
+<p>Download it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-v<span class="w"> </span><span class="s2">&quot;localhost:8081/admin/config&quot;</span><span class="w"> </span>-o<span class="w"> </span>config.yml
+</pre></div>
+</div>
+<p>It’s suitable for role-specific sections only. System sections
+(<code class="docutils literal notranslate"><span class="pre">topology</span></code>, <code class="docutils literal notranslate"><span class="pre">auth</span></code>, <code class="docutils literal notranslate"><span class="pre">vshard_groups</span></code>, <code class="docutils literal notranslate"><span class="pre">users_acl</span></code>) can be neither
+uploaded nor downloaded.</p>
+<p>If authorization is enabled, use the <code class="docutils literal notranslate"><span class="pre">curl</span></code> option <code class="docutils literal notranslate"><span class="pre">--user</span> <span class="pre">username:password</span></code>.</p>
+</div>
+<div class="section" id="cartridge-config-graphql-api">
+<span id="id3"></span><h4>GraphQL API<a class="headerlink" href="#cartridge-config-graphql-api" title="Permalink to this headline">¶</a></h4>
+<p>GraphQL API, by contrast, is only suitable for managing plain-text
+sections in the modern multi-file appearance. It is mostly used by WebUI,
+but sometimes it’s also helpful in tests:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="p">.</span><span class="n">cluster</span><span class="p">.</span><span class="n">main_server</span><span class="p">:</span><span class="n">graphql</span><span class="p">({</span><span class="n">query</span> <span class="o">=</span> <span class="s">[[</span>
+<span class="s">    mutation($sections: [ConfigSectionInput!]) {</span>
+<span class="s">        cluster {</span>
+<span class="s">            config(sections: $sections) {</span>
+<span class="s">                filename</span>
+<span class="s">                content</span>
+<span class="s">            }</span>
+<span class="s">        }</span>
+<span class="s">    }]]</span><span class="p">,</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">{</span><span class="n">sections</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="p">{</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;custom_section.yml&#39;</span><span class="p">,</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;---</span><span class="se">\n</span><span class="s1">{}</span><span class="se">\n</span><span class="s1">...&#39;</span><span class="p">,</span>
+      <span class="p">}</span>
+    <span class="p">}}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>Unlike HTTP API, GraphQL affects only the sections mentioned in the query. All
+the other sections remain unchanged.</p>
+<p>Similarly to HTTP API, GraphQL <code class="docutils literal notranslate"><span class="pre">cluster</span> <span class="pre">{config}</span></code> query isn’t suitable for
+managing system sections.</p>
+</div>
+<div class="section" id="cartridge-config-lua-api">
+<span id="id4"></span><h4>Lua API<a class="headerlink" href="#cartridge-config-lua-api" title="Permalink to this headline">¶</a></h4>
+<p>It’s not the most convenient way to configure third-party role, but it
+may be useful for role development. Please, refer to the corresponding API
+reference:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.config_patch_clusterwide</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.config_get_deepcopy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.config_get_readonly</span></code></p></li>
+</ul>
+<p>Example (from <code class="docutils literal notranslate"><span class="pre">sharded-queue</span></code>, simplified):</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kr">function</span> <span class="nf">create_tube</span><span class="p">(</span><span class="n">tube_name</span><span class="p">,</span> <span class="n">tube_opts</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">tubes</span> <span class="o">=</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">config_get_deepcopy</span><span class="p">(</span><span class="s1">&#39;tubes&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">tubes</span><span class="p">[</span><span class="n">tube_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tube_opts</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="kr">return</span> <span class="n">cartridge</span><span class="p">.</span><span class="n">config_patch_clusterwide</span><span class="p">({</span><span class="n">tubes</span> <span class="o">=</span> <span class="n">tubes</span><span class="p">})</span>
+<span class="kr">end</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">validate_config</span><span class="p">(</span><span class="n">conf</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">tubes</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">tubes</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="kr">for</span> <span class="n">tube_name</span><span class="p">,</span> <span class="n">tube_opts</span> <span class="kr">in</span> <span class="nb">pairs</span><span class="p">(</span><span class="n">tubes</span><span class="p">)</span> <span class="kr">do</span>
+        <span class="c1">-- validate tube_opts</span>
+    <span class="kr">end</span>
+    <span class="kr">return</span> <span class="kc">true</span>
+<span class="kr">end</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">apply_config</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span> <span class="n">opts</span><span class="p">)</span>
+    <span class="kr">if</span> <span class="n">opts</span><span class="p">.</span><span class="n">is_master</span> <span class="kr">then</span>
+        <span class="kd">local</span> <span class="n">tubes</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">.</span><span class="n">tubes</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="c1">-- create tubes according to the configuration</span>
+    <span class="kr">end</span>
+    <span class="kr">return</span> <span class="kc">true</span>
+<span class="kr">end</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="luatest-helpers">
+<span id="cartridge-config-luatest-api"></span><h4>Luatest helpers<a class="headerlink" href="#luatest-helpers" title="Permalink to this headline">¶</a></h4>
+<p>Cartridge test helpers provide methods for configuration management:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.test-helpers.cluster:upload_config</span></code>,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge.test-helpers.cluster:download_config</span></code>.</p></li>
+</ul>
+<p>Internally they wrap the HTTP API.</p>
+<p>Example:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="p">.</span><span class="n">before_all</span><span class="p">(</span><span class="kr">function</span><span class="p">()</span>
+    <span class="n">g</span><span class="p">.</span><span class="n">cluster</span> <span class="o">=</span> <span class="n">helpers</span><span class="p">.</span><span class="n">Cluster</span><span class="p">.</span><span class="n">new</span><span class="p">(...)</span>
+    <span class="n">g</span><span class="p">.</span><span class="n">cluster</span><span class="p">:</span><span class="n">upload_config</span><span class="p">({</span><span class="n">some_section</span> <span class="o">=</span> <span class="s1">&#39;some_value&#39;</span><span class="p">})</span>
+    <span class="n">t</span><span class="p">.</span><span class="n">assert_equals</span><span class="p">(</span>
+        <span class="n">g</span><span class="p">.</span><span class="n">cluster</span><span class="p">:</span><span class="n">download_config</span><span class="p">(),</span>
+        <span class="p">{</span><span class="n">some_section</span> <span class="o">=</span> <span class="s1">&#39;some_value&#39;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="kr">end</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="deploying-an-application">
+<span id="cartridge-deploy"></span><h2>Deploying an application<a class="headerlink" href="#deploying-an-application" title="Permalink to this headline">¶</a></h2>
+<p>After you’ve developed your Tarantool Cartridge application locally, you can deploy
+it to a test or production environment.</p>
+<p>Deploying includes:</p>
+<ul class="simple">
+<li><p>packing the application into a specific distribution format</p></li>
+<li><p>installing it to the target server</p></li>
+<li><p>running the application.</p></li>
+</ul>
+<p>You have four options to deploy a Tarantool Cartridge application:</p>
+<ul class="simple">
+<li><p>as an <a class="reference internal" href="#cartridge-deploy-rpm"><span class="std std-ref">RPM</span></a> package (for production)</p></li>
+<li><p>as a <a class="reference internal" href="#cartridge-deploy-deb"><span class="std std-ref">DEB</span></a> package (for production)</p></li>
+<li><p>as a <a class="reference internal" href="#cartridge-deploy-tgz"><span class="std std-ref">tar+gz</span></a> archive (for testing
+or as a workaround for production if root access is unavailable)</p></li>
+<li><p><a class="reference internal" href="#cartridge-deploy-rock"><span class="std std-ref">from sources</span></a> (for local testing only).</p></li>
+</ul>
+<div class="section" id="deploying-as-an-rpm-or-deb-package">
+<span id="cartridge-deploy-deb"></span><span id="cartridge-deploy-rpm"></span><h3>Deploying as an RPM or DEB package<a class="headerlink" href="#deploying-as-an-rpm-or-deb-package" title="Permalink to this headline">¶</a></h3>
+<p>The choice between DEB and RPM depends on the package manager of the target OS.
+DEB is used for Debian Linux and its derivatives, and RPM—for CentOS/RHEL and
+other RPM-based <a class="reference external" href="https://en.wikipedia.org/wiki/List_of_Linux_distributions">Linux distributions</a>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If you use the <a class="reference external" href="https://www.tarantool.io/en/developers/">Tarantool Community Edition</a>
+while packing the application, the package will have a dependency
+on this version of Tarantool.</p>
+<p>In this case, on a target server, add the Tarantool repository for
+the version equal or later than the one used for packing the application.
+This lets a package manager install the dependency correctly.
+See details for your OS on the
+<a class="reference external" href="https://www.tarantool.io/en/download/">Download</a> page.</p>
+</div>
+<p>For a production environment, it is recommended to use the <code class="docutils literal notranslate"><span class="pre">systemd</span></code> subsystem
+for managing the application instances and accessing log entries.</p>
+<p>To deploy your Tarantool Cartridge application:</p>
+<ol class="arabic">
+<li><p>Pack the application into a deliverable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>pack<span class="w"> </span>rpm<span class="w"> </span><span class="o">[</span>APP_PATH<span class="o">]</span><span class="w"> </span><span class="o">[</span>--use-docker<span class="o">]</span>
+$<span class="w"> </span><span class="c1"># -- OR --</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>pack<span class="w"> </span>deb<span class="w"> </span><span class="o">[</span>APP_PATH<span class="o">]</span><span class="w"> </span><span class="o">[</span>--use-docker<span class="o">]</span>
+</pre></div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">APP_PATH</span></code>—a path to the application directory. Defaults to <code class="docutils literal notranslate"><span class="pre">.</span></code>
+(the current directory).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--use-docker</span></code> – the flag to use if packing the application
+on a different Linux distribution or on macOS.
+It ensures the resulting artifact contains the Linux compatible
+external modules and executables.</p></li>
+</ul>
+<p>This creates an RPM or DEB package with the following naming:
+<code class="docutils literal notranslate"><span class="pre">&lt;APP_NAME&gt;-&lt;VERSION&gt;.{rpm,deb}</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">./my_app-0.1.0-1-g8c57dcb.rpm</span></code>
+or <code class="docutils literal notranslate"><span class="pre">./my_app-0.1.0-1-g8c57dcb.deb</span></code>. For more details on the format and
+usage of the <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">pack</span></code> command, refer to the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/cartridge/cartridge_cli/#packing-an-application">command description</a>.</p>
+</li>
+<li><p>Upload the generated package to a target server.</p></li>
+<li><p>Install the application:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>&lt;APP_NAME&gt;-&lt;VERSION&gt;.rpm
+$<span class="w"> </span><span class="c1"># -- OR --</span>
+$<span class="w"> </span>sudo<span class="w"> </span>dpkg<span class="w"> </span>-i<span class="w"> </span>&lt;APP_NAME&gt;-&lt;VERSION&gt;.deb
+</pre></div>
+</div>
+</li>
+<li><p>Configure the application instances.</p>
+<p>The configuration is stored in the <code class="docutils literal notranslate"><span class="pre">/etc/tarantool/conf.d/instances.yml</span></code>
+file. Create the file and specify parameters of the instances.
+For details, refer to <a class="reference internal" href="#cartridge-config"><span class="std std-ref">Configuring instances</span></a>.</p>
+<p>For example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">my_app</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">cluster_cookie</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret-cookie</span>
+
+<span class="nt">my_app.router</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">advertise_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:3301</span>
+<span class="w">  </span><span class="nt">http_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8081</span>
+
+<span class="nt">my_app.storage-master</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">advertise_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:3302</span>
+<span class="w">  </span><span class="nt">http_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8082</span>
+
+<span class="nt">my_app.storage-replica</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">advertise_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:3303</span>
+<span class="w">  </span><span class="nt">http_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8083</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Do not specify working directories of the instances in this configuration.
+They are defined via the <code class="docutils literal notranslate"><span class="pre">TARANTOOL_WORKDIR</span></code> environmental variable
+in the instantiated unit file (<code class="docutils literal notranslate"><span class="pre">/etc/systemd/system/&lt;APP_NAME&gt;&#64;.service</span></code>).</p>
+</div>
+</li>
+<li><p>Start the application instances by using <code class="docutils literal notranslate"><span class="pre">systemctl</span></code>.</p>
+<p>For more details, see <a class="reference internal" href="#cartridge-run-systemctl"><span class="std std-ref">Start/stop using systemctl</span></a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>my_app@router
+$<span class="w"> </span>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>my_app@storage-master
+$<span class="w"> </span>sudo<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>my_app@storage-replica
+</pre></div>
+</div>
+</li>
+<li><p>In case of a cluster-aware application, proceed to <a class="reference internal" href="cartridge_admin.html#cartridge-deployment"><span class="std std-ref">deploying the cluster</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you’re migrating your application from local test environment to
+production, you can re-use your test configuration at this step:</p>
+<ol class="arabic simple">
+<li><p>In the cluster web interface of the test environment, click
+<strong>Configuration files &gt; Download</strong>
+to save the test configuration.</p></li>
+<li><p>In the cluster web interface of the production environment, click
+<strong>Configuration files &gt; Upload</strong>
+to upload the saved configuration.</p></li>
+</ol>
+</div>
+</li>
+</ol>
+<p>You can further manage the running instances by using the standard operations of
+the <code class="docutils literal notranslate"><span class="pre">systemd</span></code> utilities:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">systemctl</span></code> for stopping, re-starting, checking the status of the instances,
+and so on</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">journalctl</span></code> for collecting logs of the instances.</p></li>
+</ul>
+<div class="section" id="entities-created-during-installation">
+<span id="cartridge-deploy-add"></span><h4>Entities created during installation<a class="headerlink" href="#entities-created-during-installation" title="Permalink to this headline">¶</a></h4>
+<p>During the installation of a Tarantool Cartridge application, the following
+entities are additionally created:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tarantool</span></code> user group.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">tarantool</span></code> system user. All the application instances start under this
+user. The <code class="docutils literal notranslate"><span class="pre">tarantool</span></code> user group is the main group for the <code class="docutils literal notranslate"><span class="pre">tarantool</span></code> user.
+The user is created with the option <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">/sbin/nologin</span></code>.</p></li>
+<li><p>Directories and files listed in the table below
+(<code class="docutils literal notranslate"><span class="pre">&lt;APP_NAME&gt;</span></code> is the application name, <code class="docutils literal notranslate"><span class="pre">%i</span></code> is the instance name):</p></li>
+</ul>
+<div class="table docutils container">
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 17%" />
+<col style="width: 17%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Path</p></th>
+<th class="head"><p>Access Rights</p></th>
+<th class="head"><p>Owner:Group</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/etc/systemd/system/&lt;APP_NAME&gt;.service</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-rw-r--r--</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">root:root</span></code></p></td>
+<td><p>systemd unit file for the &lt;APP_NAME&gt; service</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/etc/systemd/system/&lt;APP_NAME&gt;&#64;.service</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-rw-r--r--</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">root:root</span></code></p></td>
+<td><p>systemd instantiated unit file for the &lt;APP_NAME&gt; service</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/usr/share/tarantool/&lt;APP_NAME&gt;/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">drwxr-xr-x</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">root:root</span></code></p></td>
+<td><p>Directory. Contains executable files of the application.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/etc/tarantool/conf.d/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">drwxr-xr-x</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">root:root</span></code></p></td>
+<td><p>Directory for YAML files with the configuration of the application instances,
+such as <code class="docutils literal notranslate"><span class="pre">instances.yml</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/var/lib/tarantool/&lt;APP_NAME&gt;.%i/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">drwxr-xr-x</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tarantool:tarantool</span></code></p></td>
+<td><p>Working directories of the application instances.
+Each directory contains the instance data, namely, the
+WAL and snapshot files, and also the application configuration
+YAML files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/var/run/tarantool/</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">drwxr-xr-x</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tarantool:tarantool</span></code></p></td>
+<td><p>Directory. Contains the following files for each instance:
+<code class="docutils literal notranslate"><span class="pre">&lt;APP_NAME&gt;.%i.pid</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;APP_NAME&gt;.%i.control</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/var/run/tarantool/&lt;APP_NAME&gt;.%i.pid</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-rw-r--r--</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tarantool:tarantool</span></code></p></td>
+<td><p>Contains the process ID.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/var/run/tarantool/&lt;APP_NAME&gt;.%i.control</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">srwxr-xr-x</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tarantool:tarantool</span></code></p></td>
+<td><p>Unix socket to connect to the instance via the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/tarantoolctl/">tarantoolctl</a>
+utility.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="deploying-as-a-tar-gz-archive">
+<span id="cartridge-deploy-tgz"></span><h3>Deploying as a tar+gz archive<a class="headerlink" href="#deploying-as-a-tar-gz-archive" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic">
+<li><p>Pack the application into a distributable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>pack<span class="w"> </span>tgz<span class="w"> </span>APP_NAME
+</pre></div>
+</div>
+<p>This will create a tar+gz archive (e.g. <code class="docutils literal notranslate"><span class="pre">./my_app-0.1.0-1.tgz</span></code>).</p>
+</li>
+<li><p>Upload the archive to target servers, with <code class="docutils literal notranslate"><span class="pre">tarantool</span></code> and (optionally)
+<a class="reference internal" href="#cartridge-install-dev"><span class="std std-ref">cartridge-cli</span></a> installed.</p></li>
+<li><p>Extract the archive:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tar<span class="w"> </span>-xzvf<span class="w"> </span>APP_NAME-VERSION.tgz
+</pre></div>
+</div>
+</li>
+<li><p>Configure the instance(s).
+Create a file called <code class="docutils literal notranslate"><span class="pre">/etc/tarantool/conf.d/instances.yml</span></code>.
+For example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">my_app</span><span class="p">:</span>
+<span class="w"> </span><span class="nt">cluster_cookie</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret-cookie</span>
+
+<span class="nt">my_app.instance-1</span><span class="p">:</span>
+<span class="w"> </span><span class="nt">http_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8081</span>
+<span class="w"> </span><span class="nt">advertise_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:3301</span>
+
+<span class="nt">my_app.instance-2</span><span class="p">:</span>
+<span class="w"> </span><span class="nt">http_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8082</span>
+<span class="w"> </span><span class="nt">advertise_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:3302</span>
+</pre></div>
+</div>
+<p>See details <a class="reference internal" href="#cartridge-config"><span class="std std-ref">here</span></a>.</p>
+</li>
+<li><p>Start Tarantool instance(s). You can do it using:</p>
+<ul>
+<li><p><a class="reference internal" href="#cartridge-run-tarantool"><span class="std std-ref">tarantool</span></a>, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tarantool<span class="w"> </span>init.lua<span class="w"> </span><span class="c1"># starts a single instance</span>
+</pre></div>
+</div>
+</li>
+<li><p>or <a class="reference internal" href="#cartridge-run-cartridge"><span class="std std-ref">cartridge</span></a>, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="c1"># in application directory</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span><span class="c1"># starts all instances</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>.router_1<span class="w"> </span><span class="c1"># starts a single instance</span>
+
+$<span class="w"> </span><span class="c1"># in multi-application environment</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app<span class="w"> </span><span class="c1"># starts all instances of my_app</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app.router<span class="w"> </span><span class="c1"># starts a single instance</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>In case it is a cluster-aware application, proceed to
+<a class="reference internal" href="cartridge_admin.html#cartridge-deployment"><span class="std std-ref">deploying the cluster</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you’re migrating your application from local test environment to
+production, you can re-use your test configuration at this step:</p>
+<ol class="arabic simple">
+<li><p>In the cluster web interface of the test environment, click
+<strong>Configuration files &gt; Download</strong>
+to save the test configuration.</p></li>
+<li><p>In the cluster web interface of the production environment, click
+<strong>Configuration files &gt; Upload</strong>
+to upload the saved configuration.</p></li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="deploying-from-sources">
+<span id="cartridge-deploy-rock"></span><h3>Deploying from sources<a class="headerlink" href="#deploying-from-sources" title="Permalink to this headline">¶</a></h3>
+<p>This deployment method is intended for local testing only.</p>
+<ol class="arabic">
+<li><p>Pull all dependencies to the <code class="docutils literal notranslate"><span class="pre">.rocks</span></code> directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tarantoolctl<span class="w"> </span>rocks<span class="w"> </span>make
+</pre></div>
+</div>
+</li>
+<li><p>Configure the instance(s).
+Create a file called <code class="docutils literal notranslate"><span class="pre">/etc/tarantool/conf.d/instances.yml</span></code>.
+For example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">my_app</span><span class="p">:</span>
+<span class="w"> </span><span class="nt">cluster_cookie</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret-cookie</span>
+
+<span class="nt">my_app.instance-1</span><span class="p">:</span>
+<span class="w"> </span><span class="nt">http_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8081</span>
+<span class="w"> </span><span class="nt">advertise_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:3301</span>
+
+<span class="nt">my_app.instance-2</span><span class="p">:</span>
+<span class="w"> </span><span class="nt">http_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8082</span>
+<span class="w"> </span><span class="nt">advertise_uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost:3302</span>
+</pre></div>
+</div>
+<p>See details <a class="reference internal" href="#cartridge-config"><span class="std std-ref">here</span></a>.</p>
+</li>
+<li><p>Start Tarantool instance(s). You can do it using:</p>
+<ul>
+<li><p><a class="reference internal" href="#cartridge-run-tarantool"><span class="std std-ref">tarantool</span></a>, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tarantool<span class="w"> </span>init.lua<span class="w"> </span><span class="c1"># starts a single instance</span>
+</pre></div>
+</div>
+</li>
+<li><p>or <a class="reference internal" href="#cartridge-run-cartridge"><span class="std std-ref">cartridge</span></a>, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="c1"># in application directory</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span><span class="c1"># starts all instances</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>.router_1<span class="w"> </span><span class="c1"># starts a single instance</span>
+
+$<span class="w"> </span><span class="c1"># in multi-application environment</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app<span class="w"> </span><span class="c1"># starts all instances of my_app</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app.router<span class="w"> </span><span class="c1"># starts a single instance</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p>In case it is a cluster-aware application, proceed to
+<a class="reference internal" href="cartridge_admin.html#cartridge-deployment"><span class="std std-ref">deploying the cluster</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you’re migrating your application from local test environment to
+production, you can re-use your test configuration at this step:</p>
+<ol class="arabic simple">
+<li><p>In the cluster web interface of the test environment, click
+<strong>Configuration files &gt; Download</strong>
+to save the test configuration.</p></li>
+<li><p>In the cluster web interface of the production environment, click
+<strong>Configuration files &gt; Upload</strong>
+to upload the saved configuration.</p></li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="starting-stopping-instances">
+<span id="cartridge-run"></span><h2>Starting/stopping instances<a class="headerlink" href="#starting-stopping-instances" title="Permalink to this headline">¶</a></h2>
+<p>Depending on your <a class="reference internal" href="#cartridge-deploy"><span class="std std-ref">deployment method</span></a>, you can start/stop
+the instances using <a class="reference internal" href="#cartridge-run-tarantool"><span class="std std-ref">tarantool</span></a>,
+<a class="reference internal" href="#cartridge-run-cartridge"><span class="std std-ref">cartridge CLI</span></a>, or
+<a class="reference internal" href="#cartridge-run-systemctl"><span class="std std-ref">systemctl</span></a>.</p>
+<div class="section" id="start-stop-using-tarantool">
+<span id="cartridge-run-tarantool"></span><h3>Start/stop using tarantool<a class="headerlink" href="#start-stop-using-tarantool" title="Permalink to this headline">¶</a></h3>
+<p>With <code class="docutils literal notranslate"><span class="pre">tarantool</span></code>, you can start only a single instance:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># the simplest command</span>
+$<span class="w"> </span>tarantool<span class="w"> </span>init.lua
+</pre></div>
+</div>
+<p>You can also <a class="reference internal" href="#cartridge-config-tarantool"><span class="std std-ref">specify more options</span></a>
+on the command line or in environment variables.</p>
+<p>To stop the instance, use Ctrl+C.</p>
+</div>
+<div class="section" id="start-stop-using-cartridge-cli">
+<span id="cartridge-run-cartridge"></span><h3>Start/stop using cartridge CLI<a class="headerlink" href="#start-stop-using-cartridge-cli" title="Permalink to this headline">¶</a></h3>
+<p>With <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> CLI, you can start one or multiple instances:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span><span class="o">[</span>APP_NAME<span class="o">[</span>.INSTANCE_NAME<span class="o">]]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>The options are listed in the <span class="xref std std-doc">cartridge start reference</span>.</p>
+<p>Here are some commonly used options:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">--script</span> <span class="pre">FILE</span></code></dt><dd><p>Application’s entry point.
+Defaults to:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TARANTOOL_SCRIPT</span></code>, or</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">./init.lua</span></code> when running from the app’s directory, or</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">app_name/init.lua</span></code> in a multi-app environment.</p></li>
+</ul>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--run-dir</span> <span class="pre">DIR</span></code></dt><dd><p>Directory with pid and sock files.
+Defaults to <code class="docutils literal notranslate"><span class="pre">TARANTOOL_RUN_DIR</span></code> or <code class="docutils literal notranslate"><span class="pre">/var/run/tarantool</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">--cfg</span> <span class="pre">FILE</span></code></dt><dd><p>Cartridge instances YAML configuration file.
+Defaults to <code class="docutils literal notranslate"><span class="pre">TARANTOOL_CFG</span></code> or <code class="docutils literal notranslate"><span class="pre">./instances.yml</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">instances.yml</span></code> file contains <code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code>
+parameters described in the <a class="reference internal" href="#cartridge-config-basic"><span class="std std-ref">configuration section</span></a>
+of this guide.</p>
+</dd>
+</dl>
+<p>For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app<span class="w"> </span>--cfg<span class="w"> </span>demo.yml<span class="w"> </span>--run-dir<span class="w"> </span>./tmp/run
+</pre></div>
+</div>
+<p>It starts all <code class="docutils literal notranslate"><span class="pre">tarantool</span></code> instances specified in <code class="docutils literal notranslate"><span class="pre">cfg</span></code> file, in foreground,
+with enforced <a class="reference internal" href="#cartridge-config"><span class="std std-ref">environment variables</span></a>.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">APP_NAME</span></code> is not provided, <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> parses it from <code class="docutils literal notranslate"><span class="pre">./*.rockspec</span></code>
+filename.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">INSTANCE_NAME</span></code> is not provided, <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> reads <code class="docutils literal notranslate"><span class="pre">cfg</span></code> file and
+starts all defined instances:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="c1"># in application directory</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span><span class="c1"># starts all instances</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>.router_1<span class="w"> </span><span class="c1"># starts a single instance</span>
+
+$<span class="w"> </span><span class="c1"># in multi-application environment</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app<span class="w"> </span><span class="c1"># starts all instances of my_app</span>
+$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app.router<span class="w"> </span><span class="c1"># starts a single instance</span>
+</pre></div>
+</div>
+<p>To stop the instances, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>stop<span class="w"> </span><span class="o">[</span>APP_NAME<span class="o">[</span>.INSTANCE_NAME<span class="o">]]</span><span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p>These options from the <code class="docutils literal notranslate"><span class="pre">cartridge</span> <span class="pre">start</span></code> command are supported:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--run-dir</span> <span class="pre">DIR</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cfg</span> <span class="pre">FILE</span></code></p></li>
+</ul>
+</div>
+<div class="section" id="start-stop-using-systemctl">
+<span id="cartridge-run-systemctl"></span><h3>Start/stop using systemctl<a class="headerlink" href="#start-stop-using-systemctl" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>To run a single instance:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>APP_NAME
+</pre></div>
+</div>
+<p>This will start a  <code class="docutils literal notranslate"><span class="pre">systemd</span></code> service that will listen to the
+port specified in <a class="reference internal" href="#cartridge-run-systemctl-config"><span class="std std-ref">instance configuration</span></a>
+(<code class="docutils literal notranslate"><span class="pre">http_port</span></code> parameter).</p>
+</li>
+<li><p>To run multiple instances on one or multiple servers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>APP_NAME@INSTANCE_1
+$<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>APP_NAME@INSTANCE_2
+...
+$<span class="w"> </span>systemctl<span class="w"> </span>start<span class="w"> </span>APP_NAME@INSTANCE_N
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">APP_NAME&#64;INSTANCE_N</span></code> is the instantiated service name
+for <code class="docutils literal notranslate"><span class="pre">systemd</span></code> with an incremental <code class="docutils literal notranslate"><span class="pre">N</span></code> – a number, unique for every
+instance, added to the port the instance will listen to
+(e.g., <code class="docutils literal notranslate"><span class="pre">3301</span></code>, <code class="docutils literal notranslate"><span class="pre">3302</span></code>, etc.)</p>
+</li>
+<li><p>To stop all services on a server, use the <code class="docutils literal notranslate"><span class="pre">systemctl</span> <span class="pre">stop</span></code> command
+and specify instance names one by one. For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>systemctl<span class="w"> </span>stop<span class="w"> </span>APP_NAME@INSTANCE_1<span class="w"> </span>APP_NAME@INSTANCE_2<span class="w"> </span>...<span class="w"> </span>APP_NAME@INSTANCE_&lt;N&gt;
+</pre></div>
+</div>
+</li>
+</ul>
+<p id="cartridge-run-systemctl-config">When running instances with <code class="docutils literal notranslate"><span class="pre">systemctl</span></code>, keep these practices in mind:</p>
+<ul>
+<li><p>You can specify <em>instance configuration</em> in a YAML file.</p>
+<p>This file can contain <a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/cartridge/cartridge_api/modules/cartridge.argparse/#tables">these options</a>;
+see an example <a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/cartridge/cartridge_cli/#usage-example">here</a>).</p>
+<p>Save this file to <code class="docutils literal notranslate"><span class="pre">/etc/tarantool/conf.d/</span></code> (the default <code class="docutils literal notranslate"><span class="pre">systemd</span></code> path)
+or to a location set in the <code class="docutils literal notranslate"><span class="pre">TARANTOOL_CFG</span></code> environment variable
+(if you’ve edited the application’s <code class="docutils literal notranslate"><span class="pre">systemd</span></code> unit file).
+The file name doesn’t matter: it can be <code class="docutils literal notranslate"><span class="pre">instances.yml</span></code> or anything else you like.</p>
+<p>Here’s what <code class="docutils literal notranslate"><span class="pre">systemd</span></code> is doing further:</p>
+<ul class="simple">
+<li><p>obtains <code class="docutils literal notranslate"><span class="pre">app_name</span></code> (and <code class="docutils literal notranslate"><span class="pre">instance_name</span></code>, if specified)
+from the name of the application’s <code class="docutils literal notranslate"><span class="pre">systemd</span></code> unit file
+(e.g. <code class="docutils literal notranslate"><span class="pre">APP_NAME&#64;default</span></code> or <code class="docutils literal notranslate"><span class="pre">APP_NAME&#64;INSTANCE_1</span></code>);</p></li>
+<li><p>sets default console socket (e.g. <code class="docutils literal notranslate"><span class="pre">/var/run/tarantool/APP_NAME&#64;INSTANCE_1.control</span></code>),
+PID file (e.g. <code class="docutils literal notranslate"><span class="pre">/var/run/tarantool/APP_NAME&#64;INSTANCE_1.pid</span></code>)
+and <code class="docutils literal notranslate"><span class="pre">workdir</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">/var/lib/tarantool/&lt;APP_NAME&gt;.&lt;INSTANCE_NAME&gt;</span></code>).
+<code class="docutils literal notranslate"><span class="pre">Environment=TARANTOOL_WORKDIR=${workdir}.%i</span></code></p></li>
+</ul>
+<p>Finally, <code class="docutils literal notranslate"><span class="pre">cartridge</span></code> looks across all YAML files in
+<code class="docutils literal notranslate"><span class="pre">/etc/tarantool/conf.d</span></code> for a section with the appropriate name
+(e.g. <code class="docutils literal notranslate"><span class="pre">app_name</span></code> that contains common configuration for all instances,
+and <code class="docutils literal notranslate"><span class="pre">app_name.instance_1</span></code> that contain instance-specific configuration).
+As a result, Cartridge options <code class="docutils literal notranslate"><span class="pre">workdir</span></code>, <code class="docutils literal notranslate"><span class="pre">console_sock</span></code>, and <code class="docutils literal notranslate"><span class="pre">pid_file</span></code>
+in the YAML file
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/cartridge/cartridge_api/modules/cartridge/#cfg-opts-box-opts">cartridge.cfg</a>
+become useless, because <code class="docutils literal notranslate"><span class="pre">systemd</span></code> overrides them.</p>
+</li>
+<li><p>The default tool for querying logs is <a class="reference external" href="https://www.freedesktop.org/software/systemd/man/journalctl.html">journalctl</a>.
+For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="c1"># show log messages for a systemd unit named APP_NAME.INSTANCE_1</span>
+$<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>APP_NAME.INSTANCE_1
+
+$<span class="w"> </span><span class="c1"># show only the most recent messages and continuously print new ones</span>
+$<span class="w"> </span>journalctl<span class="w"> </span>-f<span class="w"> </span>-u<span class="w"> </span>APP_NAME.INSTANCE_1
+</pre></div>
+</div>
+<p>If really needed, you can change logging-related <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> options in
+the YAML configuration file:
+see <a class="reference external" href="https://www.tarantool.io/en/doc/2.3/reference/configuration/#confval-log">log</a>
+and other related options.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="error-handling-guidelines">
+<span id="cartridge-error-handling"></span><h2>Error handling guidelines<a class="headerlink" href="#error-handling-guidelines" title="Permalink to this headline">¶</a></h2>
+<p>Almost all errors in Cartridge follow the <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">nil,</span> <span class="pre">err</span></code> style, where
+<code class="docutils literal notranslate"><span class="pre">err</span></code> is an error object produced by Tarantool’s
+<a class="reference external" href="https://github.com/tarantool/errors">errors</a> module. Cartridge
+doesn’t raise errors except for bugs and functions contracts mismatch.
+Developing new roles should follow these guidelines as well.</p>
+<p>Note that in triggers (<code class="docutils literal notranslate"><span class="pre">cartridge.graphql.on_resolve</span></code> and
+<code class="docutils literal notranslate"><span class="pre">cartridge.twophase.on_patch</span></code>) return values are ignored.
+So if you want to raise error from trigger function, you need to
+call <code class="docutils literal notranslate"><span class="pre">error()</span></code> explicitly.</p>
+<div class="section" id="error-objects-in-lua">
+<h3>Error objects in Lua<a class="headerlink" href="#error-objects-in-lua" title="Permalink to this headline">¶</a></h3>
+<p>Error classes help to locate the problem’s source. For this purpose, an
+error object contains its class, stack traceback, and a message.</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">errors</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;errors&#39;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">DangerousError</span> <span class="o">=</span> <span class="n">errors</span><span class="p">.</span><span class="n">new_class</span><span class="p">(</span><span class="s2">&quot;DangerousError&quot;</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="kr">function</span> <span class="nf">some_fancy_function</span><span class="p">()</span>
+
+    <span class="kd">local</span> <span class="n">something_bad_happens</span> <span class="o">=</span> <span class="kc">true</span>
+
+    <span class="kr">if</span> <span class="n">something_bad_happens</span> <span class="kr">then</span>
+        <span class="kr">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="n">DangerousError</span><span class="p">:</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Oh boy&quot;</span><span class="p">)</span>
+    <span class="kr">end</span>
+
+    <span class="kr">return</span> <span class="s2">&quot;success&quot;</span> <span class="c1">-- not reachable due to the error</span>
+<span class="kr">end</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">some_fancy_function</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>nil DangerousError: Oh boy
+stack traceback:
+    test.lua:9: in function &#39;some_fancy_function&#39;
+    test.lua:15: in main chunk
+</pre></div>
+</div>
+<p>For uniform error handling, <code class="docutils literal notranslate"><span class="pre">errors</span></code> provides the <code class="docutils literal notranslate"><span class="pre">:pcall</span></code> API:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">ret</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">DangerousError</span><span class="p">:</span><span class="nb">pcall</span><span class="p">(</span><span class="n">some_fancy_function</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>nil DangerousError: Oh boy
+stack traceback:
+    test.lua:9: in function &lt;test.lua:4&gt;
+    [C]: in function &#39;xpcall&#39;
+    .rocks/share/tarantool/errors.lua:139: in function &#39;pcall&#39;
+    test.lua:15: in main chunk
+</pre></div>
+</div>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">DangerousError</span><span class="p">:</span><span class="nb">pcall</span><span class="p">(</span><span class="nb">error</span><span class="p">,</span> <span class="s1">&#39;what could possibly go wrong?&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>nil DangerousError: what could possibly go wrong?
+stack traceback:
+    [C]: in function &#39;xpcall&#39;
+    .rocks/share/tarantool/errors.lua:139: in function &#39;pcall&#39;
+    test.lua:15: in main chunk
+</pre></div>
+</div>
+<p>For <code class="docutils literal notranslate"><span class="pre">errors.pcall</span></code> there is no difference between the <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">nil,</span> <span class="pre">err</span></code> and
+<code class="docutils literal notranslate"><span class="pre">error()</span></code> approaches.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">errors.pcall</span></code> API differs from the vanilla Lua
+<a class="reference external" href="https://www.lua.org/pil/8.4.html">pcall</a>. Instead of <code class="docutils literal notranslate"><span class="pre">true</span></code> the former
+returns values returned from the call. If there is an error, it returns
+<code class="docutils literal notranslate"><span class="pre">nil</span></code> instead of <code class="docutils literal notranslate"><span class="pre">false</span></code>, plus an error message.</p>
+<p>Remote <code class="docutils literal notranslate"><span class="pre">net.box</span></code> calls keep no stack trace from the remote. In that
+case, <code class="docutils literal notranslate"><span class="pre">errors.netbox_eval</span></code> comes to the rescue. It will find a stack trace
+from local and remote hosts and restore metatables.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; conn = require(&#39;net.box&#39;).connect(&#39;localhost:3301&#39;)
+&gt; print( errors.netbox_eval(conn, &#39;return nil, DoSomethingError:new(&quot;oops&quot;)&#39;) )
+nil     DoSomethingError: oops
+stack traceback:
+        eval:1: in main chunk
+during net.box eval on localhost:3301
+stack traceback:
+        [string &quot;return print( errors.netbox_eval(&quot;]:1: in main chunk
+        [C]: in function &#39;pcall&#39;
+</pre></div>
+</div>
+<p>However, <code class="docutils literal notranslate"><span class="pre">vshard</span></code> implemented in Tarantool doesn’t utilize the <code class="docutils literal notranslate"><span class="pre">errors</span></code>
+module. Instead it uses
+<a class="reference external" href="https://github.com/tarantool/vshard/blob/master/vshard/error.lua">its own errors</a>.
+Keep this in mind when working with <code class="docutils literal notranslate"><span class="pre">vshard</span></code> functions.</p>
+<p>Data included in an error object (class name, message, traceback) may be
+easily converted to string using the <code class="docutils literal notranslate"><span class="pre">tostring()</span></code> function.</p>
+</div>
+<div class="section" id="graphql">
+<h3>GraphQL<a class="headerlink" href="#graphql" title="Permalink to this headline">¶</a></h3>
+<p>GraphQL implementation in Cartridge wraps the <code class="docutils literal notranslate"><span class="pre">errors</span></code> module, so a typical
+error response looks as follows:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;errors&quot;</span><span class="p">:[{</span>
+<span class="w">        </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;what could possibly go wrong?&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;extensions&quot;</span><span class="p">:{</span>
+<span class="w">            </span><span class="nt">&quot;io.tarantool.errors.stack&quot;</span><span class="p">:</span><span class="s2">&quot;stack traceback: ...&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;io.tarantool.errors.class_name&quot;</span><span class="p">:</span><span class="s2">&quot;DangerousError&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Read more about errors in the
+<a class="reference external" href="http://spec.graphql.org/draft/#sec-Errors.Error-result-format">GraphQL specification</a>.</p>
+<p>If you’re going to implement a GraphQL handler, you can add your own
+extension like this:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">err</span> <span class="o">=</span> <span class="n">DangerousError</span><span class="p">:</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;I have extension&#39;</span><span class="p">)</span>
+<span class="n">err</span><span class="p">.</span><span class="n">graphql_extensions</span> <span class="o">=</span> <span class="p">{</span><span class="n">code</span> <span class="o">=</span> <span class="mi">403</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>It will lead to the following response:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;errors&quot;</span><span class="p">:[{</span>
+<span class="w">        </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="s2">&quot;I have extension&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;extensions&quot;</span><span class="p">:{</span>
+<span class="w">            </span><span class="nt">&quot;io.tarantool.errors.stack&quot;</span><span class="p">:</span><span class="s2">&quot;stack traceback: ...&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;io.tarantool.errors.class_name&quot;</span><span class="p">:</span><span class="s2">&quot;DangerousError&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;code&quot;</span><span class="p">:</span><span class="mi">403</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="http">
+<h3>HTTP<a class="headerlink" href="#http" title="Permalink to this headline">¶</a></h3>
+<p>In a nutshell, an <code class="docutils literal notranslate"><span class="pre">errors</span></code> object is a table. This means that it can be
+swiftly represented in JSON. This approach is used by Cartridge to
+handle errors via http:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">err</span> <span class="o">=</span> <span class="n">DangerousError</span><span class="p">:</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;Who would have thought?&#39;</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">req</span><span class="p">:</span><span class="n">render</span><span class="p">({</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;application/json; charset=utf-8&quot;</span>
+    <span class="p">},</span>
+    <span class="n">json</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">err</span><span class="p">),</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;line&quot;</span><span class="p">:</span><span class="mi">27</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;class_name&quot;</span><span class="p">:</span><span class="s2">&quot;DangerousError&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;err&quot;</span><span class="p">:</span><span class="s2">&quot;Who would have thought?&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;file&quot;</span><span class="p">:</span><span class="s2">&quot;.../app/roles/api.lua&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;stack&quot;</span><span class="p">:</span><span class="s2">&quot;stack traceback:...&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="cluster-instance-lifecycle">
+<span id="cartridge-state-machine"></span><h2>Cluster instance lifecycle<a class="headerlink" href="#cluster-instance-lifecycle" title="Permalink to this headline">¶</a></h2>
+<p>Every instance in the cluster has an internal state machine.
+It helps manage cluster operation and describe a distributed system
+simpler.</p>
+<img alt="_images/state-machine.svg" src="_images/state-machine.svg" /><p>Instance lifecycle starts with a <code class="docutils literal notranslate"><span class="pre">cartridge.cfg</span></code> call.
+During the initialization,
+Cartridge instance binds TCP (iproto) and UDP sockets
+(SWIM), checks working directory.
+Depending on the result, it enters one
+of the following states:</p>
+<img alt="_images/InitialState.svg" src="_images/InitialState.svg" /><div class="section" id="unconfigured">
+<h3>Unconfigured<a class="headerlink" href="#unconfigured" title="Permalink to this headline">¶</a></h3>
+<p>If the working directory is clean and neither snapshots nor cluster-wide
+configuration files exist, the instance enters the <code class="docutils literal notranslate"><span class="pre">Unconfigured</span></code> state.</p>
+<p>The instance starts to accept iproto requests (Tarantool binary
+protocol) and remains in the state until the user decides to join it to a
+cluster (to create replicaset or join an existing one).</p>
+<p>After that, the instance moves to the <code class="docutils literal notranslate"><span class="pre">BootstrappingBox</span></code> state.</p>
+<img alt="_images/Unconfigured.svg" src="_images/Unconfigured.svg" /></div>
+<div class="section" id="configfound">
+<h3>ConfigFound<a class="headerlink" href="#configfound" title="Permalink to this headline">¶</a></h3>
+<p>If the instance finds all configuration files and snapshots, it enters the <code class="docutils literal notranslate"><span class="pre">ConfigFound</span></code> state.
+The instance does not load the files and snapshots yet, because it will download and validate the config first.
+On success, the state enters the <code class="docutils literal notranslate"><span class="pre">ConfigLoaded</span></code> state.
+On failure, it will move to the <code class="docutils literal notranslate"><span class="pre">InitError</span></code> state.</p>
+<img alt="_images/ConfigFound.svg" src="_images/ConfigFound.svg" /></div>
+<div class="section" id="configloaded">
+<h3>ConfigLoaded<a class="headerlink" href="#configloaded" title="Permalink to this headline">¶</a></h3>
+<p>Config is found, loaded and validated. The next step is instance
+configuring. If there are any snapshots, the instance will change its
+state to <code class="docutils literal notranslate"><span class="pre">RecoveringSnapshot</span></code>. Otherwise, it will move to
+<code class="docutils literal notranslate"><span class="pre">BootstrappingBox</span></code> state. By default, all instances start in read-only mode
+and don’t start listening until bootstrap/recovery finishes.</p>
+<img alt="_images/ConfigLoaded.svg" src="_images/ConfigLoaded.svg" /></div>
+<div class="section" id="initerror">
+<h3>InitError<a class="headerlink" href="#initerror" title="Permalink to this headline">¶</a></h3>
+<p>The following events can cause instance initialization error:</p>
+<ul class="simple">
+<li><p>Error occurred during <code class="docutils literal notranslate"><span class="pre">cartridge.remote-control</span></code>’s connection to
+binary port</p></li>
+<li><p>Missing <code class="docutils literal notranslate"><span class="pre">config.yml</span></code> from workdir (<code class="docutils literal notranslate"><span class="pre">tmp/</span></code>), while snapshots are
+present</p></li>
+<li><p>Error while loading configuration from disk</p></li>
+<li><p>Invalid config - Server is not present in the cluster configuration</p></li>
+</ul>
+</div>
+<div class="section" id="bootstrappingbox">
+<h3>BootstrappingBox<a class="headerlink" href="#bootstrappingbox" title="Permalink to this headline">¶</a></h3>
+<p>Configuring arguments for <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> if snapshots or config files are
+not present. <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> execution. Setting up users and stopping
+<code class="docutils literal notranslate"><span class="pre">remote-control</span></code>. The instance will try to start listening to full-featured
+iproto protocol. In case of failed attempt instance will change its
+state to <code class="docutils literal notranslate"><span class="pre">BootError</span></code>. On success, the instance enters the <code class="docutils literal notranslate"><span class="pre">ConnectingFullmesh</span></code> state.
+If there is no replicaset in cluster-wide
+config, the instance will set the state to <code class="docutils literal notranslate"><span class="pre">BootError</span></code>.</p>
+<img alt="_images/Recovery.svg" src="_images/Recovery.svg" /></div>
+<div class="section" id="recoveringsnapshot">
+<h3>RecoveringSnapshot<a class="headerlink" href="#recoveringsnapshot" title="Permalink to this headline">¶</a></h3>
+<p>If snapshots are present, <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> will start a recovery process.
+After that, the process is similar to <code class="docutils literal notranslate"><span class="pre">BootstrappingBox</span></code>.</p>
+</div>
+<div class="section" id="booterror">
+<h3>BootError<a class="headerlink" href="#booterror" title="Permalink to this headline">¶</a></h3>
+<p>This state can be caused by the following events:</p>
+<ul class="simple">
+<li><p>Failed binding to binary port for iproto usage</p></li>
+<li><p>Server is missing in cluster-wide config</p></li>
+<li><p>Replicaset is missing in cluster-wide config</p></li>
+<li><p>Failed replication configuration</p></li>
+</ul>
+</div>
+<div class="section" id="connectingfullmesh">
+<h3>ConnectingFullmesh<a class="headerlink" href="#connectingfullmesh" title="Permalink to this headline">¶</a></h3>
+<p>During this state, a configuration of servers and replicasets is being
+performed. Eventually, cluster topology, which is described in the config, is
+implemented. But in case of an error instance, the state moves to
+<code class="docutils literal notranslate"><span class="pre">BootError</span></code>. Otherwise, it proceeds to configuring roles.</p>
+<img alt="_images/ConnectingFullmesh.svg" src="_images/ConnectingFullmesh.svg" /></div>
+<div class="section" id="boxconfigured">
+<h3>BoxConfigured<a class="headerlink" href="#boxconfigured" title="Permalink to this headline">¶</a></h3>
+<p>This state follows the successful configuration of replicasets and cluster
+topology. The next step is a role configuration.</p>
+</div>
+<div class="section" id="configuringroles">
+<h3>ConfiguringRoles<a class="headerlink" href="#configuringroles" title="Permalink to this headline">¶</a></h3>
+<p>The state of role configuration. Instance enters this state while
+initial setup, after failover trigger(<code class="docutils literal notranslate"><span class="pre">failover.lua</span></code>) or after
+altering cluster-wide config(<code class="docutils literal notranslate"><span class="pre">twophase.lua</span></code>).</p>
+<img alt="_images/ConfiguringRoles.svg" src="_images/ConfiguringRoles.svg" /></div>
+<div class="section" id="rolesconfigured">
+<h3>RolesConfigured<a class="headerlink" href="#rolesconfigured" title="Permalink to this headline">¶</a></h3>
+<p>Successful role configuration.</p>
+</div>
+<div class="section" id="operationerror">
+<h3>OperationError<a class="headerlink" href="#operationerror" title="Permalink to this headline">¶</a></h3>
+<p>Error during role configuration.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developer’s guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-tarantool-cartridge">Installing Tarantool Cartridge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-project">Creating a project</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cluster-roles">Cluster roles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-built-in-http-server">Using the built-in HTTP server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementing-authorization-in-the-web-interface">Implementing authorization in the web interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#application-versioning">Application versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-cartridge-ignore-files">Using .cartridge.ignore files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#failover-architecture">Failover architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-instances">Configuring instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deploying-an-application">Deploying an application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#starting-stopping-instances">Starting/stopping instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#error-handling-guidelines">Error handling guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cluster-instance-lifecycle">Cluster instance lifecycle</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="README.html" title="previous chapter">Tarantool Cartridge</a></li>
+      <li>Next: <a href="cartridge_admin.html" title="next chapter">Administrator’s guide</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/cartridge_dev.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

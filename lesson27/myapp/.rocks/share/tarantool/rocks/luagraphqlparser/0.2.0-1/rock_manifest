@@ -1,0 +1,9 @@
+rock_manifest = {
+   doc = {
+      ["README.md"] = "76004112fda29fab9fb66e8db9809916"
+   },
+   lib = {
+      ["luagraphqlparser.so"] = "a78134e79dbaf5f11ab7d452fb563ac4"
+   },
+   ["luagraphqlparser-0.2.0-1.rockspec"] = "cca2b4fc06fbf8b67d647cb38faa784e"
+}

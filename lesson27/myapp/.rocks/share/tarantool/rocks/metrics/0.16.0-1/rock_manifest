@@ -1,0 +1,87 @@
+rock_manifest = {
+   doc = {
+      ["README.md"] = "3d5941f5e3954cc7c491d7669e47b9ff",
+      ["cleanup.py"] = "0afb765f397dde4c65f73e2e4afe7cb8",
+      ["conf.py"] = "7992fb4d57de2a1b6fa96a8f75c565a2",
+      ["crowdin.yaml"] = "2c6d4ff0b7d4f2e5d53eb750da44de61",
+      locale = {
+         ru = {
+            LC_MESSAGES = {
+               ["api_reference.po"] = "27eb8c131e9b96820743e2ba12234883",
+               ["getting_started.po"] = "949c6aeed8d558639e0faca580c2224d",
+               ["index.po"] = "42db2c27411ef8472fea3341663ddbec",
+               ["metrics_reference.po"] = "aa56ddbf016deecb6169a3d5df188ccd",
+               ["plugins.po"] = "9342ce73d0b120496d300b9a385253bc"
+            }
+         }
+      },
+      monitoring = {
+         ["api_reference.rst"] = "3e78b26b64e05ae99259aa08633a7270",
+         ["getting_started.rst"] = "a0318d955898acb9b6582334a70dcdc6",
+         images = {
+            ["role-config.png"] = "4dabbc150eede755872b741521de4392",
+            ["role-enable.png"] = "b412799ba135cac65cc428d998684964"
+         },
+         ["index.rst"] = "2b155a68a6b7d912813d7ed6639d53e3",
+         ["metrics_reference.rst"] = "f0eb76a834a8a2f1051cebdf62b51218",
+         ["plugins.rst"] = "fa2181979bcdfe88e4ae9a47710da948"
+      },
+      ["requirements.txt"] = "f7c306702027ddcf153b9df233538338"
+   },
+   lua = {
+      cartridge = {
+         ["health.lua"] = "1afb63a0efbaf5d561ec9ec15627ec56",
+         roles = {
+            ["metrics.lua"] = "630e954de269bbcaca1398ef41b1b296"
+         }
+      },
+      metrics = {
+         cartridge = {
+            ["failover.lua"] = "30a3cdd719554a6900adad0c40ea3d0a",
+            ["issues.lua"] = "8a7335498b3294d3e98badba585d52f9"
+         },
+         collectors = {
+            ["counter.lua"] = "1a526dd1999283f1e0b32a3146f79bb8",
+            ["gauge.lua"] = "366056d7f9108ceb2e76653669fb0d74",
+            ["histogram.lua"] = "3bb3df79442248c0e9241bba28538651",
+            ["shared.lua"] = "a776a614d31f504c205674ff9dfd8232",
+            ["summary.lua"] = "1aa02421e5cc5dc1437e9cc4b3c47ab2"
+         },
+         ["const.lua"] = "9420bfc79fcba46fdf2d1cf5073757af",
+         ["http_middleware.lua"] = "ce0c90b343126b5bfccbd97a8a3cdf30",
+         ["init.lua"] = "c8753eae47abe654a77ddd62f41a4cfd",
+         plugins = {
+            ["graphite.lua"] = "f31c2c9c05cd2c06b34c71cfe0b7c804",
+            ["json.lua"] = "ef6da512d9c7340b653d472c8c021437",
+            ["prometheus.lua"] = "e3d13b7656b54522ee2ec395d93c1ca4"
+         },
+         psutils = {
+            ["cpu.lua"] = "2ea1d11f19b83991e2145031945f2856",
+            ["psutils_linux.lua"] = "3092a6d9e23285cddd932d848f17f28b"
+         },
+         ["quantile.lua"] = "687a648c950e6fe1ef3a0b78b926d87e",
+         ["registry.lua"] = "7677a2eaddbda9707f87373312b7b665",
+         tarantool = {
+            ["clock.lua"] = "a2d9f646101cc18fd5e164ab8212fe51",
+            ["cpu.lua"] = "4797aa02b04be0540f49dd95651f88d6",
+            ["event_loop.lua"] = "941a4cabfe1e3597c7da3426336f3854",
+            ["fibers.lua"] = "928cbfc482e0834c85f25c51c7a7c363",
+            ["info.lua"] = "ed60cabe22eee67db47cae2e8b4adf3e",
+            ["luajit.lua"] = "43a4903993bdcfd0eed72216577586ee",
+            ["memory.lua"] = "4c009bb7bf7eb79535be1a2d89513b89",
+            ["memtx.lua"] = "2e7e2710750cf419688aad4c3b88b279",
+            ["network.lua"] = "130d3df30f5cd0a02ddc6872ae3f2823",
+            ["operations.lua"] = "3b2fc6ddce80259f590ff108d5161478",
+            ["replicas.lua"] = "b5a943770f951160cce87d19da259b8a",
+            ["runtime.lua"] = "3d4039833cb9c0eb3ebb31bcf261f49e",
+            ["slab.lua"] = "0ff6ca384f88294e7635bfe191b4e5d1",
+            ["spaces.lua"] = "ef6b23bf998877e9aeb3723ac016e150",
+            ["system.lua"] = "ebff86d1c019496bfdd0e4ff522e1c59",
+            ["vinyl.lua"] = "9973bf60dfa7002e50b30bdeb38e8dba"
+         },
+         ["tarantool.lua"] = "c0807848d978eeea90113eb18f5fbbc4",
+         ["utils.lua"] = "4729554eba410d472dbc486ecda3e636"
+      }
+   },
+   ["metrics-0.16.0-1.rockspec"] = "b034251b11da0eed77725024241e6f48"
+}

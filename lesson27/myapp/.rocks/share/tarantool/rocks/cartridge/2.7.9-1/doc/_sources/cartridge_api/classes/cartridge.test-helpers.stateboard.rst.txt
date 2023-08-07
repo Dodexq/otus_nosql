@@ -1,0 +1,42 @@
+.. _cartridge.test-helpers.stateboard:
+
+===============================================================================
+Class *cartridge.test-helpers.stateboard*
+===============================================================================
+
+Class to run and manage stateboard.
+
+
+
+
+-------------------------------------------------------------------------------
+Methods
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.test-helpers.stateboard.cartridge.test-helpers.stateboard:new:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cartridge.test-helpers.stateboard:new (object)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Build stateboard object.
+
+
+**Parameters:**
+
+- *object:* 
+
+  - *name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Human-readable node name.  
+  - *command:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Command to run stateboard.  
+  - *workdir:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Path to the data directory.  
+  - *net_box_port:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Value to be passed in  ``TARANTOOL_LISTEN``  and used for net_box connection.  
+  - *net_box_credentials:* (**tab**) Override default net_box credentials. (optional) 
+  - *env:* (**tab**) Environment variables passed to the process. (optional) 
+
+
+**Returns**:
+
+object
+
+

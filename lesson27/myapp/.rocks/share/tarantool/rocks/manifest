@@ -1,0 +1,1216 @@
+commands = {
+   stateboard = {
+      "cartridge/2.7.9-1"
+   }
+}
+dependencies = {
+   cartridge = {
+      ["2.7.9-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     1, 6, 2, revision = 1, string = "1.6.2-1"
+                  }
+               }
+            },
+            name = "ddl"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     1, 4, 0, revision = 1, string = "1.4.0-1"
+                  }
+               }
+            },
+            name = "http"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     3, 2, 0, revision = 1, string = "3.2.0-1"
+                  }
+               }
+            },
+            name = "checks"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     2, 2, 1, revision = 1, string = "2.2.1-1"
+                  }
+               }
+            },
+            name = "errors"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     0, 1, 23, revision = 1, string = "0.1.23-1"
+                  }
+               }
+            },
+            name = "vshard"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     2, 4, 0, revision = 1, string = "2.4.0-1"
+                  }
+               }
+            },
+            name = "membership"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     8, 2, 1, revision = 1, string = "8.2.1-1"
+                  }
+               }
+            },
+            name = "frontend-core"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     0, 2, 0, revision = 1, string = "0.2.0-1"
+                  }
+               }
+            },
+            name = "graphql"
+         }
+      }
+   },
+   ["cartridge-cli-extensions"] = {
+      ["1.1.1-1"] = {
+         {
+            constraints = {
+               {
+                  op = "~>",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   checks = {
+      ["3.2.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ddl = {
+      ["1.6.2-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {},
+            name = "tarantool"
+         }
+      }
+   },
+   errors = {
+      ["2.2.1-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   ["frontend-core"] = {
+      ["8.2.1-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   graphql = {
+      ["0.2.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     0, 2, 0, revision = 1, string = "0.2.0-1"
+                  }
+               }
+            },
+            name = "luagraphqlparser"
+         }
+      }
+   },
+   http = {
+      ["1.4.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   luagraphqlparser = {
+      ["0.2.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   },
+   membership = {
+      ["2.4.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {
+               {
+                  op = "~>",
+                  version = {
+                     3, string = "3"
+                  }
+               }
+            },
+            name = "checks"
+         }
+      }
+   },
+   metrics = {
+      ["0.16.0-1"] = {
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     2, 0, 0, string = "2.0.0"
+                  }
+               }
+            },
+            name = "checks"
+         }
+      }
+   },
+   myapp = {
+      ["scm-1"] = {
+         {
+            constraints = {},
+            name = "tarantool"
+         },
+         {
+            constraints = {
+               {
+                  op = ">=",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     3, 2, 0, revision = 1, string = "3.2.0-1"
+                  }
+               }
+            },
+            name = "checks"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     2, 7, 9, revision = 1, string = "2.7.9-1"
+                  }
+               }
+            },
+            name = "cartridge"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     0, 16, 0, revision = 1, string = "0.16.0-1"
+                  }
+               }
+            },
+            name = "metrics"
+         },
+         {
+            constraints = {
+               {
+                  op = "==",
+                  version = {
+                     1, 1, 1, revision = 1, string = "1.1.1-1"
+                  }
+               }
+            },
+            name = "cartridge-cli-extensions"
+         }
+      }
+   },
+   vshard = {
+      ["0.1.23-1"] = {
+         {
+            constraints = {
+               {
+                  op = "~>",
+                  version = {
+                     5, 1, string = "5.1"
+                  }
+               }
+            },
+            name = "lua"
+         }
+      }
+   }
+}
+modules = {
+   cartridge = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge-cli-extensions.admin"] = {
+      "cartridge-cli-extensions/1.1.1-1"
+   },
+   ["cartridge.VERSION"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.admin"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.argparse"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.auth"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.auth-backend"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.cluster-cookie"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.clusterwide-config"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.confapplier"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.etcd2"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.etcd2-client"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.failover"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.failover.leader_autoreturn"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.failover.raft"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.feedback"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.front-bundle"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.funcall"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.graphql"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.graphql.execute"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.graphql.funcall"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.graphql.parse"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.graphql.schema"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.graphql.types"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.graphql.validate"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.health"] = {
+      "metrics/0.16.0-1"
+   },
+   ["cartridge.hotreload"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.invalid-format"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.issues"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.label-utils"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.logging_whitelist"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.boxinfo"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.compression"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.deprecated"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.edit-topology"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.failover"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.get-topology"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.proxy"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.stat"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.topology"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.lua-api.vshard"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.pool"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.remote-control"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.roles"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.roles.coordinator"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.roles.ddl-manager"] = {
+      "ddl/1.6.2-1"
+   },
+   ["cartridge.roles.metrics"] = {
+      "metrics/0.16.0-1"
+   },
+   ["cartridge.roles.vshard-router"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.roles.vshard-storage"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.rpc"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.service-registry"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.sslsocket"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.stateboard"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.stateboard-client"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.tar"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.test-helpers"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.test-helpers.cluster"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.test-helpers.etcd"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.test-helpers.server"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.test-helpers.stateboard"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.topology"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.twophase"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.upload"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.user-defined-role"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.utils"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.vars"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.vshard-utils"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-auth"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-compression"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-config"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-ddl"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-failover"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-issues"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-suggestions"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-topology"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.api-vshard"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.gql-boxinfo"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge.webui.gql-stat"] = {
+      "cartridge/2.7.9-1"
+   },
+   ["cartridge/VERSION.lua.in"] = {
+      "cartridge/2.7.9-1"
+   },
+   checks = {
+      "checks/3.2.0-1"
+   },
+   ddl = {
+      "ddl/1.6.2-1"
+   },
+   ["ddl.cache"] = {
+      "ddl/1.6.2-1"
+   },
+   ["ddl.check"] = {
+      "ddl/1.6.2-1"
+   },
+   ["ddl.db"] = {
+      "ddl/1.6.2-1"
+   },
+   ["ddl.get"] = {
+      "ddl/1.6.2-1"
+   },
+   ["ddl.set"] = {
+      "ddl/1.6.2-1"
+   },
+   ["ddl.utils"] = {
+      "ddl/1.6.2-1"
+   },
+   errors = {
+      "errors/2.2.1-1"
+   },
+   ["errors.deprecate"] = {
+      "errors/2.2.1-1"
+   },
+   ["frontend-core"] = {
+      "frontend-core/8.2.1-1"
+   },
+   ["frontend-core.bundle"] = {
+      "frontend-core/8.2.1-1"
+   },
+   ["graphql.execute"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.init"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.introspection"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.parse"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.query_util"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.rules"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.schema"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.types"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.util"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.validate"] = {
+      "graphql/0.2.0-1"
+   },
+   ["graphql.validate_variables"] = {
+      "graphql/0.2.0-1"
+   },
+   ["http.codes"] = {
+      "http/1.4.0-1"
+   },
+   ["http.lib"] = {
+      "http/1.4.0-1"
+   },
+   ["http.mime_types"] = {
+      "http/1.4.0-1"
+   },
+   ["http.server"] = {
+      "http/1.4.0-1"
+   },
+   luagraphqlparser = {
+      "luagraphqlparser/0.2.0-1"
+   },
+   membership = {
+      "membership/2.4.0-1"
+   },
+   ["membership.events"] = {
+      "membership/2.4.0-1"
+   },
+   ["membership.members"] = {
+      "membership/2.4.0-1"
+   },
+   ["membership.network"] = {
+      "membership/2.4.0-1"
+   },
+   ["membership.options"] = {
+      "membership/2.4.0-1"
+   },
+   ["membership.stash"] = {
+      "membership/2.4.0-1"
+   },
+   ["metrics.cartridge.failover"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.cartridge.issues"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.collectors.counter"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.collectors.gauge"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.collectors.histogram"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.collectors.shared"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.collectors.summary"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.const"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.http_middleware"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.init"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.plugins.graphite"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.plugins.json"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.plugins.prometheus"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.psutils.cpu"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.psutils.psutils_linux"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.quantile"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.registry"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.clock"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.cpu"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.event_loop"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.fibers"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.info"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.luajit"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.memory"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.memtx"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.network"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.operations"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.replicas"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.runtime"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.slab"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.spaces"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.system"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.tarantool.vinyl"] = {
+      "metrics/0.16.0-1"
+   },
+   ["metrics.utils"] = {
+      "metrics/0.16.0-1"
+   },
+   ["vshard.cfg"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.consts"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.error"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.hash"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.heap"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.init"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.registry"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.replicaset"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.rlist"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.router.init"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.service_info"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.storage.init"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.storage.ref"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.storage.reload_evolution"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.storage.sched"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.util"] = {
+      "vshard/0.1.23-1"
+   },
+   ["vshard.version"] = {
+      "vshard/0.1.23-1"
+   }
+}
+repository = {
+   cartridge = {
+      ["2.7.9-1"] = {
+         {
+            arch = "installed",
+            commands = {
+               stateboard = "stateboard"
+            },
+            dependencies = {
+               checks = "3.2.0-1",
+               ddl = "1.6.2-1",
+               errors = "2.2.1-1",
+               ["frontend-core"] = "8.2.1-1",
+               graphql = "0.2.0-1",
+               http = "1.4.0-1",
+               luagraphqlparser = "0.2.0-1",
+               membership = "2.4.0-1",
+               vshard = "0.1.23-1"
+            },
+            modules = {
+               cartridge = "cartridge.lua",
+               ["cartridge.VERSION"] = "cartridge/VERSION.lua",
+               ["cartridge.admin"] = "cartridge/admin.lua",
+               ["cartridge.argparse"] = "cartridge/argparse.lua",
+               ["cartridge.auth"] = "cartridge/auth.lua",
+               ["cartridge.auth-backend"] = "cartridge/auth-backend.lua",
+               ["cartridge.cluster-cookie"] = "cartridge/cluster-cookie.lua",
+               ["cartridge.clusterwide-config"] = "cartridge/clusterwide-config.lua",
+               ["cartridge.confapplier"] = "cartridge/confapplier.lua",
+               ["cartridge.etcd2"] = "cartridge/etcd2.lua",
+               ["cartridge.etcd2-client"] = "cartridge/etcd2-client.lua",
+               ["cartridge.failover"] = "cartridge/failover.lua",
+               ["cartridge.failover.leader_autoreturn"] = "cartridge/failover/leader_autoreturn.lua",
+               ["cartridge.failover.raft"] = "cartridge/failover/raft.lua",
+               ["cartridge.feedback"] = "cartridge/feedback.lua",
+               ["cartridge.front-bundle"] = "cartridge/front-bundle.lua",
+               ["cartridge.funcall"] = "cartridge/funcall.lua",
+               ["cartridge.graphql"] = "cartridge/graphql.lua",
+               ["cartridge.graphql.execute"] = "cartridge/graphql/execute.lua",
+               ["cartridge.graphql.funcall"] = "cartridge/graphql/funcall.lua",
+               ["cartridge.graphql.parse"] = "cartridge/graphql/parse.lua",
+               ["cartridge.graphql.schema"] = "cartridge/graphql/schema.lua",
+               ["cartridge.graphql.types"] = "cartridge/graphql/types.lua",
+               ["cartridge.graphql.validate"] = "cartridge/graphql/validate.lua",
+               ["cartridge.hotreload"] = "cartridge/hotreload.lua",
+               ["cartridge.invalid-format"] = "cartridge/invalid-format.lua",
+               ["cartridge.issues"] = "cartridge/issues.lua",
+               ["cartridge.label-utils"] = "cartridge/label-utils.lua",
+               ["cartridge.logging_whitelist"] = "cartridge/logging_whitelist.lua",
+               ["cartridge.lua-api.boxinfo"] = "cartridge/lua-api/boxinfo.lua",
+               ["cartridge.lua-api.compression"] = "cartridge/lua-api/compression.lua",
+               ["cartridge.lua-api.deprecated"] = "cartridge/lua-api/deprecated.lua",
+               ["cartridge.lua-api.edit-topology"] = "cartridge/lua-api/edit-topology.lua",
+               ["cartridge.lua-api.failover"] = "cartridge/lua-api/failover.lua",
+               ["cartridge.lua-api.get-topology"] = "cartridge/lua-api/get-topology.lua",
+               ["cartridge.lua-api.proxy"] = "cartridge/lua-api/proxy.lua",
+               ["cartridge.lua-api.stat"] = "cartridge/lua-api/stat.lua",
+               ["cartridge.lua-api.topology"] = "cartridge/lua-api/topology.lua",
+               ["cartridge.lua-api.vshard"] = "cartridge/lua-api/vshard.lua",
+               ["cartridge.pool"] = "cartridge/pool.lua",
+               ["cartridge.remote-control"] = "cartridge/remote-control.lua",
+               ["cartridge.roles"] = "cartridge/roles.lua",
+               ["cartridge.roles.coordinator"] = "cartridge/roles/coordinator.lua",
+               ["cartridge.roles.vshard-router"] = "cartridge/roles/vshard-router.lua",
+               ["cartridge.roles.vshard-storage"] = "cartridge/roles/vshard-storage.lua",
+               ["cartridge.rpc"] = "cartridge/rpc.lua",
+               ["cartridge.service-registry"] = "cartridge/service-registry.lua",
+               ["cartridge.sslsocket"] = "cartridge/sslsocket.lua",
+               ["cartridge.stateboard"] = "cartridge/stateboard.lua",
+               ["cartridge.stateboard-client"] = "cartridge/stateboard-client.lua",
+               ["cartridge.tar"] = "cartridge/tar.lua",
+               ["cartridge.test-helpers"] = "cartridge/test-helpers.lua",
+               ["cartridge.test-helpers.cluster"] = "cartridge/test-helpers/cluster.lua",
+               ["cartridge.test-helpers.etcd"] = "cartridge/test-helpers/etcd.lua",
+               ["cartridge.test-helpers.server"] = "cartridge/test-helpers/server.lua",
+               ["cartridge.test-helpers.stateboard"] = "cartridge/test-helpers/stateboard.lua",
+               ["cartridge.topology"] = "cartridge/topology.lua",
+               ["cartridge.twophase"] = "cartridge/twophase.lua",
+               ["cartridge.upload"] = "cartridge/upload.lua",
+               ["cartridge.user-defined-role"] = "cartridge/user-defined-role.lua",
+               ["cartridge.utils"] = "cartridge/utils.lua",
+               ["cartridge.vars"] = "cartridge/vars.lua",
+               ["cartridge.vshard-utils"] = "cartridge/vshard-utils.lua",
+               ["cartridge.webui"] = "cartridge/webui.lua",
+               ["cartridge.webui.api-auth"] = "cartridge/webui/api-auth.lua",
+               ["cartridge.webui.api-compression"] = "cartridge/webui/api-compression.lua",
+               ["cartridge.webui.api-config"] = "cartridge/webui/api-config.lua",
+               ["cartridge.webui.api-ddl"] = "cartridge/webui/api-ddl.lua",
+               ["cartridge.webui.api-failover"] = "cartridge/webui/api-failover.lua",
+               ["cartridge.webui.api-issues"] = "cartridge/webui/api-issues.lua",
+               ["cartridge.webui.api-suggestions"] = "cartridge/webui/api-suggestions.lua",
+               ["cartridge.webui.api-topology"] = "cartridge/webui/api-topology.lua",
+               ["cartridge.webui.api-vshard"] = "cartridge/webui/api-vshard.lua",
+               ["cartridge.webui.gql-boxinfo"] = "cartridge/webui/gql-boxinfo.lua",
+               ["cartridge.webui.gql-stat"] = "cartridge/webui/gql-stat.lua",
+               ["cartridge/VERSION.lua.in"] = "cartridge/VERSION.lua.in"
+            }
+         }
+      }
+   },
+   ["cartridge-cli-extensions"] = {
+      ["1.1.1-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["cartridge-cli-extensions.admin"] = "cartridge-cli-extensions/admin.lua"
+            }
+         }
+      }
+   },
+   checks = {
+      ["3.2.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               checks = "checks.lua"
+            }
+         }
+      }
+   },
+   ddl = {
+      ["1.6.2-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["cartridge.roles.ddl-manager"] = "cartridge/roles/ddl-manager.lua",
+               ddl = "ddl.lua",
+               ["ddl.cache"] = "ddl/cache.lua",
+               ["ddl.check"] = "ddl/check.lua",
+               ["ddl.db"] = "ddl/db.lua",
+               ["ddl.get"] = "ddl/get.lua",
+               ["ddl.set"] = "ddl/set.lua",
+               ["ddl.utils"] = "ddl/utils.lua"
+            }
+         }
+      }
+   },
+   errors = {
+      ["2.2.1-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               errors = "errors.lua",
+               ["errors.deprecate"] = "errors/deprecate.lua"
+            }
+         }
+      }
+   },
+   ["frontend-core"] = {
+      ["8.2.1-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["frontend-core"] = "frontend-core.lua",
+               ["frontend-core.bundle"] = "frontend-core/bundle.lua"
+            }
+         }
+      }
+   },
+   graphql = {
+      ["0.2.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               luagraphqlparser = "0.2.0-1"
+            },
+            modules = {
+               ["graphql.execute"] = "graphql/execute.lua",
+               ["graphql.init"] = "graphql/init.lua",
+               ["graphql.introspection"] = "graphql/introspection.lua",
+               ["graphql.parse"] = "graphql/parse.lua",
+               ["graphql.query_util"] = "graphql/query_util.lua",
+               ["graphql.rules"] = "graphql/rules.lua",
+               ["graphql.schema"] = "graphql/schema.lua",
+               ["graphql.types"] = "graphql/types.lua",
+               ["graphql.util"] = "graphql/util.lua",
+               ["graphql.validate"] = "graphql/validate.lua",
+               ["graphql.validate_variables"] = "graphql/validate_variables.lua"
+            }
+         }
+      }
+   },
+   http = {
+      ["1.4.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["http.codes"] = "http/codes.lua",
+               ["http.lib"] = "http/lib.so",
+               ["http.mime_types"] = "http/mime_types.lua",
+               ["http.server"] = "http/server.lua"
+            }
+         }
+      }
+   },
+   luagraphqlparser = {
+      ["0.2.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               luagraphqlparser = "luagraphqlparser.so"
+            }
+         }
+      }
+   },
+   membership = {
+      ["2.4.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               checks = "3.2.0-1"
+            },
+            modules = {
+               membership = "membership.lua",
+               ["membership.events"] = "membership/events.lua",
+               ["membership.members"] = "membership/members.lua",
+               ["membership.network"] = "membership/network.lua",
+               ["membership.options"] = "membership/options.lua",
+               ["membership.stash"] = "membership/stash.lua"
+            }
+         }
+      }
+   },
+   metrics = {
+      ["0.16.0-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               checks = "3.2.0-1"
+            },
+            modules = {
+               ["cartridge.health"] = "cartridge/health.lua",
+               ["cartridge.roles.metrics"] = "cartridge/roles/metrics.lua",
+               ["metrics.cartridge.failover"] = "metrics/cartridge/failover.lua",
+               ["metrics.cartridge.issues"] = "metrics/cartridge/issues.lua",
+               ["metrics.collectors.counter"] = "metrics/collectors/counter.lua",
+               ["metrics.collectors.gauge"] = "metrics/collectors/gauge.lua",
+               ["metrics.collectors.histogram"] = "metrics/collectors/histogram.lua",
+               ["metrics.collectors.shared"] = "metrics/collectors/shared.lua",
+               ["metrics.collectors.summary"] = "metrics/collectors/summary.lua",
+               ["metrics.const"] = "metrics/const.lua",
+               ["metrics.http_middleware"] = "metrics/http_middleware.lua",
+               ["metrics.init"] = "metrics/init.lua",
+               ["metrics.plugins.graphite"] = "metrics/plugins/graphite.lua",
+               ["metrics.plugins.json"] = "metrics/plugins/json.lua",
+               ["metrics.plugins.prometheus"] = "metrics/plugins/prometheus.lua",
+               ["metrics.psutils.cpu"] = "metrics/psutils/cpu.lua",
+               ["metrics.psutils.psutils_linux"] = "metrics/psutils/psutils_linux.lua",
+               ["metrics.quantile"] = "metrics/quantile.lua",
+               ["metrics.registry"] = "metrics/registry.lua",
+               ["metrics.tarantool"] = "metrics/tarantool.lua",
+               ["metrics.tarantool.clock"] = "metrics/tarantool/clock.lua",
+               ["metrics.tarantool.cpu"] = "metrics/tarantool/cpu.lua",
+               ["metrics.tarantool.event_loop"] = "metrics/tarantool/event_loop.lua",
+               ["metrics.tarantool.fibers"] = "metrics/tarantool/fibers.lua",
+               ["metrics.tarantool.info"] = "metrics/tarantool/info.lua",
+               ["metrics.tarantool.luajit"] = "metrics/tarantool/luajit.lua",
+               ["metrics.tarantool.memory"] = "metrics/tarantool/memory.lua",
+               ["metrics.tarantool.memtx"] = "metrics/tarantool/memtx.lua",
+               ["metrics.tarantool.network"] = "metrics/tarantool/network.lua",
+               ["metrics.tarantool.operations"] = "metrics/tarantool/operations.lua",
+               ["metrics.tarantool.replicas"] = "metrics/tarantool/replicas.lua",
+               ["metrics.tarantool.runtime"] = "metrics/tarantool/runtime.lua",
+               ["metrics.tarantool.slab"] = "metrics/tarantool/slab.lua",
+               ["metrics.tarantool.spaces"] = "metrics/tarantool/spaces.lua",
+               ["metrics.tarantool.system"] = "metrics/tarantool/system.lua",
+               ["metrics.tarantool.vinyl"] = "metrics/tarantool/vinyl.lua",
+               ["metrics.utils"] = "metrics/utils.lua"
+            }
+         }
+      }
+   },
+   myapp = {
+      ["scm-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {
+               cartridge = "2.7.9-1",
+               ["cartridge-cli-extensions"] = "1.1.1-1",
+               checks = "3.2.0-1",
+               ddl = "1.6.2-1",
+               errors = "2.2.1-1",
+               ["frontend-core"] = "8.2.1-1",
+               graphql = "0.2.0-1",
+               http = "1.4.0-1",
+               luagraphqlparser = "0.2.0-1",
+               membership = "2.4.0-1",
+               metrics = "0.16.0-1",
+               vshard = "0.1.23-1"
+            },
+            modules = {}
+         }
+      }
+   },
+   vshard = {
+      ["0.1.23-1"] = {
+         {
+            arch = "installed",
+            commands = {},
+            dependencies = {},
+            modules = {
+               ["vshard.cfg"] = "vshard/cfg.lua",
+               ["vshard.consts"] = "vshard/consts.lua",
+               ["vshard.error"] = "vshard/error.lua",
+               ["vshard.hash"] = "vshard/hash.lua",
+               ["vshard.heap"] = "vshard/heap.lua",
+               ["vshard.init"] = "vshard/init.lua",
+               ["vshard.registry"] = "vshard/registry.lua",
+               ["vshard.replicaset"] = "vshard/replicaset.lua",
+               ["vshard.rlist"] = "vshard/rlist.lua",
+               ["vshard.router.init"] = "vshard/router/init.lua",
+               ["vshard.service_info"] = "vshard/service_info.lua",
+               ["vshard.storage.init"] = "vshard/storage/init.lua",
+               ["vshard.storage.ref"] = "vshard/storage/ref.lua",
+               ["vshard.storage.reload_evolution"] = "vshard/storage/reload_evolution.lua",
+               ["vshard.storage.sched"] = "vshard/storage/sched.lua",
+               ["vshard.util"] = "vshard/util.lua",
+               ["vshard.version"] = "vshard/version.lua"
+            }
+         }
+      }
+   }
+}

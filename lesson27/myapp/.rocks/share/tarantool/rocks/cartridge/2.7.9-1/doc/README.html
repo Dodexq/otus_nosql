@@ -1,0 +1,252 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tarantool Cartridge &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer’s guide" href="cartridge_dev.html" />
+    <link rel="prev" title="Tarantool Cartridge" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="tarantool-cartridge">
+<span id="cartridge-readme"></span><h1><a class="toc-backref" href="#id1">Tarantool Cartridge</a><a class="headerlink" href="#tarantool-cartridge" title="Permalink to this headline">¶</a></h1>
+<p>A framework for distributed applications development.</p>
+<div class="website-hidden">
+  <a href="https://github.com/tarantool/cartridge/actions?query=workflow%3A%22Backend+Test%22">
+    <img src="https://github.com/tarantool/cartridge/workflows/Backend%20Test/badge.svg">
+  </a>
+  <a href="https://github.com/tarantool/cartridge/actions?query=workflow%3A%22Frontend+Test%22">
+    <img src="https://github.com/tarantool/cartridge/workflows/Frontend%20Test/badge.svg">
+  </a>
+  <br/>
+  <a href="https://t.me/tarantool">
+    <img src="https://img.shields.io/badge/telegram%20(EN)-tarantool-blue?logo=telegram&style=social">
+  </a>
+  <br/>
+  <a href="https://t.me/tarantoolru">
+    <img src="https://img.shields.io/badge/telegram%20(RU)-tarantoolru-blue?logo=telegram&style=social">
+  </a>
+</div><p align="center">
+  <img
+    src="https://github.com/tarantool/cartridge/raw/master/cartridge.png"
+    height="400px"
+  >
+</p><div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tarantool-cartridge" id="id1">Tarantool Cartridge</a></p>
+<ul>
+<li><p><a class="reference internal" href="#about-tarantool-cartridge" id="id2">About Tarantool Cartridge</a></p></li>
+<li><p><a class="reference internal" href="#getting-started" id="id3">Getting started</a></p>
+<ul>
+<li><p><a class="reference internal" href="#prerequisites" id="id4">Prerequisites</a></p></li>
+<li><p><a class="reference internal" href="#create-your-first-application" id="id5">Create your first application</a></p></li>
+<li><p><a class="reference internal" href="#next-steps" id="id6">Next steps</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#contributing" id="id7">Contributing</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="about-tarantool-cartridge">
+<h2><a class="toc-backref" href="#id2">About Tarantool Cartridge</a><a class="headerlink" href="#about-tarantool-cartridge" title="Permalink to this headline">¶</a></h2>
+<p>Tarantool Cartridge allows you to easily develop Tarantool-based applications
+and run them on one or more Tarantool instances organized into a cluster.</p>
+<p>This is the recommended alternative to the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/app_server/">old-school practices</a>
+of application development for Tarantool.</p>
+<p>As a <strong>software development kit (SDK)</strong>, Tarantool Cartridge provides you with
+utilities and an application template to help:</p>
+<ul class="simple">
+<li><p>easily set up a development environment for your applications;</p></li>
+<li><p>plug the necessary Lua modules.</p></li>
+</ul>
+<p>The resulting package can be installed and started on one or multiple servers
+as one or multiple instantiated services – independent or organized into a
+<strong>cluster</strong>.</p>
+<p>A Tarantool cluster is a collection of Tarantool instances acting in concert.
+While a single Tarantool instance can leverage the performance of a single server
+and is vulnerable to failure, the cluster spans multiple servers, utilizes their
+cumulative CPU power, and is fault-tolerant.</p>
+<p>To fully utilize the capabilities of a Tarantool cluster, you need to
+develop applications keeping in mind they are to run in a cluster environment.</p>
+<p>As a <strong>cluster management tool</strong>, Tarantool Cartridge provides your cluster-aware
+applications with the following key benefits:</p>
+<ul class="simple">
+<li><p>horizontal scalability and load balancing via built-in automatic sharding;</p></li>
+<li><p>asynchronous replication;</p></li>
+<li><p>automatic failover;</p></li>
+<li><p>centralized cluster control via GUI or API;</p></li>
+<li><p>automatic configuration synchronization;</p></li>
+<li><p>instance functionality segregation.</p></li>
+</ul>
+<p>A Tarantool Cartridge cluster can segregate functionality between instances via
+built-in and custom (user-defined) <strong>cluster roles</strong>. You can toggle instances
+on and off on the fly during cluster operation. This allows you to put
+different types of workloads (e.g., compute- and transaction-intensive ones) on
+different physical servers with dedicated hardware.</p>
+<p>Tarantool Cartridge has an external utility called
+<a class="reference external" href="https://github.com/tarantool/cartridge-cli">cartridge-cli</a> which
+provides you with utilities and an application template to help:</p>
+<ul class="simple">
+<li><p>easily set up a development environment for your applications;</p></li>
+<li><p>plug the necessary Lua modules;</p></li>
+<li><p>pack the applications in an environment-independent way: together with
+module binaries and Tarantool executables.</p></li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h2><a class="toc-backref" href="#id3">Getting started</a><a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="prerequisites">
+<h3><a class="toc-backref" href="#id4">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h3>
+<p>To get a template application that uses Tarantool Cartridge and run it,
+you need to install several packages:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">tarantool</span></code> and <code class="docutils literal notranslate"><span class="pre">tarantool-dev</span></code>
+(see these <a class="reference external" href="https://www.tarantool.io/en/download/">instructions</a>);</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cartridge-cli</span></code>
+(see these <a class="reference external" href="https://github.com/tarantool/cartridge-cli#installation">instructions</a>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span></code>, <code class="docutils literal notranslate"><span class="pre">gcc</span></code>, <code class="docutils literal notranslate"><span class="pre">cmake</span></code> and <code class="docutils literal notranslate"><span class="pre">make</span></code>.</p></li>
+</ul>
+</div>
+<div class="section" id="create-your-first-application">
+<h3><a class="toc-backref" href="#id5">Create your first application</a><a class="headerlink" href="#create-your-first-application" title="Permalink to this headline">¶</a></h3>
+<p>Long story short, enter these commands into the console one-by-one:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cartridge<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>myapp
+<span class="nb">cd</span><span class="w"> </span>myapp
+cartridge<span class="w"> </span>build
+cartridge<span class="w"> </span>start<span class="w"> </span>-d
+cartridge<span class="w"> </span>replicasets<span class="w"> </span>setup<span class="w"> </span>--bootstrap-vshard
+cartridge<span class="w"> </span>failover<span class="w"> </span><span class="nb">set</span><span class="w"> </span>stateful<span class="w"> </span>--state-provider<span class="w"> </span>stateboard<span class="w"> </span>--provider-params<span class="w"> </span><span class="s1">&#39;{&quot;uri&quot;: &quot;localhost:4401&quot;, &quot;password&quot;: &quot;passwd&quot;}&#39;</span>
+</pre></div>
+</div>
+<p>That’s all! Now you can visit <a class="reference external" href="http://localhost:8081">http://localhost:8081</a> and see your application’s
+Admin Web UI:</p>
+<img alt="rst/images/full-cluster.png" class="align-center" src="rst/images/full-cluster.png" />
+</div>
+<div class="section" id="next-steps">
+<h3><a class="toc-backref" href="#id6">Next steps</a><a class="headerlink" href="#next-steps" title="Permalink to this headline">¶</a></h3>
+<p>See:</p>
+<ul class="simple">
+<li><p>A more detailed
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/getting_started/getting_started_cartridge/">getting started guide</a></p></li>
+<li><p>More
+<a class="reference external" href="https://github.com/tarantool/examples">application examples</a></p></li>
+<li><p><a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/cartridge/">Cartridge documentation</a></p></li>
+<li><p><a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/cartridge/cartridge_api/">Cartridge API reference</a></p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="contributing">
+<h2><a class="toc-backref" href="#id7">Contributing</a><a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h2>
+<p>The most essential contribution is your <em>feedback</em>, don’t hesitate to
+<a class="reference external" href="https://github.com/tarantool/cartridge/issues/new">open an issue</a>.
+If you’d like to propose some changes in code, see the contribution
+<a class="reference external" href="https://github.com/tarantool/cartridge/blob/master/CONTRIBUTING.rst">guide</a>.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#about-tarantool-cartridge">About Tarantool Cartridge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#contributing">Contributing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Tarantool Cartridge</a></li>
+      <li>Next: <a href="cartridge_dev.html" title="next chapter">Developer’s guide</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/README.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

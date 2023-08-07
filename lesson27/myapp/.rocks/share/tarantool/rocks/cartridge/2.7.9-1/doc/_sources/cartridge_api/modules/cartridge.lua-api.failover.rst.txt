@@ -1,0 +1,233 @@
+.. _cartridge.lua-api.failover:
+
+===============================================================================
+Module *cartridge.lua-api.failover*
+===============================================================================
+
+Administration functions (failover related).
+
+
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.failover.get_params:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_params ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get failover configuration. 
+
+(**Added** in v2.0.2-2)
+
+
+
+**Returns**:
+
+(`FailoverParams <cartridge.lua-api.failover.FailoverParams_>`_) 
+
+
+.. _cartridge.lua-api.failover.set_params:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set_params (opts)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Configure automatic failover. 
+
+(**Added** in v2.0.2-2)
+
+
+**Parameters:**
+
+- *opts:* 
+
+  - *mode:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *state_provider:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *failover_timeout:* (optional **number**) (added in v2.3.0-52)  
+  - *tarantool_params:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+  - *etcd2_params:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) (added in v2.1.2-26)  
+  - *fencing_enabled:* (optional **boolean**) (added in v2.3.0-57)  
+  - *fencing_timeout:* (optional **number**) (added in v2.3.0-57)  
+  - *fencing_pause:* (optional **number**) (added in v2.3.0-57)  
+  - *leader_autoreturn:* (optional **boolean**) (added in v2.7.7)  
+  - *autoreturn_delay:* (optional **number**) (added in v2.7.7)  
+  - *check_cookie_hash:* (optional **boolean**) (added in v2.7.8)  
+
+
+**Returns**:
+
+(**boolean**) `true` if config applied successfully
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.failover.get_failover_enabled:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_failover_enabled ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get current failover state. 
+
+(**Deprecated** since v2.0.2-2)
+
+
+
+
+.. _cartridge.lua-api.failover.set_failover_enabled:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set_failover_enabled (enabled)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Enable or disable automatic failover. 
+
+(**Deprecated** since v2.0.2-2)
+
+
+**Parameters:**
+
+- *enabled:* (**boolean**)   
+
+**Returns**:
+
+(**boolean**) New failover state
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.failover.promote:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+promote (replicaset_uuid[, opts])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Promote leaders in replicasets.
+
+
+**Parameters:**
+
+- *replicaset_uuid:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) ] = leader_uuid }  
+- *opts:* 
+
+  - *force_inconsistency:* (optional **boolean**) (default: **false**)  
+  - *skip_error_on_change:* (optional **boolean**) Skip etcd error if vclockkeeper was changed between calls (default: **false**)  
+
+
+**Returns**:
+
+(**boolean**) true On success
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.failover.pause:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+pause ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Stops failover across cluster at runtime.  Will be useful in case of "failover storms"
+when failover triggers too many times in minute.
+
+
+
+
+**Returns**:
+
+(**boolean**) true On success
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.lua-api.failover.resume:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+resume ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Starts failover across cluster at runtime after  ``pause`` . 
+Don't forget to resume your failover after pausing it.
+
+
+
+
+**Returns**:
+
+(**boolean**) true On success
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+-------------------------------------------------------------------------------
+Tables
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.lua-api.failover.FailoverParams:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+FailoverParams
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Failover parameters. 
+
+(**Added** in v2.0.2-2)
+
+
+**Fields:**
+
+- *mode:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Supported modes are "disabled", "eventual", "stateful" or "raft"  
+- *state_provider:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Supported state providers are "tarantool" and "etcd2".  
+- *failover_timeout:* (**number**) (added in v2.3.0-52)Timeout (in seconds), used by membership tomark  ``suspect``  members as  ``dead``  (default: 20)  
+- *tarantool_params:* (added in v2.0.2-2)
+
+  - *uri:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+  - *password:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+
+- *etcd2_params:* (added in v2.1.2-26)
+
+  - *prefix:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Prefix used for etcd keys: `<prefix>/lock` and`<prefix>/leaders`  
+  - *lock_delay:* (optional **number**) Timeout (in seconds), determines lock's time-to-live (default: 10)  
+  - *endpoints:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) URIs that are used to discover and to access etcd cluster instances.(default:  ``{'http://localhost:2379', 'http://localhost:4001'}`` )  
+  - *username:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) (default: "")  
+  - *password:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) (default: "")  
+
+- *fencing_enabled:* (**boolean**) (added in v2.3.0-57)Abandon leadership when both the state provider quorum and atleast one replica are lost (suitable in stateful mode only,default: false)  
+- *fencing_timeout:* (**number**) (added in v2.3.0-57)Time (in seconds) to actuate fencing after the check fails(default: 10)  
+- *fencing_pause:* (**number**) (added in v2.3.0-57)The period (in seconds) of performing the check(default: 2)  
+- *leader_autoreturn:* (**boolean**) (added in v2.7.7)If enabled, then switched leader will return after ` ``autoreturn_delay`` `(default: false)  
+- *autoreturn_delay:* (**number**) (added in v2.7.7)Time (in seconds) until failover try to return leader to the first nodein ` ``failover_priority`` `(default: 300)  
+- *check_cookie_hash:* (**boolean**) (added in v2.7.8)If enabled, then check that nobody else uses this stateboard(default: true)  
+
+

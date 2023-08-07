@@ -1,0 +1,39 @@
+===============================================================================
+Table of contents
+===============================================================================
+
+.. toctree::
+   :maxdepth: 1
+
+   modules/cartridge
+   modules/cartridge.auth
+   modules/cartridge.roles
+   modules/cartridge.issues
+   modules/cartridge.argparse
+   modules/cartridge.twophase
+   modules/cartridge.failover
+   modules/cartridge.topology
+   modules/cartridge.clusterwide-config
+   modules/cartridge.rpc
+   modules/cartridge.tar
+   modules/cartridge.pool
+   modules/cartridge.upload
+   modules/cartridge.confapplier
+   modules/cartridge.test-helpers
+   modules/cartridge.remote-control
+   modules/cartridge.service-registry
+   modules/custom-role
+   modules/cartridge.lua-api.stat
+   modules/cartridge.lua-api.boxinfo
+   modules/cartridge.lua-api.get-topology
+   modules/cartridge.lua-api.edit-topology
+   modules/cartridge.lua-api.topology
+   modules/cartridge.lua-api.failover
+   modules/cartridge.lua-api.vshard
+   modules/cartridge.lua-api.deprecated
+
+   classes/cartridge.test-helpers.cluster
+   classes/cartridge.test-helpers.server
+   classes/cartridge.test-helpers.etcd
+   classes/cartridge.test-helpers.stateboard
+

@@ -1,0 +1,183 @@
+.. _cartridge.confapplier:
+
+===============================================================================
+Module *cartridge.confapplier*
+===============================================================================
+
+Configuration management primitives.
+
+
+
+Implements the internal state machine which helps to manage cluster
+operation and protects from invalid state transitions.
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.confapplier.get_active_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_active_config ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get current ClusterwideConfig object of instance
+
+
+
+**Returns**:
+
+:ref:`cartridge.clusterwide-config <cartridge.clusterwide-config>` or nil,
+if instance not bootstrapped.
+
+
+.. _cartridge.confapplier.get_readonly:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_readonly ([section_name])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get a read-only view on the clusterwide configuration. 
+
+Returns either  ``conf[section_name]``  or entire  ``conf`` .
+Any attempt to modify the section or its children
+will raise an error.
+
+
+**Parameters:**
+
+- *section_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)  (optional) 
+
+**Returns**:
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) 
+
+
+.. _cartridge.confapplier.get_deepcopy:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_deepcopy ([section_name])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Get a read-write deep copy of the clusterwide configuration. 
+
+Returns either  ``conf[section_name]``  or entire  ``conf`` .
+Changing it has no effect
+unless it's used to patch clusterwide configuration.
+
+
+**Parameters:**
+
+- *section_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)  (optional) 
+
+**Returns**:
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) 
+
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.confapplier.set_state:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set_state (state[, err])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Perform state transition.
+
+
+**Parameters:**
+
+- *state:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) New state  
+- *err:*   (optional) 
+
+**Returns**:
+
+(**nil**) 
+
+
+.. _cartridge.confapplier.wish_state:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+wish_state (state[, timeout])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Make a wish for meeting desired state.
+
+
+**Parameters:**
+
+- *state:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Desired state.  
+- *timeout:* (**number**)  (optional) 
+
+**Returns**:
+
+(`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Final state, may differ from desired.
+
+
+.. _cartridge.confapplier.validate_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+validate_config (clusterwide_config_new)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Validate configuration by all roles.
+
+
+**Parameters:**
+
+- *clusterwide_config_new:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+.. _cartridge.confapplier.restart_replication:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+restart_replication ()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Restart replication from topology on the current node.
+
+
+
+
+.. _cartridge.confapplier.apply_config:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+apply_config (clusterwide_config)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Apply the role configuration.
+
+
+**Parameters:**
+
+- *clusterwide_config:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+**Returns**:
+
+(**boolean**) true
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

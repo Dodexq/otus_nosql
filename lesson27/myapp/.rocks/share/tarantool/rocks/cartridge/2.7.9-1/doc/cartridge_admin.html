@@ -1,0 +1,1227 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Administrator’s guide &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
+    <link rel="prev" title="Developer’s guide" href="cartridge_dev.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="administrator-s-guide">
+<span id="cartridge-admin"></span><h1>Administrator’s guide<a class="headerlink" href="#administrator-s-guide" title="Permalink to this headline">¶</a></h1>
+<p>This guide explains how to deploy and manage a Tarantool cluster with Tarantool
+Cartridge.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For more information on managing Tarantool instances, see the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/admin/">server administration section</a>
+of the Tarantool manual.</p>
+</div>
+<p>Before deploying the cluster, familiarize yourself with the notion of
+<a class="reference internal" href="cartridge_dev.html#cartridge-roles"><span class="std std-ref">cluster roles</span></a> and
+<a class="reference internal" href="cartridge_dev.html#cartridge-deploy"><span class="std std-ref">deploy Tarantool instances</span></a> according to the
+desired cluster topology.</p>
+<div class="section" id="deploying-the-cluster">
+<span id="cartridge-deployment"></span><h2>Deploying the cluster<a class="headerlink" href="#deploying-the-cluster" title="Permalink to this headline">¶</a></h2>
+<p>To deploy the cluster, first, <a class="reference internal" href="cartridge_dev.html#cartridge-config"><span class="std std-ref">configure</span></a> your
+Tarantool instances according to the desired cluster topology, for example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">my_app.router</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;advertise_uri&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;localhost:3301&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http_port&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">8080</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;workdir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;./tmp/router&quot;</span><span class="p p-Indicator">}</span>
+<span class="nt">my_app.storage_A_master</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;advertise_uri&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;localhost:3302&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http_enabled&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">False</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;workdir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;./tmp/storage-a-master&quot;</span><span class="p p-Indicator">}</span>
+<span class="nt">my_app.storage_A_replica</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;advertise_uri&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;localhost:3303&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http_enabled&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">False</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;workdir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;./tmp/storage-a-replica&quot;</span><span class="p p-Indicator">}</span>
+<span class="nt">my_app.storage_B_master</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;advertise_uri&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;localhost:3304&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http_enabled&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">False</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;workdir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;./tmp/storage-b-master&quot;</span><span class="p p-Indicator">}</span>
+<span class="nt">my_app.storage_B_replica</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="s">&quot;advertise_uri&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;localhost:3305&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;http_enabled&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="nv">False</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;workdir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;./tmp/storage-b-replica&quot;</span><span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+<p>Then <a class="reference internal" href="cartridge_dev.html#cartridge-run"><span class="std std-ref">start the instances</span></a>, for example using
+<code class="docutils literal notranslate"><span class="pre">cartridge</span></code> CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>start<span class="w"> </span>my_app<span class="w"> </span>--cfg<span class="w"> </span>demo.yml<span class="w"> </span>--run-dir<span class="w"> </span>./tmp/run
+</pre></div>
+</div>
+<p>And bootstrap the cluster.
+You can do this via the Web interface which is available at
+<code class="docutils literal notranslate"><span class="pre">http://&lt;instance_hostname&gt;:&lt;instance_http_port&gt;</span></code>
+(in this example, <code class="docutils literal notranslate"><span class="pre">http://localhost:8080</span></code>).</p>
+</div>
+<div class="section" id="bootstrapping-from-an-existing-cluster-optional">
+<h2>Bootstrapping from an existing cluster (optional)<a class="headerlink" href="#bootstrapping-from-an-existing-cluster-optional" title="Permalink to this headline">¶</a></h2>
+<p>You can bootstrap a cluster from an existing cluster (<em>original</em> cluster in the example
+below) via the argparse option <code class="docutils literal notranslate"><span class="pre">TARANTOOL_BOOTSTRAP_FROM</span></code> or <code class="docutils literal notranslate"><span class="pre">--bootstrap_from</span></code>
+in the following form:
+<code class="docutils literal notranslate"><span class="pre">TARANTOOL_BOOTSTRAP_FROM=admin:SECRET-ORIGINAL-CLUSTER-COOKIE&#64;HOST:MASTER_PORT</span></code>.
+That option should be present on each instance in replicasets of the target cluster.
+Make sure that you’ve prepared a valid configuration for the target cluster.
+A valid topology should contain the <strong>same</strong> <em>replicaset uuids</em> for each replicaset
+and <em>instance uuids</em> that <strong>differ</strong> from original cluster.</p>
+<p>Several notes:</p>
+<ul class="simple">
+<li><p>You can bootstrap specific replicasets from a cluster
+(for example, data nodes only) instead of the whole cluster.</p></li>
+<li><p>Don’t load data in the target cluster while bootstrapping.
+If you need to hot switch between original and target cluster, stop data loading
+in original cluster until bootstrapping is completed.</p></li>
+<li><p>Check logs and <code class="docutils literal notranslate"><span class="pre">box.info.replication</span></code> on target cluster after bootstrapping.
+If something went wrong, try again.</p></li>
+</ul>
+<p>Example of valid data in <code class="docutils literal notranslate"><span class="pre">edit_topology</span></code> request:</p>
+<p>Original cluster topology:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="s2">&quot;replicasets&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;alias&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;router-original&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;aaaaaaaa-aaaa-0000-0000-000000000000&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;join_servers&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">&quot;uri&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;localhost:3301&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;aaaaaaaa-aaaa-0000-0000-000000000001&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="s2">&quot;roles&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vshard-router&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;failover-coordinator&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;alias&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;storage-original&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;bbbbbbbb-0000-0000-0000-000000000000&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;weight&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;join_servers&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">&quot;uri&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;localhost:3302&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;bbbbbbbb-bbbb-0000-0000-000000000001&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="s2">&quot;roles&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vshard-storage&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Target cluster topology:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="s2">&quot;replicasets&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;alias&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;router-original&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;cccccccc-cccc-0000-0000-000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;- this is dataless router,</span>
+<span class="w">            </span><span class="c1">// it&#39;s not necessary to bootstrap it from original cluster</span>
+<span class="w">            </span><span class="s2">&quot;join_servers&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">&quot;uri&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;localhost:13301&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;- different uri</span>
+<span class="w">                    </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;cccccccc-cccc-0000-0000-000000000001&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="s2">&quot;roles&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vshard-router&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;failover-coordinator&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;alias&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;storage-original&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;bbbbbbbb-0000-0000-0000-000000000000&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// replicaset_uuid is the same as in the original cluster</span>
+<span class="w">            </span><span class="c1">// that allows us bootstrap target cluster from original cluster</span>
+<span class="w">            </span><span class="s2">&quot;weight&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;join_servers&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">&quot;uri&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;localhost:13302&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// &lt;- different uri</span>
+<span class="w">                    </span><span class="s2">&quot;uuid&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;bbbbbbbb-bbbb-0000-0000-000000000002&quot;</span><span class="w"> </span><span class="c1">// &lt;- different instance_uuid</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="s2">&quot;roles&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vshard-storage&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cluster-setup">
+<h2>Cluster setup<a class="headerlink" href="#cluster-setup" title="Permalink to this headline">¶</a></h2>
+<p>In the web interface, do the following:</p>
+<ol class="arabic">
+<li><p>Depending on the authentication state:</p>
+<ul>
+<li><p>If enabled (in production), enter your credentials and click
+<strong>Login</strong>:</p>
+<a class="reference internal image-reference" href="_images/auth_creds.png"><img alt="_images/auth_creds.png" class="align-left" src="_images/auth_creds.png" style="width: 477.6px; height: 270.40000000000003px;" /></a>
+<p> </p>
+</li>
+<li><p>If disabled (for easier testing), simply proceed to configuring the
+cluster.</p></li>
+</ul>
+</li>
+<li><p>Click <strong>Сonfigure</strong> next to the first unconfigured server to create the first
+replica set – solely for the router (intended for <em>compute-intensive</em> workloads).</p>
+<a class="reference internal image-reference" href="_images/unconfigured-router.png"><img alt="_images/unconfigured-router.png" class="align-left" src="_images/unconfigured-router.png" style="width: 945.6px; height: 443.20000000000005px;" /></a>
+<p> </p>
+<p>In the pop-up window, check the <code class="docutils literal notranslate"><span class="pre">vshard-router</span></code> role or any custom role
+that has <code class="docutils literal notranslate"><span class="pre">vshard-router</span></code> as a dependent role (in this example, this is
+a custom role named <code class="docutils literal notranslate"><span class="pre">app.roles.api</span></code>).</p>
+<p>(Optional) Specify a display name for the replica set, for example <code class="docutils literal notranslate"><span class="pre">router</span></code>.</p>
+<a class="reference internal image-reference" href="_images/create-router.png"><img alt="_images/create-router.png" class="align-left" src="_images/create-router.png" style="width: 795.2px; height: 545.6px;" /></a>
+<p> </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As described in the <a class="reference internal" href="cartridge_dev.html#cartridge-built-in-roles"><span class="std std-ref">built-in roles section</span></a>,
+it is a good practice to enable workload-specific cluster roles on
+instances running on physical servers with workload-specific hardware.</p>
+</div>
+<p>Click <strong>Create replica set</strong> and see the newly-created replica set
+in the web interface:</p>
+<a class="reference internal image-reference" href="_images/router-replica-set.png"><img alt="_images/router-replica-set.png" class="align-left" src="_images/router-replica-set.png" style="width: 935.2px; height: 205.60000000000002px;" /></a>
+<p> </p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful: after an instance joins a replica set, you <strong>CAN NOT</strong> revert
+this or make the instance join any other replica set.</p>
+</div>
+</li>
+<li><p>Create another replica set for a master storage node (intended for
+<em>transaction-intensive</em> workloads).</p>
+<p>Check the <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> role or any custom role
+that has <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> as a dependent role (in this example, this is
+a custom role named <code class="docutils literal notranslate"><span class="pre">app.roles.storage</span></code>).</p>
+<p>(Optional) Check a specific group, for example <code class="docutils literal notranslate"><span class="pre">hot</span></code>.
+Replica sets with <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> roles can belong to different groups.
+In our example, these are <code class="docutils literal notranslate"><span class="pre">hot</span></code> or <code class="docutils literal notranslate"><span class="pre">cold</span></code> groups meant to process
+hot and cold data independently. These groups are specified in the cluster’s
+<a class="reference internal" href="cartridge_dev.html#cartridge-vshard-groups"><span class="std std-ref">configuration file</span></a>; by default, a cluster has
+no groups.</p>
+<p>(Optional) Specify a display name for the replica set, for example <code class="docutils literal notranslate"><span class="pre">hot-storage</span></code>.</p>
+<p>Click <strong>Create replica set</strong>.</p>
+<a class="reference internal image-reference" href="_images/create-storage.png"><img alt="_images/create-storage.png" class="align-left" src="_images/create-storage.png" style="width: 796.8000000000001px; height: 548.0px;" /></a>
+<p> </p>
+</li>
+<li><p>(Optional) If required by topology, populate the second replica set
+with more storage nodes:</p>
+<ol class="arabic">
+<li><p>Click <strong>Configure</strong> next to another unconfigured server dedicated for
+<em>transaction-intensive</em> workloads.</p></li>
+<li><p>Click <strong>Join Replica Set</strong> tab.</p></li>
+<li><p>Select the second replica set, and click <strong>Join replica set</strong> to
+add the server to it.</p>
+<a class="reference internal image-reference" href="_images/join-storage.png"><img alt="_images/join-storage.png" class="align-left" src="_images/join-storage.png" style="width: 796.0px; height: 417.6px;" /></a>
+<p> </p>
+</li>
+</ol>
+</li>
+<li><p>Depending on cluster topology:</p>
+<ul class="simple">
+<li><p>add more instances to the first or second replica sets, or</p></li>
+<li><p>create more replica sets and populate them with instances meant to handle
+a specific type of workload (compute or transactions).</p></li>
+</ul>
+<p>For example:</p>
+<a class="reference internal image-reference" href="_images/final-cluster.png"><img alt="_images/final-cluster.png" class="align-left" src="_images/final-cluster.png" style="width: 940.8000000000001px; height: 648.8000000000001px;" /></a>
+<p> </p>
+</li>
+<li><p>(Optional) By default, all new <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> replica sets get a weight
+of <code class="docutils literal notranslate"><span class="pre">1</span></code> before the <code class="docutils literal notranslate"><span class="pre">vshard</span></code> bootstrap in the next step.</p></li>
+</ol>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<blockquote>
+<div><p>In case you add a new replica set after <code class="docutils literal notranslate"><span class="pre">vshard</span></code> bootstrap, as described
+in the <a class="reference internal" href="#cartridge-change-cluster-topology"><span class="std std-ref">topology change section</span></a>,
+it will get a weight of 0 by default.</p>
+</div></blockquote>
+<p>To make different replica sets store different numbers of buckets, click
+<strong>Edit</strong> next to a replica set, change its default weight, and click
+<strong>Save</strong>:</p>
+<a class="reference internal image-reference" href="_images/change-weight.png"><img alt="_images/change-weight.png" class="align-left" src="_images/change-weight.png" style="width: 789.6px; height: 597.6px;" /></a>
+<p> </p>
+<p>For more information on buckets and replica set’s weights, see the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/reference_rock/vshard/">vshard module documentation</a>.</p>
+</div>
+</div></blockquote>
+<ol class="arabic">
+<li><p>Bootstrap <code class="docutils literal notranslate"><span class="pre">vshard</span></code> by clicking the corresponding button, or by saying
+<code class="docutils literal notranslate"><span class="pre">cartridge.admin.boostrap_vshard()</span></code> over the administrative console.</p>
+<p>This command creates virtual buckets and distributes them among storages.</p>
+<p>From now on, all cluster configuration can be done via the web interface.</p>
+<a class="reference internal image-reference" href="_images/bootstrap-vshard.png"><img alt="_images/bootstrap-vshard.png" class="align-left" src="_images/bootstrap-vshard.png" style="width: 941.6px; height: 199.20000000000002px;" /></a>
+<p> </p>
+</li>
+</ol>
+</div>
+<div class="section" id="updating-the-configuration">
+<span id="cartridge-ui-configuration"></span><h2>Updating the configuration<a class="headerlink" href="#updating-the-configuration" title="Permalink to this headline">¶</a></h2>
+<p>Cluster configuration is specified in a YAML configuration file.
+This file includes cluster topology and role descriptions.</p>
+<p>All instances in Tarantool cluster have the same configuration. To this end,
+every instance stores a copy of the configuration file, and the cluster
+keeps these copies in sync: as you submit updated configuration in
+the Web interface, the cluster validates it (and rejects inappropriate changes)
+and distributes <strong>automatically</strong> across the cluster.</p>
+<p>To update the configuration:</p>
+<ol class="arabic">
+<li><p>Click <strong>Configuration files</strong> tab.</p></li>
+<li><p>(Optional) Click <strong>Downloaded</strong> to get hold of the current configuration file.</p></li>
+<li><p>Update the configuration file.</p>
+<p>You can add/change/remove any sections except system ones:
+<code class="docutils literal notranslate"><span class="pre">topology</span></code>, <code class="docutils literal notranslate"><span class="pre">vshard</span></code>, and <code class="docutils literal notranslate"><span class="pre">vshard_groups</span></code>.</p>
+<p>To remove a section, simply remove it from the configuration file.</p>
+</li>
+<li><p>Compress the configuration file as a <code class="docutils literal notranslate"><span class="pre">.zip</span></code> archive and
+click <strong>Upload configuration</strong> button to upload it.</p>
+<p>You will see a message in the lower part of the screen saying whether
+configuration was uploaded successfully, and an error description if the
+new configuration was not applied.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="managing-the-cluster">
+<span id="cartridge-change-manage-cluster"></span><h2>Managing the cluster<a class="headerlink" href="#managing-the-cluster" title="Permalink to this headline">¶</a></h2>
+<p>This chapter explains how to:</p>
+<ul class="simple">
+<li><p>change the cluster topology,</p></li>
+<li><p>enable automatic failover,</p></li>
+<li><p>switch the replica set’s master manually,</p></li>
+<li><p>deactivate replica sets, and</p></li>
+<li><p>expel instances.</p></li>
+</ul>
+<div class="section" id="changing-the-cluster-topology">
+<span id="cartridge-change-cluster-topology"></span><h3>Changing the cluster topology<a class="headerlink" href="#changing-the-cluster-topology" title="Permalink to this headline">¶</a></h3>
+<p>Upon adding a newly deployed instance to a new or existing replica set:</p>
+<ol class="arabic">
+<li><p>The cluster validates the configuration update by checking if the new instance
+is available using the <a class="reference external" href="https://www.tarantool.io/en/doc/1.10/reference/reference_rock/membership/">membership module</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">membership</span></code> module works over the UDP protocol and can operate before
+the <code class="docutils literal notranslate"><span class="pre">box.cfg</span></code> function is called.</p>
+</div>
+<p>All the nodes in the cluster must be healthy for validation success.</p>
+</li>
+<li><p>The new instance waits until another instance in the cluster receives the
+configuration update and discovers it, again, using the <code class="docutils literal notranslate"><span class="pre">membership</span></code> module.
+On this step, the new instance does not have a UUID yet.</p></li>
+<li><p>Once the instance realizes its presence is known to the cluster, it calls
+the <a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/reference_lua/box_cfg/">box.cfg</a>
+function and starts living its life.</p></li>
+</ol>
+<p>An optimal strategy for connecting new nodes to the cluster is to deploy a new
+zero-weight replica set instance by instance, and then increase the weight.
+Once the weight is updated and all cluster nodes are notified of the configuration
+change, buckets start migrating to new nodes.</p>
+<p>To populate the cluster with more nodes, do the following:</p>
+<ol class="arabic">
+<li><p>Deploy new Tarantool instances as described in the
+<a class="reference internal" href="cartridge_dev.html#cartridge-deploy"><span class="std std-ref">deployment section</span></a>.</p>
+<p>If new nodes do not appear in the Web interface, click <strong>Probe server</strong> and
+specify their URIs manually.</p>
+<a class="reference internal image-reference" href="_images/probe-server.png"><img alt="_images/probe-server.png" class="align-left" src="_images/probe-server.png" style="width: 478.40000000000003px; height: 232.8px;" /></a>
+<p> </p>
+<p>If a node is accessible, it will appear in the list.</p>
+</li>
+<li><p>In the Web interface:</p>
+<ul>
+<li><p>Create a new replica set with one of the new instances:
+click <strong>Configure</strong> next to an unconfigured server,
+check the necessary roles, and click <strong>Create replica set</strong>:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In case you are adding a new <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> instance, remember that
+all such instances get a <code class="docutils literal notranslate"><span class="pre">0</span></code> weight by default after the <code class="docutils literal notranslate"><span class="pre">vshard</span></code>
+bootstrap which happened during the initial cluster deployment.</p>
+<a class="reference internal image-reference" href="_images/zero.png"><img alt="_images/zero.png" class="align-left" src="_images/zero.png" style="width: 940.8000000000001px; height: 173.60000000000002px;" /></a>
+<p> </p>
+</div>
+</li>
+<li><p>Or add the instances to existing replica sets:
+click <strong>Configure</strong> next to an unconfigured server, click <strong>Join replica set</strong>
+tab, select a replica set, and click <strong>Join replica set</strong>.</p></li>
+</ul>
+<p>If necessary, repeat this for more instances to reach the desired redundancy level.</p>
+</li>
+<li><p>In case you are deploying a new <code class="docutils literal notranslate"><span class="pre">vshard-storage</span></code> replica set, populate it
+with data when you are ready:
+click <strong>Edit</strong> next to the replica set in question, increase its weight, and
+click <strong>Save</strong> to start <a class="reference internal" href="#cartridge-rebalance-data"><span class="std std-ref">data rebalancing</span></a>.</p></li>
+</ol>
+<p>As an alternative to the web interface, you can view and change cluster topology
+via GraphQL. The cluster’s endpoint for serving GraphQL queries is <code class="docutils literal notranslate"><span class="pre">/admin/api</span></code>.
+You can use any third-party GraphQL client like
+<a class="reference external" href="https://github.com/graphql/graphiql">GraphiQL</a> or
+<a class="reference external" href="https://altair.sirmuel.design">Altair</a>.</p>
+<p>Examples:</p>
+<ul>
+<li><p>listing all servers in the cluster:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">query</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">servers</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">alias</span><span class="w"> </span><span class="nx">uri</span><span class="w"> </span><span class="nx">uuid</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>listing all replica sets with their servers:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">query</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">replicasets</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">uuid</span>
+<span class="w">        </span><span class="nx">roles</span>
+<span class="w">        </span><span class="nx">servers</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">uri</span><span class="w"> </span><span class="nx">uuid</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>joining a server to a new replica set with a storage role enabled:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="nx">mutation</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">join_server</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">uri</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;localhost:33003&quot;</span>
+<span class="w">        </span><span class="nx">roles</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;vshard-storage&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="section" id="data-rebalancing">
+<span id="cartridge-rebalance-data"></span><h4>Data rebalancing<a class="headerlink" href="#data-rebalancing" title="Permalink to this headline">¶</a></h4>
+<p>Rebalancing (resharding) is initiated periodically and upon adding a new replica
+set with a non-zero weight to the cluster. For more information, see the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/reference_rock/vshard/vshard_admin/#rebalancing-process">rebalancing process section</a>
+of the <code class="docutils literal notranslate"><span class="pre">vshard</span></code> module documentation.</p>
+<p>The most convenient way to trace through the process of rebalancing is to monitor
+the number of active buckets on storage nodes. Initially, a newly added replica
+set has 0 active buckets. After a few minutes, the background rebalancing process
+begins to transfer buckets from other replica sets to the new one. Rebalancing
+continues until the data is distributed evenly among all replica sets.</p>
+<p>To monitor the current number of buckets, connect to any Tarantool instance over
+the <a class="reference internal" href="#cartridge-manage-sharding-cli"><span class="std std-ref">administrative console</span></a>, and say:</p>
+<div class="highlight-tarantoolsession notranslate"><div class="highlight"><pre><span></span><span class="gp">tarantool&gt; </span><span class="n">vshard</span><span class="p">.</span><span class="n">storage</span><span class="p">.</span><span class="n">info</span><span class="p">().</span><span class="n">bucket</span>
+<span class="nn">---</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">receiving</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">active</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="nt">total</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">  </span><span class="nt">garbage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">sending</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+<p>The number of buckets may be increasing or decreasing depending on whether the
+rebalancer is migrating buckets to or from the storage node.</p>
+<p>For more information on the monitoring parameters, see the
+<a class="reference internal" href="#cartridge-monitor-storage"><span class="std std-ref">monitoring storages section</span></a>.</p>
+</div>
+</div>
+<div class="section" id="deactivating-replica-sets">
+<span id="cartridge-deactivate-replica-set"></span><h3>Deactivating replica sets<a class="headerlink" href="#deactivating-replica-sets" title="Permalink to this headline">¶</a></h3>
+<p>To deactivate an entire replica set (e.g., to perform maintenance on it) means
+to move all of its buckets to other sets.</p>
+<p>To deactivate a set, do the following:</p>
+<ol class="arabic">
+<li><p>Click <strong>Edit</strong> next to the set in question.</p></li>
+<li><p>Set its weight to <code class="docutils literal notranslate"><span class="pre">0</span></code> and click <strong>Save</strong>:</p>
+<a class="reference internal image-reference" href="_images/zero-weight.png"><img alt="_images/zero-weight.png" class="align-left" src="_images/zero-weight.png" style="width: 795.2px; height: 599.2px;" /></a>
+<p> </p>
+</li>
+<li><p>Wait for the rebalancing process to finish migrating all the set’s buckets
+away. You can monitor the current bucket number as described in the
+<a class="reference internal" href="#cartridge-rebalance-data"><span class="std std-ref">data rebalancing section</span></a>.</p></li>
+</ol>
+</div>
+<div class="section" id="expelling-instances">
+<span id="cartridge-expelling-instances"></span><h3>Expelling instances<a class="headerlink" href="#expelling-instances" title="Permalink to this headline">¶</a></h3>
+<p>Once an instance is <em>expelled</em>, it can never participate in the cluster again as
+every instance will reject it.</p>
+<p>To expel an instance, stop it, then click <strong>…</strong> next to it, then click <strong>Expel server</strong> and
+<strong>Expel</strong>:</p>
+<a class="reference internal image-reference" href="_images/expelling-instance.png"><img alt="_images/expelling-instance.png" class="align-left" src="_images/expelling-instance.png" style="width: 940.0px; height: 340.8px;" /></a>
+<p> </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are two restrictions:</p>
+<ul class="simple">
+<li><p>You can’t expel a leader if it has a replica. Switch leadership first.</p></li>
+<li><p>You can’t expel a vshard-storage if it has buckets. Set the weight to zero
+and wait until rebalancing is completed.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="enabling-automatic-failover">
+<span id="cartridge-node-failure"></span><h3>Enabling automatic failover<a class="headerlink" href="#enabling-automatic-failover" title="Permalink to this headline">¶</a></h3>
+<p>In a master-replica cluster configuration with automatic failover enabled, if
+the user-specified master of any replica set fails, the cluster automatically
+chooses a replica from the priority list and grants it the active master
+role (read/write). To learn more about details of failover work, see
+<a class="reference internal" href="cartridge_dev.html#cartridge-failover"><span class="std std-ref">failover documentation</span></a>.</p>
+<div class="section" id="failover-disabled-default">
+<h4>Failover disabled (default)<a class="headerlink" href="#failover-disabled-default" title="Permalink to this headline">¶</a></h4>
+<p>The leader is the first instance according to the topology configuration.
+No automatic decisions are made. You can manually change the leader in the failover
+priority list or call <code class="docutils literal notranslate"><span class="pre">box.cfg{read_only</span> <span class="pre">=</span> <span class="pre">false}</span></code> on any instance.</p>
+<p>To disable failover:</p>
+<ol class="arabic">
+<li><p>Click <strong>Failover</strong>:</p>
+<a class="reference internal image-reference" href="_images/failover-button.png"><img alt="_images/failover-button.png" class="align-left" src="_images/failover-button.png" style="width: 926.4000000000001px; height: 200.0px;" /></a>
+<p> </p>
+</li>
+<li><p>In the <strong>Failover control</strong> box, select the <strong>Disabled</strong> mode:</p>
+<a class="reference internal image-reference" href="_images/failover-disabled.png"><img alt="_images/failover-disabled.png" class="align-left" src="_images/failover-disabled.png" style="width: 478.40000000000003px; height: 307.20000000000005px;" /></a>
+<p> </p>
+</li>
+</ol>
+</div>
+<div class="section" id="eventual-failover-not-recommended-for-production">
+<h4>Eventual failover (not recommended for production)<a class="headerlink" href="#eventual-failover-not-recommended-for-production" title="Permalink to this headline">¶</a></h4>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The eventual failover mode is <strong>not recommended</strong> for use on large clusters
+in production. If you have a high load production cluster, use the stateful
+failover with <code class="docutils literal notranslate"><span class="pre">etcd</span></code> instead.</p>
+</div>
+<p>The leader isn’t elected consistently. Every instance thinks the leader is the
+first healthy server in the replicaset. The instance health is determined
+according to the membership status (the SWIM protocol).</p>
+<p>To set the priority in a replica set:</p>
+<ol class="arabic">
+<li><p>Click <strong>Edit</strong> next to the replica set in question.</p></li>
+<li><p>Scroll to the bottom of the <strong>Edit replica set</strong> box to see the list of
+servers.</p></li>
+<li><p>Drag replicas to their place in the priority list, and click <strong>Save</strong>:</p>
+<a class="reference internal image-reference" href="_images/failover-priority.png"><img alt="_images/failover-priority.png" class="align-left" src="_images/failover-priority.png" style="width: 794.4000000000001px; height: 617.6px;" /></a>
+<p> </p>
+</li>
+</ol>
+<p>To enable eventual failover:</p>
+<ol class="arabic">
+<li><p>Click <strong>Failover</strong>:</p>
+<a class="reference internal image-reference" href="_images/failover-button.png"><img alt="_images/failover-button.png" class="align-left" src="_images/failover-button.png" style="width: 926.4000000000001px; height: 200.0px;" /></a>
+<p> </p>
+</li>
+<li><p>In the <strong>Failover control</strong> box, select the <strong>Eventual</strong> mode:</p>
+<a class="reference internal image-reference" href="_images/failover-eventual.png"><img alt="_images/failover-eventual.png" class="align-left" src="_images/failover-eventual.png" style="width: 478.40000000000003px; height: 391.20000000000005px;" /></a>
+<p> </p>
+</li>
+</ol>
+</div>
+<div class="section" id="stateful-failover">
+<h4>Stateful failover<a class="headerlink" href="#stateful-failover" title="Permalink to this headline">¶</a></h4>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The stateful failover mode with Tarantool Stateboard is <strong>not recommended</strong>
+for use on large clusters in production. If you have a high load production
+cluster, use the stateful failover with <code class="docutils literal notranslate"><span class="pre">etcd</span></code> instead.</p>
+</div>
+<p>Leader appointments are polled from the external state provider.
+Decisions are made by one of the instances with the <code class="docutils literal notranslate"><span class="pre">failover-coordinator</span></code>
+role enabled. There are two options of external state provider:</p>
+<ul class="simple">
+<li><p>Tarantool Stateboard - you need to run instance of stateboard with command
+<code class="docutils literal notranslate"><span class="pre">tarantool</span> <span class="pre">stateboard.init.lua</span></code>.</p></li>
+<li><p>etcd v2 - you need to run and configure etcd cluster. Note that <strong>only etcd v2
+API is supported</strong>, so you can still use etcd v3 with <code class="docutils literal notranslate"><span class="pre">ETCD_ENABLE_V2=true</span></code>.</p></li>
+</ul>
+<p>To enable stateful failover:</p>
+<ol class="arabic">
+<li><p>Run stateboard or etcd</p></li>
+<li><p>Click <strong>Failover</strong>:</p>
+<a class="reference internal image-reference" href="_images/failover-button.png"><img alt="_images/failover-button.png" class="align-left" src="_images/failover-button.png" style="width: 926.4000000000001px; height: 200.0px;" /></a>
+<p> </p>
+</li>
+<li><p>In the <strong>Failover control</strong> box, select the <strong>Stateful</strong> mode:</p>
+<a class="reference internal image-reference" href="_images/failover-stateful.png"><img alt="_images/failover-stateful.png" class="align-left" src="_images/failover-stateful.png" style="width: 477.6px; height: 653.6px;" /></a>
+<p> </p>
+</li>
+<li><p>Check the necessary parameters.</p></li>
+</ol>
+<p>In this mode, you can choose the leader with the <strong>Promote a leader</strong> button in the WebUI (or a
+GraphQL request).</p>
+<a class="reference internal image-reference" href="_images/failover-promote.png"><img alt="_images/failover-promote.png" class="align-left" src="_images/failover-promote.png" style="width: 927.2px; height: 296.0px;" /></a>
+<p> </p>
+</div>
+<div class="section" id="raft-failover-beta">
+<h4>Raft failover (beta)<a class="headerlink" href="#raft-failover-beta" title="Permalink to this headline">¶</a></h4>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Raft failover in Cartridge is in beta. Don’t use it in production.</p>
+</div>
+<p>The replicaset leader is chosen by <span class="xref std std-ref">built-in Raft</span>,
+then the other replicasets get information about leader change from membership.
+Raft parameters can be configured by environment variables.</p>
+<p>To enable the Raft failover:</p>
+<ol class="arabic">
+<li><p>Make sure that your Tarantool version is higher than 2.10.0</p></li>
+<li><p>Click <strong>Failover</strong>:</p>
+<a class="reference internal image-reference" href="_images/failover-button.png"><img alt="_images/failover-button.png" class="align-left" src="_images/failover-button.png" style="width: 926.4000000000001px; height: 200.0px;" /></a>
+<p> </p>
+</li>
+<li><p>In the <strong>Failover control</strong> box, select the <strong>Raft</strong> mode:</p>
+<a class="reference internal image-reference" href="_images/failover-raft.png"><img alt="_images/failover-raft.png" class="align-left" src="_images/failover-raft.png" style="width: 476.0px; height: 305.6px;" /></a>
+<p> </p>
+</li>
+<li><p>Check the necessary parameters.</p></li>
+</ol>
+<p>In this mode, you can choose the leader with the <strong>Promote a leader</strong> button in the WebUI (or a
+GraphQL request or manual call <code class="docutils literal notranslate"><span class="pre">box.ctl.promote</span></code>).</p>
+<a class="reference internal image-reference" href="_images/failover-promote.png"><img alt="_images/failover-promote.png" class="align-left" src="_images/failover-promote.png" style="width: 927.2px; height: 296.0px;" /></a>
+<p> </p>
+</div>
+</div>
+<div class="section" id="changing-failover-priority-list">
+<span id="cartridge-switch-master"></span><h3>Changing failover priority list<a class="headerlink" href="#changing-failover-priority-list" title="Permalink to this headline">¶</a></h3>
+<p>To change failover priority list:</p>
+<ol class="arabic">
+<li><p>Click the <strong>Edit</strong> button next to the replica set in question:</p>
+<a class="reference internal image-reference" href="_images/edit-replica-set.png"><img alt="_images/edit-replica-set.png" class="align-left" src="_images/edit-replica-set.png" style="width: 920.8000000000001px; height: 178.4px;" /></a>
+<p> </p>
+</li>
+<li><p>Scroll to the bottom of the <strong>Edit replica set</strong> box to see the list of
+servers. The server on the top is the master.</p>
+<a class="reference internal image-reference" href="_images/switch-master.png"><img alt="_images/switch-master.png" class="align-left" src="_images/switch-master.png" style="width: 791.2px; height: 616.0px;" /></a>
+<p> </p>
+</li>
+<li><p>Drag a required server to the top position and click <strong>Save</strong>.</p></li>
+</ol>
+<p>In case of eventual failover, the new master will automatically enter the
+read/write mode, while the ex-master will become read-only. This works for any roles.</p>
+</div>
+</div>
+<div class="section" id="managing-users">
+<span id="cartridge-users"></span><h2>Managing users<a class="headerlink" href="#managing-users" title="Permalink to this headline">¶</a></h2>
+<p>On the <strong>Users</strong> tab, you can enable/disable authentication as well as add,
+remove, edit, and view existing users who can access the web interface.</p>
+<a class="reference internal image-reference" href="_images/users-tab.png"><img alt="_images/users-tab.png" class="align-left" src="_images/users-tab.png" style="width: 1728.0px; height: 470.4px;" /></a>
+<p> </p>
+<p>Notice that the <strong>Users</strong> tab is available only if authorization in the web
+interface is <a class="reference internal" href="cartridge_dev.html#cartridge-auth-enable"><span class="std std-ref">implemented</span></a>.</p>
+<p>Also, some features (like deleting users) can be disabled in the cluster
+configuration; this is regulated by the
+<a class="reference external" href="https://www.tarantool.io/en/rocks/cluster/1.0/modules/cluster/#cfg-opts-box-opts">auth_backend_name</a>
+option passed to <code class="docutils literal notranslate"><span class="pre">cartridge.cfg()</span></code>.</p>
+</div>
+<div class="section" id="resolving-conflicts">
+<span id="cartridge-resolve-conflicts"></span><h2>Resolving conflicts<a class="headerlink" href="#resolving-conflicts" title="Permalink to this headline">¶</a></h2>
+<p>Tarantool has an embedded mechanism for asynchronous replication. As a consequence,
+records are distributed among the replicas with a delay, so conflicts can arise.</p>
+<p>To prevent conflicts, the special trigger <code class="docutils literal notranslate"><span class="pre">space.before_replace</span></code> is used. It is
+executed every time before making changes to the table for which it was configured.
+The trigger function is implemented in the Lua programming language. This function
+takes the original and new values of the tuple to be modified as its arguments.
+The returned value of the function is used to change the result of the operation:
+this will be the new value of the modified tuple.</p>
+<p>For insert operations, the old value is absent, so <code class="docutils literal notranslate"><span class="pre">nil</span></code> is passed as the first
+argument.</p>
+<p>For delete operations, the new value is absent, so <code class="docutils literal notranslate"><span class="pre">nil</span></code> is passed as the second
+argument. The trigger function can also return <code class="docutils literal notranslate"><span class="pre">nil</span></code>, thus turning this operation
+into delete.</p>
+<p>This example shows how to use the <code class="docutils literal notranslate"><span class="pre">space.before_replace</span></code> trigger to prevent
+replication conflicts. Suppose we have a <code class="docutils literal notranslate"><span class="pre">box.space.test</span></code> table that is modified in
+multiple replicas at the same time. We store one payload field in this table. To
+ensure consistency, we also store the last modification time in each tuple of this
+table and set the <code class="docutils literal notranslate"><span class="pre">space.before_replace</span></code> trigger, which gives preference to
+newer tuples. Below is the code in Lua:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">fiber</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;fiber&#39;</span><span class="p">)</span>
+<span class="c1">-- define a function that will modify the function test_replace(tuple)</span>
+        <span class="c1">-- add a timestamp to each tuple in the space</span>
+        <span class="n">tuple</span> <span class="o">=</span> <span class="n">box</span><span class="p">.</span><span class="n">tuple</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="n">tuple</span><span class="p">):</span><span class="n">update</span><span class="p">{{</span><span class="s1">&#39;!&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fiber</span><span class="p">.</span><span class="n">time</span><span class="p">()}}</span>
+        <span class="n">box</span><span class="p">.</span><span class="n">space</span><span class="p">.</span><span class="n">test</span><span class="p">:</span><span class="n">replace</span><span class="p">(</span><span class="n">tuple</span><span class="p">)</span>
+<span class="kr">end</span>
+<span class="n">box</span><span class="p">.</span><span class="n">cfg</span><span class="p">{</span> <span class="p">}</span> <span class="c1">-- restore from the local directory</span>
+<span class="c1">-- set the trigger to avoid conflicts</span>
+<span class="n">box</span><span class="p">.</span><span class="n">space</span><span class="p">.</span><span class="n">test</span><span class="p">:</span><span class="n">before_replace</span><span class="p">(</span><span class="kr">function</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+        <span class="kr">if</span> <span class="n">old</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="ow">and</span> <span class="n">new</span> <span class="o">~=</span> <span class="kc">nil</span> <span class="ow">and</span> <span class="n">new</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">old</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="kr">then</span>
+                <span class="kr">return</span> <span class="n">old</span> <span class="c1">-- ignore the request</span>
+        <span class="kr">end</span>
+        <span class="c1">-- otherwise apply as is</span>
+<span class="kr">end</span><span class="p">)</span>
+<span class="n">box</span><span class="p">.</span><span class="n">cfg</span><span class="p">{</span> <span class="n">replication</span> <span class="o">=</span> <span class="p">{...}</span> <span class="p">}</span> <span class="c1">-- subscribe</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="monitoring-a-cluster-via-cli">
+<span id="cartridge-monitor-shard"></span><h2>Monitoring a cluster via CLI<a class="headerlink" href="#monitoring-a-cluster-via-cli" title="Permalink to this headline">¶</a></h2>
+<p>This section describes parameters you can monitor over the administrative
+console.</p>
+<div class="section" id="connecting-to-nodes-via-cli">
+<span id="cartridge-manage-sharding-cli"></span><h3>Connecting to nodes via CLI<a class="headerlink" href="#connecting-to-nodes-via-cli" title="Permalink to this headline">¶</a></h3>
+<p>Each Tarantool node (<code class="docutils literal notranslate"><span class="pre">router</span></code>/<code class="docutils literal notranslate"><span class="pre">storage</span></code>) provides an administrative console
+(Command Line Interface) for debugging, monitoring, and troubleshooting. The
+console acts as a Lua interpreter and displays the result in the human-readable
+YAML format.</p>
+<p>To connect to a Tarantool instance via the console, you can choose
+one of the commands:</p>
+<ul>
+<li><p>Old-fashioned way:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tarantoolctl<span class="w"> </span>connect<span class="w"> </span>&lt;instance_hostname&gt;:&lt;port&gt;
+</pre></div>
+</div>
+</li>
+<li><p>If you have cartridge-cli installed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>connect<span class="w"> </span>&lt;instance_hostname&gt;:&lt;port&gt;
+</pre></div>
+</div>
+</li>
+<li><p>If you ran Cartridge locally:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cartridge<span class="w"> </span>enter<span class="w"> </span>&lt;node_name&gt;
+</pre></div>
+</div>
+</li>
+</ul>
+<p>where the <code class="docutils literal notranslate"><span class="pre">&lt;instance_hostname&gt;:&lt;port&gt;</span></code> is the instance’s URI.</p>
+</div>
+<div class="section" id="monitoring-storages">
+<span id="cartridge-monitor-storage"></span><h3>Monitoring storages<a class="headerlink" href="#monitoring-storages" title="Permalink to this headline">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">vshard.storage.info()</span></code> to obtain information on storage nodes.</p>
+<div class="section" id="output-example">
+<span id="cartridge-monitor-storage-example"></span><h4>Output example<a class="headerlink" href="#output-example" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-tarantoolsession notranslate"><div class="highlight"><pre><span></span><span class="gp">tarantool&gt; </span><span class="n">vshard</span><span class="p">.</span><span class="n">storage</span><span class="p">.</span><span class="n">info</span><span class="p">()</span>
+<span class="nn">---</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">replicasets</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">&lt;replicaset_2&gt;</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;replicaset_2&gt;</span>
+<span class="w">    </span><span class="nt">master</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage:storage@127.0.0.1:3303</span>
+<span class="w">    </span><span class="nt">&lt;replicaset_1&gt;</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;replicaset_1&gt;</span>
+<span class="w">    </span><span class="nt">master</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage:storage@127.0.0.1:3301</span>
+<span class="w">  </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;!-- buckets status</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">receiving</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0 &lt;!-- buckets in the RECEIVING state</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">active</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2 &lt;!-- buckets in the ACTIVE state</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">garbage</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0 &lt;!-- buckets in the GARBAGE state (are to be deleted)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">total</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2 &lt;!-- total number of buckets</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">sending</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0 &lt;!-- buckets in the SENDING state</span>
+<span class="w">  </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1 &lt;!-- the status of the replica set</span>
+<span class="w">  </span><span class="nt">replication</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">disconnected &lt;!-- the status of the replication</span>
+<span class="w">    </span><span class="nt">idle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;idle&gt;</span>
+<span class="w">  </span><span class="nt">alerts</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;MASTER_IS_UNREACHABLE&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;Master</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">unreachable:</span><span class="nv"> </span><span class="s">disconnected&#39;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="status-list">
+<span id="cartridge-monitor-storage-statuses"></span><h4>Status list<a class="headerlink" href="#status-list" title="Permalink to this headline">¶</a></h4>
+<div class="table docutils container">
+<table class="left-align-column-1 left-align-column-2 docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 28%" />
+<col style="width: 58%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Code</strong></p></td>
+<td><p><strong>Critical level</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Green</p></td>
+<td><p>A replica set works in a regular way.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Yellow</p></td>
+<td><p>There are some issues, but they don’t
+affect a replica set efficiency (worth
+noticing, but don’t require immediate
+intervention).</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Orange</p></td>
+<td><p>A replica set is in a degraded state.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Red</p></td>
+<td><p>A replica set is disabled.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="potential-issues">
+<span id="cartridge-monitor-storage-issues"></span><h4>Potential issues<a class="headerlink" href="#potential-issues" title="Permalink to this headline">¶</a></h4>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MISSING_MASTER</span></code> – No master node in the replica set configuration.</p>
+<p><strong>Critical level:</strong> Orange.</p>
+<p><strong>Cluster condition:</strong> Service is degraded for data-change requests to the
+replica set.</p>
+<p><strong>Solution:</strong> Set the master node for the replica set in the configuration using API.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UNREACHABLE_MASTER</span></code> – No connection between the master and the replica.</p>
+<p><strong>Critical level:</strong></p>
+<ul class="simple">
+<li><p>If idle value doesn’t exceed T1 threshold (1 s.)—Yellow,</p></li>
+<li><p>If idle value doesn’t exceed T2 threshold (5 s.)—Orange,</p></li>
+<li><p>If idle value exceeds T3 threshold (10 s.)—Red.</p></li>
+</ul>
+<p><strong>Cluster condition:</strong> For read requests to replica, the data may be obsolete
+compared with the data on master.</p>
+<p><strong>Solution:</strong> Reconnect to the master: fix the network issues, reset the current
+master, switch to another master.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LOW_REDUNDANCY</span></code> – Master has access to a single replica only.</p>
+<p><strong>Critical level:</strong> Yellow.</p>
+<p><strong>Cluster condition:</strong> The data storage redundancy factor is equal to 2. It
+is lower than the minimal recommended value for production usage.</p>
+<p><strong>Solution:</strong> Check cluster configuration:</p>
+<ul class="simple">
+<li><p>If only one master and one replica are specified in the configuration,
+it is recommended to add at least one more replica to reach the redundancy
+factor of 3.</p></li>
+<li><p>If three or more replicas are specified in the configuration, consider
+checking the replicas’ states and network connection among the replicas.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INVALID_REBALANCING</span></code> – Rebalancing invariant was violated. During migration,
+a storage node can either send or receive buckets. So it shouldn’t be the case
+that a replica set sends buckets to one replica set and receives buckets from
+another replica set at the same time.</p>
+<p><strong>Critical level:</strong> Yellow.</p>
+<p><strong>Cluster condition:</strong> Rebalancing is on hold.</p>
+<p><strong>Solution:</strong> There are two possible reasons for invariant violation:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">rebalancer</span></code> has crashed.</p></li>
+<li><p>Bucket states were changed manually.</p></li>
+</ul>
+<p>Either way, please contact Tarantool support.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">HIGH_REPLICATION_LAG</span></code> – Replica’s lag exceeds T1 threshold (1 sec.).</p>
+<p><strong>Critical level:</strong></p>
+<ul class="simple">
+<li><p>If the lag doesn’t exceed T1 threshold (1 sec.)—Yellow;</p></li>
+<li><p>If the lag exceeds T2 threshold (5 sec.)—Orange.</p></li>
+</ul>
+<p><strong>Cluster condition:</strong> For read-only requests to the replica, the data may
+be obsolete compared with the data on the master.</p>
+<p><strong>Solution:</strong> Check the replication status of the replica. Further instructions
+are given in the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/admin/troubleshoot/">Tarantool troubleshooting guide</a>.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OUT_OF_SYNC</span></code> – Mal-synchronization occurred. The lag exceeds T3 threshold (10 sec.).</p>
+<p><strong>Critical level:</strong> Red.</p>
+<p><strong>Cluster condition:</strong> For read-only requests to the replica, the data may be
+obsolete compared with the data on the master.</p>
+<p><strong>Solution:</strong> Check the replication status of the replica. Further instructions
+are given in the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/admin/troubleshoot/">Tarantool troubleshooting guide</a>.</p>
+</li>
+</ul>
+<ul id="unreachable-replica">
+<li><p><code class="docutils literal notranslate"><span class="pre">UNREACHABLE_REPLICA</span></code> – One or multiple replicas are unreachable.</p>
+<p><strong>Critical level:</strong> Yellow.</p>
+<p><strong>Cluster condition:</strong> Data storage redundancy factor for the given replica
+set is less than the configured factor. If the replica is next in the queue for
+rebalancing (in accordance with the weight configuration), the requests are
+forwarded to the replica that is still next in the queue.</p>
+<p><strong>Solution:</strong> Check the error message and find out which replica is unreachable.
+If a replica is disabled, enable it. If this doesn’t help, consider checking
+the network.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UNREACHABLE_REPLICASET</span></code> – All replicas except for the current one are unreachable.
+<strong>Critical level:</strong> Red.</p>
+<p><strong>Cluster condition:</strong> The replica stores obsolete data.</p>
+<p><strong>Solution:</strong> Check if the other replicas are enabled. If all replicas are
+enabled, consider checking network issues on the master. If the replicas are
+disabled, check them first: the master might be working properly.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="monitoring-routers">
+<span id="cartridge-monitor-router"></span><h3>Monitoring routers<a class="headerlink" href="#monitoring-routers" title="Permalink to this headline">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">vshard.router.info()</span></code> to obtain information on the router.</p>
+<div class="section" id="cartridge-monitor-router-example">
+<span id="id2"></span><h4>Output example<a class="headerlink" href="#cartridge-monitor-router-example" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-tarantoolsession notranslate"><div class="highlight"><pre><span></span><span class="gp">tarantool&gt; </span><span class="n">vshard</span><span class="p">.</span><span class="n">router</span><span class="p">.</span><span class="n">info</span><span class="p">()</span>
+<span class="nn">---</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">replicasets</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">&lt;replica set UUID&gt;</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">master</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;available / unreachable / missing&gt;</span>
+<span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;!-- URI of master</span>
+<span class="w">        </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;!-- UUID of instance</span>
+<span class="w">      </span><span class="nt">replica</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">status</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;available / unreachable / missing&gt;</span>
+<span class="w">        </span><span class="nt">uri</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;!-- URI of replica used for slave requests</span>
+<span class="w">        </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;!-- UUID of instance</span>
+<span class="w">      </span><span class="nt">uuid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;!-- UUID of replica set</span>
+<span class="w">    </span><span class="nt">&lt;replica set UUID&gt;</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="go">  status: &lt;!-- status of router</span>
+<span class="go">  bucket:</span>
+<span class="go">    known: &lt;!-- number of buckets with the known destination</span>
+<span class="go">    unknown: &lt;!-- number of other buckets</span>
+<span class="go">  alerts: [&lt;alert code&gt;, &lt;alert description&gt;], ...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cartridge-monitor-router-statuses">
+<span id="id3"></span><h4>Status list<a class="headerlink" href="#cartridge-monitor-router-statuses" title="Permalink to this headline">¶</a></h4>
+<div class="table docutils container">
+<table class="left-align-column-1 left-align-column-2 docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 28%" />
+<col style="width: 58%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>Code</strong></p></td>
+<td><p><strong>Critical level</strong></p></td>
+<td><p><strong>Description</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Green</p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">router</span></code> works in a regular way.</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Yellow</p></td>
+<td><p>Some replicas are unreachable (affects
+the speed of executing read requests).</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Orange</p></td>
+<td><p>Service is degraded for changing data.</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Red</p></td>
+<td><p>Service is degraded for reading data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="cartridge-monitor-router-issues">
+<span id="id4"></span><h4>Potential issues<a class="headerlink" href="#cartridge-monitor-router-issues" title="Permalink to this headline">¶</a></h4>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depending on the nature of the issue, use either the UUID of a replica,
+or the UUID of a replica set.</p>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">MISSING_MASTER</span></code> – The master in one or multiple replica sets is not
+specified in the configuration.</p>
+<p><strong>Critical level:</strong> Orange.</p>
+<p><strong>Cluster condition:</strong> Partial degrade for data-change requests.</p>
+<p><strong>Solution:</strong> Specify the master in the configuration.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UNREACHABLE_MASTER</span></code> – The <code class="docutils literal notranslate"><span class="pre">router</span></code> lost connection with the master of
+one or multiple replica sets.</p>
+<p><strong>Critical level:</strong> Orange.</p>
+<p><strong>Cluster condition:</strong> Partial degrade for data-change requests.</p>
+<p><strong>Solution:</strong> Restore connection with the master. First, check if the master
+is enabled. If it is, consider checking the network.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SUBOPTIMAL_REPLICA</span></code> – There is a replica for read-only requests, but this
+replica is not optimal according to the configured weights. This means that
+the optimal replica is unreachable.</p>
+<p><strong>Critical level:</strong> Yellow.</p>
+<p><strong>Cluster condition:</strong> Read-only requests are forwarded to a backup replica.</p>
+<p><strong>Solution:</strong> Check the status of the optimal replica and its network connection.</p>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">UNREACHABLE_REPLICASET</span></code> – A replica set is unreachable for both read-only
+and data-change requests.</p>
+<p><strong>Critical Level:</strong> Red.</p>
+<p><strong>Cluster condition:</strong> Partial degrade for read-only and data-change requests.</p>
+<p><strong>Solution:</strong> The replica set has an unreachable master and replica. Check the
+error message to detect this replica set. Then fix the issue in the same way
+as for <a class="reference internal" href="#unreachable-replica"><span class="std std-ref">UNREACHABLE_REPLICA</span></a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="issues-and-suggestions">
+<span id="cartridge-issues-suggestions"></span><h2>Issues and suggestions<a class="headerlink" href="#issues-and-suggestions" title="Permalink to this headline">¶</a></h2>
+<p>Cartridge displays cluster and instances issues in WebUI:</p>
+<ul>
+<li><p>Replication:
+* <strong>critical</strong>: “Replication from … to … isn’t running” –</p>
+<blockquote>
+<div><p>when <code class="docutils literal notranslate"><span class="pre">box.info.replication.upstream</span> <span class="pre">==</span> <span class="pre">nil</span></code>;</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>critical</strong>: “Replication from … to … state “stopped”/”orphan”/etc. (…)”;</p></li>
+<li><p><strong>warning</strong>: “Replication from … to …: high lag” –
+when <code class="docutils literal notranslate"><span class="pre">upstream.lag</span> <span class="pre">&gt;</span> <span class="pre">box.cfg.replication_sync_lag</span></code>;</p></li>
+<li><p><strong>warning</strong>: “Replication from … to …: long idle” –
+when <code class="docutils literal notranslate"><span class="pre">upstream.idle</span> <span class="pre">&gt;</span> <span class="pre">2</span> <span class="pre">*</span> <span class="pre">box.cfg.replication_timeout</span></code>;</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/cartridge-issues-high-lag.png"><img alt="_images/cartridge-issues-high-lag.png" class="align-left" src="_images/cartridge-issues-high-lag.png" style="width: 475.20000000000005px; height: 267.2px;" /></a>
+<p> </p>
+<p>Cartridge can propose you to fix some of replication issues by
+restarting replication:</p>
+<a class="reference internal image-reference" href="images/cartridge-issues-restart-replication.png"><img alt="images/cartridge-issues-restart-replication.png" class="align-left" src="images/cartridge-issues-restart-replication.png" /></a>
+<p> </p>
+</li>
+<li><p>Failover:
+* <strong>warning</strong>: “Can’t obtain failover coordinator (…)”;
+* <strong>warning</strong>: “There is no active failover coordinator”;
+* <strong>warning</strong>: “Failover is stuck on …: Error fetching appointments (…)”;
+* <strong>warning</strong>: “Failover is stuck on …: Failover fiber is dead” -</p>
+<blockquote>
+<div><p>this is likely a bug;</p>
+</div></blockquote>
+</li>
+<li><p>Switchover:</p>
+<ul class="simple">
+<li><p><strong>warning</strong>: “Consistency on … isn’t reached yet”;</p></li>
+</ul>
+</li>
+<li><p>Clock:</p>
+<ul class="simple">
+<li><p><strong>warning</strong>: “Clock difference between … and … exceed threshold”</p></li>
+</ul>
+<blockquote>
+<div><p><cite>limits.clock_delta_threshold_warning</cite>;</p>
+</div></blockquote>
+</li>
+<li><p>Memory:</p>
+<ul class="simple">
+<li><p><strong>critical</strong>: “Running out of memory on …” - when all 3 metrics
+<code class="docutils literal notranslate"><span class="pre">items_used_ratio</span></code>, <code class="docutils literal notranslate"><span class="pre">arena_used_ratio</span></code>, <code class="docutils literal notranslate"><span class="pre">quota_used_ratio</span></code> from
+<code class="docutils literal notranslate"><span class="pre">box.slab.info()</span></code> exceed <code class="docutils literal notranslate"><span class="pre">limits.fragmentation_threshold_critical</span></code>;</p></li>
+<li><p><strong>warning</strong>: “Memory is highly fragmented on …” - when
+<code class="docutils literal notranslate"><span class="pre">items_used_ratio</span> <span class="pre">&gt;</span> <span class="pre">limits.fragmentation_threshold_warning</span></code> and
+both <code class="docutils literal notranslate"><span class="pre">arena_used_ratio</span></code>, <code class="docutils literal notranslate"><span class="pre">quota_used_ratio</span></code> exceed critical limit;</p></li>
+</ul>
+</li>
+<li><p>Configuration:</p>
+<ul class="simple">
+<li><p><strong>warning</strong>: “Configuration checksum mismatch on …”;</p></li>
+<li><p><strong>warning</strong>: “Configuration is prepared and locked on …”;</p></li>
+<li><p><strong>warning</strong>: “Advertise URI (…) differs from clusterwide config (…)”;</p></li>
+<li><p><strong>warning</strong>: “Configuring roles is stuck on … and hangs for … so far”;</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/cartridge-issues-config-mismatch.png"><img alt="_images/cartridge-issues-config-mismatch.png" class="align-left" src="_images/cartridge-issues-config-mismatch.png" style="width: 476.0px; height: 180.8px;" /></a>
+<p> </p>
+<p>Cartridge can propose you to fix some of configuration issues by
+force applying configuration:</p>
+<a class="reference internal image-reference" href="_images/cartridge-issues-force-apply.png"><img alt="_images/cartridge-issues-force-apply.png" class="align-left" src="_images/cartridge-issues-force-apply.png" style="width: 476.8px; height: 232.8px;" /></a>
+<p> </p>
+</li>
+<li><p>Alien members:</p>
+<ul class="simple">
+<li><p><strong>warning</strong>: “Instance … with alien uuid is in the membership” -
+when two separate clusters share the same cluster cookie;</p></li>
+</ul>
+<a class="reference internal image-reference" href="_images/cartridge-issues-alien-uuid.png"><img alt="_images/cartridge-issues-alien-uuid.png" class="align-left" src="_images/cartridge-issues-alien-uuid.png" style="width: 475.20000000000005px; height: 182.4px;" /></a>
+<p> </p>
+</li>
+<li><p>Deprecated space format:</p>
+<ul class="simple">
+<li><p><strong>warning</strong>: “Instance … has spaces with deprecated format: space1, …”</p></li>
+</ul>
+</li>
+<li><p>Custom issues (defined by user):</p>
+<ul class="simple">
+<li><p>Custom roles can announce more issues with their own level, topic
+and message. See <cite>custom-role.get_issues</cite>.</p></li>
+</ul>
+</li>
+</ul>
+<p>Since Tarantool Enterprise supporting compression, Cartridge can check if
+you have spaces where you can use compression.
+To enable it, click on button “Suggestions”. Note that the operation can affect cluster
+perfomance, so choose the time to use it wisely.</p>
+<a class="reference internal image-reference" href="_images/compression-suggestion-1.png"><img alt="_images/compression-suggestion-1.png" class="align-left" src="_images/compression-suggestion-1.png" style="width: 946.4000000000001px; height: 326.40000000000003px;" /></a>
+<p> </p>
+<p>You will see the warning about cluster perfomance and then click “Continue”.</p>
+<a class="reference internal image-reference" href="_images/compression-suggestion-2.png"><img alt="_images/compression-suggestion-2.png" class="align-left" src="_images/compression-suggestion-2.png" style="width: 476.0px; height: 148.8px;" /></a>
+<p> </p>
+<p>You will see information about fields that can be compressed.</p>
+<a class="reference internal image-reference" href="_images/compression-suggestion-3.png"><img alt="_images/compression-suggestion-3.png" class="align-left" src="_images/compression-suggestion-3.png" style="width: 660.0px; height: 259.2px;" /></a>
+<p> </p>
+</div>
+<div class="section" id="instances-general-info">
+<span id="cartridge-instance-general-info"></span><h2>Instances general info<a class="headerlink" href="#instances-general-info" title="Permalink to this headline">¶</a></h2>
+<p>You can check some general instance info in WebUI.
+To see it, click on “Server details button”.</p>
+<p>And then choose one of the tabs to see various parameters:</p>
+</div>
+<div class="section" id="changing-cluster-cookie">
+<span id="cartridge-change-cookie"></span><h2>Changing cluster cookie<a class="headerlink" href="#changing-cluster-cookie" title="Permalink to this headline">¶</a></h2>
+<p>In some cases it could be useful to change cluster-cookie (e.g. when you need to fix
+a broken cluster). To do it, perform next actions:</p>
+<ol class="arabic">
+<li><p>(Optional) If you use stateful failover:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- remember old cookie hash</span>
+<span class="kd">local</span> <span class="n">cluster_cookie</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.cluster-cookie&#39;</span><span class="p">)</span>
+
+<span class="kd">local</span> <span class="n">old_hash</span> <span class="o">=</span> <span class="n">cluster_cookie</span><span class="p">.</span><span class="n">get_cookie_hash</span><span class="p">()</span>
+</pre></div>
+</div>
+</li>
+<li><p>Change cluster-cookie on each instance:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">cluster_cookie</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.cluster-cookie&#39;</span><span class="p">)</span>
+
+<span class="n">cluster_cookie</span><span class="p">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="n">new_cookie</span><span class="p">)</span>
+
+<span class="nb">require</span><span class="p">(</span><span class="s1">&#39;membership&#39;</span><span class="p">).</span><span class="n">set_encryption_key</span><span class="p">(</span><span class="n">cluster_cookie</span><span class="p">.</span><span class="n">cookie</span><span class="p">())</span>
+
+<span class="kr">if</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.failover&#39;</span><span class="p">).</span><span class="n">is_leader</span><span class="p">()</span> <span class="kr">then</span>
+    <span class="n">box</span><span class="p">.</span><span class="n">schema</span><span class="p">.</span><span class="n">user</span><span class="p">.</span><span class="n">passwd</span><span class="p">(</span><span class="n">new_cookie</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre></div>
+</div>
+</li>
+<li><p>(Optional) If you use stateful failover:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="c1">-- update cookie hash in a state provider</span>
+<span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.vars&#39;</span><span class="p">).</span><span class="n">new</span><span class="p">(</span><span class="s1">&#39;cartridge.failover&#39;</span><span class="p">).</span><span class="n">client</span><span class="p">:</span><span class="n">set_identification_string</span><span class="p">(</span>
+    <span class="n">cluster_cookie</span><span class="p">.</span><span class="n">get_cookie_hash</span><span class="p">(),</span> <span class="n">old_hash</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">apply_config</span></code> in cluster to reapply changes to each instance:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">confapplier</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.confapplier&#39;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">clusterwide_config</span> <span class="o">=</span> <span class="n">confapplier</span><span class="p">.</span><span class="n">get_active_config</span><span class="p">()</span>
+<span class="kr">return</span> <span class="n">confapplier</span><span class="p">.</span><span class="n">apply_config</span><span class="p">(</span><span class="n">clusterwide_config</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="fixing-broken-instance-configuration">
+<span id="cartridge-fix-config"></span><h2>Fixing broken instance configuration<a class="headerlink" href="#fixing-broken-instance-configuration" title="Permalink to this headline">¶</a></h2>
+<p>It’s possible that some instances have a broken configuration. To do it,
+perform next actions:</p>
+<ul>
+<li><p>Try to reapply configuration forcefully:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">cartridge</span><span class="p">.</span><span class="n">config_force_reapply</span><span class="p">(</span><span class="n">instaces_uuids</span><span class="p">)</span> <span class="c1">-- pass here uuids of broken instances</span>
+</pre></div>
+</div>
+</li>
+<li><p>If it didn’t work, you could try to copy a config from healthy instance:</p>
+<ol class="arabic simple">
+<li><p>Stop broken instance and remove it’s <code class="docutils literal notranslate"><span class="pre">config</span></code> directory.
+Don’t touch any other files in working directory.</p></li>
+<li><p>Copy <code class="docutils literal notranslate"><span class="pre">config</span></code>  directory from a healthy instance to broken one’s directory.</p></li>
+<li><p>Start broken instance and check if it’s working.</p></li>
+<li><p>If nothing had worked, try to carefully remove a broken instance from cluster
+and setup a new one.</p></li>
+</ol>
+</li>
+</ul>
+</div>
+<div class="section" id="upgrading-schema">
+<span id="cartridge-upgrading-schema"></span><h2>Upgrading schema<a class="headerlink" href="#upgrading-schema" title="Permalink to this headline">¶</a></h2>
+<p>When upgrading Tarantool to a newer version, please don’t forget to:</p>
+<ol class="arabic simple">
+<li><p>Stop the cluster</p></li>
+<li><p>Make sure that <code class="docutils literal notranslate"><span class="pre">upgrade_schema</span></code> <a class="reference internal" href="cartridge_api/modules/cartridge.html#cartridge-cfg"><span class="std std-ref">option</span></a> is enabled</p></li>
+<li><p>Start the cluster again</p></li>
+</ol>
+<p>This will automatically apply <a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/admin/upgrades/#admin-upgrades">box.schema.upgrade()</a>
+on the leader, according to the failover priority in the topology configuration.</p>
+</div>
+<div class="section" id="disaster-recovery">
+<span id="cartridge-recovery"></span><h2>Disaster recovery<a class="headerlink" href="#disaster-recovery" title="Permalink to this headline">¶</a></h2>
+<p>Please see the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/admin/disaster_recovery/">disaster recovery section</a>
+in the Tarantool manual.</p>
+</div>
+<div class="section" id="backups">
+<span id="cartridge-backups"></span><h2>Backups<a class="headerlink" href="#backups" title="Permalink to this headline">¶</a></h2>
+<p>Please see the
+<a class="reference external" href="https://www.tarantool.io/en/doc/latest/book/admin/backups/">backups section</a>
+in the Tarantool manual.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Administrator’s guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#deploying-the-cluster">Deploying the cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bootstrapping-from-an-existing-cluster-optional">Bootstrapping from an existing cluster (optional)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cluster-setup">Cluster setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-the-configuration">Updating the configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-the-cluster">Managing the cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-users">Managing users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resolving-conflicts">Resolving conflicts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#monitoring-a-cluster-via-cli">Monitoring a cluster via CLI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#issues-and-suggestions">Issues and suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#instances-general-info">Instances general info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changing-cluster-cookie">Changing cluster cookie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fixing-broken-instance-configuration">Fixing broken instance configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#upgrading-schema">Upgrading schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#disaster-recovery">Disaster recovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backups">Backups</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cartridge_api/index.html">Cartridge API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="cartridge_dev.html" title="previous chapter">Developer’s guide</a></li>
+      <li>Next: <a href="troubleshooting.html" title="next chapter">Troubleshooting</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/cartridge_admin.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

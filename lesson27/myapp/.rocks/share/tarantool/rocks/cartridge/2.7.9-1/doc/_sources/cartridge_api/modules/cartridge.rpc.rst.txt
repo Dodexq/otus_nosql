@@ -1,0 +1,147 @@
+.. _cartridge.rpc:
+
+===============================================================================
+Module *cartridge.rpc*
+===============================================================================
+
+Remote procedure calls between cluster instances.
+
+
+
+
+-------------------------------------------------------------------------------
+Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.rpc.get_candidates:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_candidates (role_name[, opts])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+List candidates suitable for performing a remote call. 
+Candidates are deduced from a local config and membership, which may
+differ from replica to replica (e.g. during  ``patch_clusterwide`` ). It
+may produce invalid candidates.
+
+
+
+**Parameters:**
+
+- *role_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *opts:* 
+
+  - *leader_only:* (optional **boolean**) Filter instances which are leaders now.(default: **false**)  
+  - *healthy_only:* (optional **boolean**) The member is considered healthy ifit reports either  ``ConfiguringRoles``  or  ``RolesConfigured``  stateand its SWIM status is either  ``alive``  or  ``suspect`` (added in v1.1.0-11, default: **true**)  
+  - *labels:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Filter instances that have the specified labels. Adding labels is possible via theedit_topology method or via graphqlExample: rpc.get_candidates('role', { labels = {['msk'] = 'dc'} })  
+
+
+**Returns**:
+
+(`{string,...} <https://www.lua.org/manual/5.1/manual.html#5.4>`_) URIs
+
+
+.. _cartridge.rpc.call:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+call (role_name, fn_name[, args[, opts]])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Perform a remote procedure call. 
+Find a suitable healthy instance with an enabled role and
+perform a [ ``net.box``   ``conn:call`` ](
+https://tarantool.io/en/doc/latest/reference/reference_lua/net_box/#net-box-call)
+on it.  ``rpc.call()``  can only be used for functions defined in role return table
+unlike  ``net.box``   ``conn:call()`` , which is used for global functions as well.
+
+
+
+**Parameters:**
+
+- *role_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *fn_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *args:* (`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)  (optional) 
+- *opts:* 
+
+  - *prefer_local:* (optional **boolean**) Don't perform a remote call if possible. When the role is enabledlocally and current instance is healthy the remote netbox call issubstituted with a local Lua function call. When the option isdisabled it never tries to perform call locally and always usesnetbox connection, even to connect self.(default: **true**)  
+  - *leader_only:* (optional **boolean**) Perform a call only on the replica set leaders.(default: **false**)  
+  - *uri:* (optional `string <https://www.lua.org/manual/5.1/manual.html#5.4>`_) Force a call to be performed on this particular uri.Disregards member status and  ``opts.prefer_local`` .Conflicts with  ``opts.leader_only = true`` .(added in v1.2.0-63)  
+  - *labels:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Filter instances that have the specified labels. Adding labels is possible via theedit_topology method or via graphql.Example: rpc.call('role', 'func', {}, { labels = { ['msk'] = 'dc' } })  
+  - *remote_only:*  (*deprecated*) Use  ``prefer_local``  instead.  
+  - *timeout:*  passed to  ``net.box``   ``conn:call``  options.  
+  - *buffer:*  passed to  ``net.box``   ``conn:call``  options.  
+  - *on_push:*  passed to  ``net.box``   ``conn:call``  options.  
+  - *on_push_ctx:*  passed to  ``net.box``   ``conn:call``  options.  
+
+
+**Returns**:
+
+`conn:call()` result
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: lua
+
+    -- myrole.lua
+    return {
+        role_name = 'myrole',
+        add = function(a, b) return a + b end,
+    }
+    
+.. code-block:: lua
+
+    -- call it as follows:
+    cartridge.rpc_call('myrole', 'add', {2, 2}) -- returns 4
+    
+
+-------------------------------------------------------------------------------
+Local Functions
+-------------------------------------------------------------------------------
+
+
+.. _cartridge.rpc.get_connection:
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_connection (role_name[, opts])
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Connect to an instance with an enabled role. 
+Candidates to connect are deduced from a local config and membership,
+which may differ from replica to replica (e.g. during  ``patch_clusterwide`` ).
+It may produce invalid candidates.
+
+
+
+**Parameters:**
+
+- *role_name:* (`string <https://www.lua.org/manual/5.1/manual.html#5.4>`_)   
+- *opts:* 
+
+  - *prefer_local:* (optional **boolean**)   
+  - *leader_only:* (optional **boolean**)   
+  - *labels:* (optional `table <https://www.lua.org/manual/5.1/manual.html#5.5>`_)   
+
+
+**Returns**:
+
+``net.box``  connection
+
+
+**Or**
+
+(**nil**) 
+
+(`table <https://www.lua.org/manual/5.1/manual.html#5.5>`_) Error description
+
+

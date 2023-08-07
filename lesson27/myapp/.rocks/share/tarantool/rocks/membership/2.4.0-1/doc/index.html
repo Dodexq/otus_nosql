@@ -1,0 +1,835 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>membership</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+<li><a href="#Encryption_Functions">Encryption Functions </a></li>
+<li><a href="#Subscription_Functions">Subscription Functions </a></li>
+<li><a href="#membership_options_Functions">membership.options Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="nowrap">
+  <li><strong>membership</strong></li>
+</ul>
+<h2>Topics</h2>
+<ul class="">
+  <li><a href="topics/README.md.html">README</a></li>
+  <li><a href="topics/CHANGELOG.md.html">CHANGELOG</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>membership</code></h1>
+<p>Membership library for Tarantool based on a gossip protocol.</p>
+<p> This library builds a mesh from multiple tarantool instances. The
+ mesh monitors itself, helps members discover everyone else and get
+ notified about their status changes with low latency.</p>
+
+<p> It is built upon the ideas from consul, or, more precisely,
+ the <a href="swim-paper.pdf">SWIM</a> algorithm.</p>
+
+<p> Membership module works over UDP protocol and can operate
+ even before tarantool <a href="https://tarantool.io/en/doc/latest/book/box/box_cfg/"><code>box.cfg</code></a> was initialized.</p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#init">init (advertise_host, port)</a></td>
+	<td class="summary">Initialize the membership module.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#broadcast">broadcast ()</a></td>
+	<td class="summary">Discover members in local network.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#leave">leave ()</a></td>
+	<td class="summary">Gracefully leave the membership group.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#members">members ()</a></td>
+	<td class="summary">Obtain all members known to the current instance.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#pairs">pairs ()</a></td>
+	<td class="summary">Iterate over members.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#get_member">get_member (uri)</a></td>
+	<td class="summary">Get info about member with the given URI.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#myself">myself ()</a></td>
+	<td class="summary">Get info about the current instance.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#add_member">add_member (uri)</a></td>
+	<td class="summary">Add a member to the group.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#probe_uri">probe_uri (uri)</a></td>
+	<td class="summary">Send a ping to a member.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set_payload">set_payload (key, value)</a></td>
+	<td class="summary">Update payload and disseminate it along with the member status.</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#MemberInfo">MemberInfo</a></td>
+	<td class="summary">Member data structure.</td>
+	</tr>
+</table>
+<h2><a href="#Encryption_Functions">Encryption Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#get_encryption_key">get_encryption_key ()</a></td>
+	<td class="summary">Retrieve the encryption key that is currently in use.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#set_encryption_key">set_encryption_key (key)</a></td>
+	<td class="summary">Set the key used for low-level message encryption.</td>
+	</tr>
+</table>
+<h2><a href="#Subscription_Functions">Subscription Functions </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#subscribe">subscribe ()</a></td>
+	<td class="summary">Subscribe for updates in the members table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#unsubscribe">unsubscribe (cond)</a></td>
+	<td class="summary">Unsubscribe from membership updates.</td>
+	</tr>
+</table>
+<h2><a href="#membership_options_Functions">membership.options Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#options.PROTOCOL_PERIOD_SECONDS">options.PROTOCOL_PERIOD_SECONDS</a></td>
+	<td class="summary">Period of sending direct PINGs.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#options.ACK_TIMEOUT_SECONDS">options.ACK_TIMEOUT_SECONDS</a></td>
+	<td class="summary">Time to wait for ACK message after PING.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#options.ANTI_ENTROPY_PERIOD_SECONDS">options.ANTI_ENTROPY_PERIOD_SECONDS</a></td>
+	<td class="summary">Period to perform anti-entropy sync.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#options.SUSPICIOUSNESS">options.SUSPICIOUSNESS</a></td>
+	<td class="summary">Toggle producing <code>suspect</code> rumors when ping fails.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#options.SUSPECT_TIMEOUT_SECONDS">options.SUSPECT_TIMEOUT_SECONDS</a></td>
+	<td class="summary">Timeout to mark <code>suspect</code> members as <code>dead</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#options.NUM_FAILURE_DETECTION_SUBGROUPS">options.NUM_FAILURE_DETECTION_SUBGROUPS</a></td>
+	<td class="summary">Number of members to try indirectly pinging a <code>suspect</code>.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#options.MAX_PACKET_SIZE">options.MAX_PACKET_SIZE</a></td>
+	<td class="summary">Maximum size of UPD packets to send.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#options.ENCRYPTION_INIT">options.ENCRYPTION_INIT</a></td>
+	<td class="summary">Initialization vector for aes256 CBC encryption.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "init"></a>
+    <strong>init (advertise_host, port)</strong>
+    </dt>
+    <dd>
+    Initialize the membership module.
+ Bind a UDP socket to <code>0.0.0.0:&lt;port&gt;</code>,
+ set the <code>advertise_uri</code> parameter to <code>&lt;advertise_host&gt;:&lt;port&gt;</code>,
+ and <code>incarnation</code> to <code>1</code>.</p>
+
+<p> The <code>init()</code> function can be called several times,
+ the old socket will be closed and a new one opened.</p>
+
+<p> If the <code>advertise_uri</code> changes during the next <code>init()</code>,
+ the old URI is considered <code>DEAD</code>.
+ In order to leave the group gracefully use the <a href="index.html#leave">leave</a> function.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">advertise_host</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+           either hostname or IP address being advertised to other members
+        </li>
+        <li><span class="parameter">port</span>
+            <span class="types"><span class="type">number</span></span>
+           UDP port to bind and advertise
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        <code>true</code>
+    </ol>
+
+    <h3>Raises:</h3>
+    Socket bind error
+
+
+
+</dd>
+    <dt>
+    <a name = "broadcast"></a>
+    <strong>broadcast ()</strong>
+    </dt>
+    <dd>
+    Discover members in local network.
+ Send UDP broadcast to all networks
+ discovered by <code>getifaddrs()</code> C call
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>true</code> if broadcast was sent
+    </ol>
+     <h3>Or</h3>
+    <ol>
+
+        <code>false</code> if <code>getifaddrs()</code> fails.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "leave"></a>
+    <strong>leave ()</strong>
+    </dt>
+    <dd>
+    Gracefully leave the membership group.
+ The node will be marked with the status <code>left</code>
+ and no other members will ever try to reconnect it.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+          <code>true</code> if call succeeds,
+  <code>false</code> if member has already left.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "members"></a>
+    <strong>members ()</strong>
+    </dt>
+    <dd>
+    Obtain all members known to the current instance. </p>
+
+<p> Editing this table has no effect.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+        a table with URIs as keys and corresponding <a href="index.html#MemberInfo">MemberInfo</a> as values.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "pairs"></a>
+    <strong>pairs ()</strong>
+    </dt>
+    <dd>
+    Iterate over members.
+ A shorthand for <code>pairs(membership.members())</code>.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        Lua iterator
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">for</span> uri, member <span class="keyword">in</span> membership.<span class="global">pairs</span>() <span class="keyword">do</span> <span class="keyword">end</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "get_member"></a>
+    <strong>get_member (uri)</strong>
+    </dt>
+    <dd>
+    Get info about member with the given URI.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uri</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         <code>&lt;advertise_uri&gt;</code> of member of interest
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#MemberInfo">MemberInfo</a></span>
+        the member data structure of the instance with the given URI.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "myself"></a>
+    <strong>myself ()</strong>
+    </dt>
+    <dd>
+    Get info about the current instance.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#MemberInfo">MemberInfo</a></span>
+        the member data structure of the current instance.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "add_member"></a>
+    <strong>add_member (uri)</strong>
+    </dt>
+    <dd>
+    Add a member to the group.
+ Also propagate this event to other members.
+ Adding a member to a single instance is enough
+ as everybody else in the group will receive the update with time.
+ It does not matter who adds whom.</p>
+
+<p> <strong>Warning:</strong> The gossip protocol guarantees
+ that every member in the group becomes aware
+ of any status change in two communication cycles.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uri</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         <code>&lt;advertise_uri&gt;</code> of member to add
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">true</span> or <span class="type">nil</span></span>
+
+
+</li>
+        <li>
+           <span class="types">optional <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+<p>Possible errors:</p>
+
+<ul>
+    <li><code>"parse error"</code> - if the URI can not be parsed</li>
+</ul>
+</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "probe_uri"></a>
+    <strong>probe_uri (uri)</strong>
+    </dt>
+    <dd>
+    Send a ping to a member.
+ Send a ping-message to a member to make sure it is in the group.</p>
+
+<p> If the member responds but not in the group, it is added.</p>
+
+<p> If it already is in the group, nothing happens.</p>
+
+<p> <strong>Warning:</strong> When destination IP can be resolved in several diffent
+ ways (by different hostnames) it is possible that <code>probe_uri()</code> function returns
+ <code>"no response"</code> error, but the member is added to the group with another URI,
+ corresponding to its <code>&lt;advertise_uri&gt;</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">uri</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         <code>&lt;advertise_uri&gt;</code> of member to ping
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">true</span> or <span class="type">nil</span></span>
+
+
+</li>
+        <li>
+           <span class="types">optional <a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+<p> Possible errors:</p>
+
+<ul>
+    <li><code>&quot;parse error&quot;</code> - if the URI can not be parsed</li>
+    <li><code>&quot;ping was not sent&quot;</code> - if hostname could not be reloved</li>
+    <li><code>&quot;no reponce&quot;</code> - if member does not responf within 0.2 seconds</li>
+</ul>
+</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "set_payload"></a>
+    <strong>set_payload (key, value)</strong>
+    </dt>
+    <dd>
+    Update payload and disseminate it along with the member status.
+ Also increments <code>incarnation</code>.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         a key to set in payload table
+        </li>
+        <li><span class="parameter">value</span>
+         auxiliary data
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "MemberInfo"></a>
+    <strong>MemberInfo</strong>
+    </dt>
+    <dd>
+    Member data structure.
+ A member is represented by the table with the following fields:
+
+
+    <h3>Fields:</h3>
+    <ul>
+        <li><span class="parameter">uri</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         <code>&lt;advertise_uri&gt;</code> of a member
+        </li>
+        <li><span class="parameter">status</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+<p> a string that takes one of the values below</p>
+
+<ul>
+    <li><code>alive</code>: a member that replies to ping-messages is alive and well.</li>
+    <li><code>suspect</code>: if any member in the group cannot get a reply from any other member, the first member asks
+    three other alive members to send a ping-message to the member in question. If there is no response,
+    the latter becomes a suspect.</li>
+    <li><code>dead</code>: a <code>suspect</code> becomes <code>dead</code> after a timeout.</li>
+    <li><code>left</code>: a member gets the <code>left</code> status after executing the <a href="index.html#leave">leave</a> function.</li>
+</ul>
+
+
+        </li>
+        <li><span class="parameter">incarnation</span>
+            <span class="types"><span class="type">number</span></span>
+         a value incremented every time
+ the instance status changes, or its payload is updated
+        </li>
+        <li><span class="parameter">payload</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a></span>
+         an auxiliary data that can be used by various modules
+        </li>
+        <li><span class="parameter">timestamp</span>
+            <span class="types"><span class="type">number</span></span>
+         a value of fiber.time64()
+ which corresponds to the last update of status or incarnation;
+ it is always local and does not depend on other members’ clock setting.
+        </li>
+        <li><span class="parameter">clock_delta</span>
+            <span class="types"><span class="type">number</span></span>
+         difference of clocks (fiber.time64) between self and peer
+ calculated during ping/ack protocol step or while probe_uri call
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">tarantool&gt; membership.myself()
+<span class="comment">---
+</span>uri: <span class="string">"localhost:33001"</span>
+status: <span class="string">"alive"</span>
+incarnation: <span class="number">1</span>
+payload:
+    uuid: <span class="string">"2d00c500-2570-4019-bfcc-ab25e5096b73"</span>
+timestamp: <span class="number">1522427330993752</span>
+clock_delta: <span class="number">700</span>
+...</pre>
+    </ul>
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Encryption_Functions"></a>Encryption Functions </h2>
+
+          <div class="section-description">
+           The encryption is handled by the
+ <a href="https://tarantool.io/en/doc/latest/reference/reference_lua/crypto/"><code>crypto.cipher.aes256.cbc</code></a>
+ Tarantool module.</p>
+
+<p> For proper communication, all members must be configured
+ to use the same encryption key. Otherwise, members report
+ either <code>dead</code> or <code>non-decryptable</code> in their status.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "get_encryption_key"></a>
+    <strong>get_encryption_key ()</strong>
+    </dt>
+    <dd>
+    Retrieve the encryption key that is currently in use.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+        encryption key
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "set_encryption_key"></a>
+    <strong>set_encryption_key (key)</strong>
+    </dt>
+    <dd>
+    Set the key used for low-level message encryption.
+ The key is either trimmed or padded automatically to be exactly 32 bytes.
+ If the <code>key</code> value is <code>nil</code>, the encryption is disabled.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+         encryption key
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header has-description"><a name="Subscription_Functions"></a>Subscription Functions </h2>
+
+          <div class="section-description">
+           A subscription is implemented with Tarantool built-in
+ <a href="https://tarantool.io/en/doc/latest/reference/reference_lua/fiber/#fiber-cond"><code>fiber.cond</code></a>
+ objects.
+          </div>
+    <dl class="function">
+    <dt>
+    <a name = "subscribe"></a>
+    <strong>subscribe ()</strong>
+    </dt>
+    <dd>
+    Subscribe for updates in the members table.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        <code>fiber.cond</code> object which is
+ broadcasted whenever the members table changes
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "unsubscribe"></a>
+    <strong>unsubscribe (cond)</strong>
+    </dt>
+    <dd>
+    Unsubscribe from membership updates.
+ Remove subscription on <code>cond</code> object.</p>
+
+<p> If parameter passed is already unsubscribed o invaled nothing happens.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">cond</span>
+         <code>fiber.cond</code> object obtained from <a href="index.html#subscribe">subscribe</a> function
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">nil</span></span>
+
+
+
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2 class="section-header "><a name="membership_options_Functions"></a>membership.options Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "options.PROTOCOL_PERIOD_SECONDS"></a>
+    <strong>options.PROTOCOL_PERIOD_SECONDS</strong>
+    </dt>
+    <dd>
+    Period of sending direct PINGs.
+ Denoted as <code>T&apos;</code> in <a href="swim-paper.pdf">SWIM paper</a>.</p>
+
+<p> Default is 1
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "options.ACK_TIMEOUT_SECONDS"></a>
+    <strong>options.ACK_TIMEOUT_SECONDS</strong>
+    </dt>
+    <dd>
+    Time to wait for ACK message after PING.
+ If a member does not reply within this time,
+ the indirect ping algorithm is invoked.</p>
+
+<p> Default is 0.2
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "options.ANTI_ENTROPY_PERIOD_SECONDS"></a>
+    <strong>options.ANTI_ENTROPY_PERIOD_SECONDS</strong>
+    </dt>
+    <dd>
+    Period to perform anti-entropy sync.
+ Algorithm is described in <a href="swim-paper.pdf">SWIM paper</a>.</p>
+
+<p> Default is 10
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "options.SUSPICIOUSNESS"></a>
+    <strong>options.SUSPICIOUSNESS</strong>
+    </dt>
+    <dd>
+    Toggle producing <code>suspect</code> rumors when ping fails.  Even if disabled,
+ it doesn't affect neither gossip dissemination nor other statuses
+ generation (e.g. <code>dead</code> and <code>non-decryptable</code>).</p>
+
+<p> Default is <code>true</code>
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "options.SUSPECT_TIMEOUT_SECONDS"></a>
+    <strong>options.SUSPECT_TIMEOUT_SECONDS</strong>
+    </dt>
+    <dd>
+    Timeout to mark <code>suspect</code> members as <code>dead</code>. </p>
+
+<p> Default is 3
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "options.NUM_FAILURE_DETECTION_SUBGROUPS"></a>
+    <strong>options.NUM_FAILURE_DETECTION_SUBGROUPS</strong>
+    </dt>
+    <dd>
+    Number of members to try indirectly pinging a <code>suspect</code>.
+ Denoted as <code>k</code> in <a href="swim-paper.pdf">SWIM paper</a>.</p>
+
+<p> Default is 3
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "options.MAX_PACKET_SIZE"></a>
+    <strong>options.MAX_PACKET_SIZE</strong>
+    </dt>
+    <dd>
+    Maximum size of UPD packets to send. </p>
+
+<p> Default is 1472 (<code>Default-MTU (1500) - IP-Header (20) - UDP-Header (8)</code>)
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "options.ENCRYPTION_INIT"></a>
+    <strong>options.ENCRYPTION_INIT</strong>
+    </dt>
+    <dd>
+    Initialization vector for aes256 CBC encryption.
+
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
+<i style="float:right;">Last updated 2021-07-12 22:06:16 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

@@ -1,0 +1,11 @@
+rock_manifest = {
+   ["cartridge-cli-extensions-1.1.1-1.rockspec"] = "318df67243b6c36a02b342f69cd5d6a7",
+   doc = {
+      ["admin.md"] = "3fe6e2af0369a5e7a0ca50ff6c51750f"
+   },
+   lua = {
+      ["cartridge-cli-extensions"] = {
+         ["admin.lua"] = "d5f9a95f5e5410780636a2f00f43bb0f"
+      }
+   }
+}

@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.failover &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.topology" href="cartridge.topology.html" />
+    <link rel="prev" title="Module cartridge.twophase" href="cartridge.twophase.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-failover">
+<span id="cartridge-failover"></span><h1>Module <em>cartridge.failover</em><a class="headerlink" href="#module-cartridge-failover" title="Permalink to this headline">¶</a></h1>
+<p>Gather information regarding instances leadership.</p>
+<p>Failover can operate in two modes:</p>
+<ul class="simple">
+<li><p>In <cite>disabled</cite> mode the leader is the first server configured in
+<code class="docutils literal notranslate"><span class="pre">topology.replicasets[].master</span></code>  array.</p></li>
+<li><p>In  <code class="docutils literal notranslate"><span class="pre">eventual</span></code>  mode the leader isn’t elected consistently.
+Instead, every instance in cluster thinks the leader is the
+first <strong>healthy</strong> server in replicaset, while instance health is
+determined according to membership status (the SWIM protocol).</p></li>
+<li><p>In <cite>stateful</cite> mode leaders appointments are polled from the
+external storage. (<strong>Added</strong> in v2.0.2-2)</p></li>
+</ul>
+<p>This module behavior depends on the instance state.</p>
+<p>From the very beginning it reports <cite>is_rw() == false</cite>,
+<code class="docutils literal notranslate"><span class="pre">is_leader()</span> <span class="pre">==</span> <span class="pre">false</span></code> ,  <code class="docutils literal notranslate"><span class="pre">get_active_leaders()</span> <span class="pre">==</span> <span class="pre">{}</span></code> .</p>
+<p>The module is configured when the instance enters <cite>ConfiguringRoles</cite>
+state for the first time. From that moment it reports actual values
+according to the mode set in clusterwide config.</p>
+<p>(<strong>Added</strong> in v1.2.0-17)</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-coordinator">
+<span id="cartridge-failover-get-coordinator"></span><h3>get_coordinator ()<a class="headerlink" href="#get-coordinator" title="Permalink to this headline">¶</a></h3>
+<p>Get current stateful failover coordinator</p>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) coordinator</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+<div class="section" id="local-functions">
+<h2>Local Functions<a class="headerlink" href="#local-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="schedule-clear">
+<span id="cartridge-failover-schedule-clear"></span><h3>schedule_clear ()<a class="headerlink" href="#schedule-clear" title="Permalink to this headline">¶</a></h3>
+<p>Cancel all pending reconfigure_all tasks.</p>
+</div>
+<div class="section" id="schedule-add">
+<span id="cartridge-failover-schedule-add"></span><h3>schedule_add ()<a class="headerlink" href="#schedule-add" title="Permalink to this headline">¶</a></h3>
+<p>Schedule new reconfigure_all task.</p>
+</div>
+<div class="section" id="get-appointments-disabled-mode">
+<span id="cartridge-failover-get-appointments-disabled-mode"></span><h3>_get_appointments_disabled_mode ()<a class="headerlink" href="#get-appointments-disabled-mode" title="Permalink to this headline">¶</a></h3>
+<p>Generate appointments according to clusterwide configuration.
+Used in ‘disabled’ failover mode.</p>
+</div>
+<div class="section" id="get-appointments-eventual-mode">
+<span id="cartridge-failover-get-appointments-eventual-mode"></span><h3>_get_appointments_eventual_mode ()<a class="headerlink" href="#get-appointments-eventual-mode" title="Permalink to this headline">¶</a></h3>
+<p>Generate appointments according to membership status.
+Used in ‘eventual’ failover mode.</p>
+</div>
+<div class="section" id="get-appointments-stateful-mode">
+<span id="cartridge-failover-get-appointments-stateful-mode"></span><h3>_get_appointments_stateful_mode ()<a class="headerlink" href="#get-appointments-stateful-mode" title="Permalink to this headline">¶</a></h3>
+<p>Get appointments from external storage.
+Used in ‘stateful’ failover mode.</p>
+</div>
+<div class="section" id="accept-appointments-replicaset-uuid">
+<span id="cartridge-failover-accept-appointments"></span><h3>accept_appointments (replicaset_uuid)<a class="headerlink" href="#accept-appointments-replicaset-uuid" title="Permalink to this headline">¶</a></h3>
+<p>Accept new appointments.</p>
+<p>Get appointments wherever they come from and put them into cache.
+Cached active_leaders table is never modified, but overriden by it’s
+modified copy (if necessary).</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>replicaset_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{[string]=string}</a>) to leader_uuid map</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) Whether leadership map has changed</p>
+</div>
+<div class="section" id="fencing-check">
+<span id="cartridge-failover-fencing-check"></span><h3>fencing_check ()<a class="headerlink" href="#fencing-check" title="Permalink to this headline">¶</a></h3>
+<p>Perform the fencing healthcheck.</p>
+<p>Fencing is actuated when the instance disconnects from both
+the state provider and a replica, i.e. the check returns false.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+<div class="section" id="check-suppressing-lock">
+<span id="cartridge-failover-check-suppressing-lock"></span><h3>check_suppressing_lock ()<a class="headerlink" href="#check-suppressing-lock" title="Permalink to this headline">¶</a></h3>
+<p>Lock failover if failover suppressing is on.</p>
+</div>
+<div class="section" id="failover-loop">
+<span id="cartridge-failover-failover-loop"></span><h3>failover_loop ()<a class="headerlink" href="#failover-loop" title="Permalink to this headline">¶</a></h3>
+<p>Repeatedly fetch new appointments and reconfigure roles.</p>
+</div>
+<div class="section" id="cfg">
+<span id="cartridge-failover-cfg"></span><h3>cfg ()<a class="headerlink" href="#cfg" title="Permalink to this headline">¶</a></h3>
+<p>Initialize the failover module.</p>
+</div>
+<div class="section" id="get-active-leaders">
+<span id="cartridge-failover-get-active-leaders"></span><h3>get_active_leaders ()<a class="headerlink" href="#get-active-leaders" title="Permalink to this headline">¶</a></h3>
+<p>Get map of replicaset leaders.</p>
+<p><strong>Returns</strong>:</p>
+<p>{[replicaset_uuid] = instance_uuid,…}</p>
+</div>
+<div class="section" id="is-leader">
+<span id="cartridge-failover-is-leader"></span><h3>is_leader ()<a class="headerlink" href="#is-leader" title="Permalink to this headline">¶</a></h3>
+<p>Check current instance leadership.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+<div class="section" id="is-rw">
+<span id="cartridge-failover-is-rw"></span><h3>is_rw ()<a class="headerlink" href="#is-rw" title="Permalink to this headline">¶</a></h3>
+<p>Check current instance writability.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+<div class="section" id="is-vclockkeeper">
+<span id="cartridge-failover-is-vclockkeeper"></span><h3>is_vclockkeeper ()<a class="headerlink" href="#is-vclockkeeper" title="Permalink to this headline">¶</a></h3>
+<p>Check if current instance has persisted his vclock.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+<div class="section" id="is-paused">
+<span id="cartridge-failover-is-paused"></span><h3>is_paused ()<a class="headerlink" href="#is-paused" title="Permalink to this headline">¶</a></h3>
+<p>Check if failover paused on current instance.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+<div class="section" id="failover-suppressed">
+<span id="cartridge-failover-failover-suppressed"></span><h3>failover_suppressed ()<a class="headerlink" href="#failover-suppressed" title="Permalink to this headline">¶</a></h3>
+<p>Check if failover suppressed on current instance.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+<div class="section" id="consistency-needed">
+<span id="cartridge-failover-consistency-needed"></span><h3>consistency_needed ()<a class="headerlink" href="#consistency-needed" title="Permalink to this headline">¶</a></h3>
+<p>Check if current configuration implies consistent switchover.</p>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true / false</p>
+</div>
+<div class="section" id="force-inconsistency-replicaset-uuid">
+<span id="cartridge-failover-force-inconsistency"></span><h3>force_inconsistency (replicaset_uuid)<a class="headerlink" href="#force-inconsistency-replicaset-uuid" title="Permalink to this headline">¶</a></h3>
+<p>Force inconsistent leader switching.
+Do it by resetting vclockkeepers in state provider.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>replicaset_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{[string]=string,…}</a>) to leader_uuid mapping</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="wait-consistency-replicaset-uuid">
+<span id="cartridge-failover-wait-consistency"></span><h3>wait_consistency (replicaset_uuid)<a class="headerlink" href="#wait-consistency-replicaset-uuid" title="Permalink to this headline">¶</a></h3>
+<p>Wait when promoted instances become vclockkeepers.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>replicaset_uuid:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">{[string]=string,…}</a>) to leader_uuid mapping</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.twophase.html" title="previous chapter">Module <em>cartridge.twophase</em></a></li>
+      <li>Next: <a href="cartridge.topology.html" title="next chapter">Module <em>cartridge.topology</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.failover.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

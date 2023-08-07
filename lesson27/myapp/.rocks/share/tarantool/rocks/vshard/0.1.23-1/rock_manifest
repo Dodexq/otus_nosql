@@ -1,0 +1,32 @@
+rock_manifest = {
+   doc = {
+      LICENSE = "1eafebb145f237f109dc0512bfaad1dc",
+      ["README.md"] = "e28abd6e49f8a3dd7d89526922c44338"
+   },
+   lua = {
+      vshard = {
+         ["cfg.lua"] = "6e4afcbb1c44e467a40860759d0ca5e5",
+         ["consts.lua"] = "1110607d3f80f021a34361290d761a7e",
+         ["error.lua"] = "65afd82287ea2cca9bb9c978d19b96f9",
+         ["hash.lua"] = "1f38b7cfa09db70b8762a9db745126e2",
+         ["heap.lua"] = "3a9ec1e75cdeeb9c1649e35293042a8f",
+         ["init.lua"] = "ed4b5eb10ecef663498fb5fe5f2a2903",
+         ["registry.lua"] = "8f7e6855b0c52956d7004b95d9a188b4",
+         ["replicaset.lua"] = "2dbbd5b88008015a5149d4cb4b81e9eb",
+         ["rlist.lua"] = "fe29b2822c5638d85cc4ad354ae4d0f4",
+         router = {
+            ["init.lua"] = "9d34e36ff68579dcceaa3a974ddb1164"
+         },
+         ["service_info.lua"] = "12d99b3c05464f21e3696292339146eb",
+         storage = {
+            ["init.lua"] = "39998fdd57efe3d56a417efe2549ece5",
+            ["ref.lua"] = "dc238246a5dfa20918d7b0233a35cff4",
+            ["reload_evolution.lua"] = "9093e11086eef97bb4e2009d54048c7e",
+            ["sched.lua"] = "c3c6369018fe10b030f4d7b4cc15b3b1"
+         },
+         ["util.lua"] = "96fd069c1178a195923dc377a3405b39",
+         ["version.lua"] = "fc36e26d2cca0643184669e69a07e240"
+      }
+   },
+   ["vshard-0.1.23-1.rockspec"] = "156d9415021858790384cf1c9f68b052"
+}

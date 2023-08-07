@@ -1,0 +1,239 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.confapplier &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.remote-control" href="cartridge.remote-control.html" />
+    <link rel="prev" title="Module cartridge.upload" href="cartridge.upload.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-confapplier">
+<span id="cartridge-confapplier"></span><h1>Module <em>cartridge.confapplier</em><a class="headerlink" href="#module-cartridge-confapplier" title="Permalink to this headline">¶</a></h1>
+<p>Configuration management primitives.</p>
+<p>Implements the internal state machine which helps to manage cluster
+operation and protects from invalid state transitions.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-active-config">
+<span id="cartridge-confapplier-get-active-config"></span><h3>get_active_config ()<a class="headerlink" href="#get-active-config" title="Permalink to this headline">¶</a></h3>
+<p>Get current ClusterwideConfig object of instance</p>
+<p><strong>Returns</strong>:</p>
+<p><a class="reference internal" href="cartridge.clusterwide-config.html#cartridge-clusterwide-config"><span class="std std-ref">cartridge.clusterwide-config</span></a> or nil,
+if instance not bootstrapped.</p>
+</div>
+<div class="section" id="get-readonly-section-name">
+<span id="cartridge-confapplier-get-readonly"></span><h3>get_readonly ([section_name])<a class="headerlink" href="#get-readonly-section-name" title="Permalink to this headline">¶</a></h3>
+<p>Get a read-only view on the clusterwide configuration.</p>
+<p>Returns either  <code class="docutils literal notranslate"><span class="pre">conf[section_name]</span></code>  or entire  <code class="docutils literal notranslate"><span class="pre">conf</span></code> .
+Any attempt to modify the section or its children
+will raise an error.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>section_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)  (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p>
+</div>
+<div class="section" id="get-deepcopy-section-name">
+<span id="cartridge-confapplier-get-deepcopy"></span><h3>get_deepcopy ([section_name])<a class="headerlink" href="#get-deepcopy-section-name" title="Permalink to this headline">¶</a></h3>
+<p>Get a read-write deep copy of the clusterwide configuration.</p>
+<p>Returns either  <code class="docutils literal notranslate"><span class="pre">conf[section_name]</span></code>  or entire  <code class="docutils literal notranslate"><span class="pre">conf</span></code> .
+Changing it has no effect
+unless it’s used to patch clusterwide configuration.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>section_name:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>)  (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p>
+</div>
+</div>
+<div class="section" id="local-functions">
+<h2>Local Functions<a class="headerlink" href="#local-functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="set-state-state-err">
+<span id="cartridge-confapplier-set-state"></span><h3>set_state (state[, err])<a class="headerlink" href="#set-state-state-err" title="Permalink to this headline">¶</a></h3>
+<p>Perform state transition.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>state:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) New state</p></li>
+<li><p><em>err:</em>   (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>nil</strong>)</p>
+</div>
+<div class="section" id="wish-state-state-timeout">
+<span id="cartridge-confapplier-wish-state"></span><h3>wish_state (state[, timeout])<a class="headerlink" href="#wish-state-state-timeout" title="Permalink to this headline">¶</a></h3>
+<p>Make a wish for meeting desired state.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>state:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Desired state.</p></li>
+<li><p><em>timeout:</em> (<strong>number</strong>)  (optional)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.4">string</a>) Final state, may differ from desired.</p>
+</div>
+<div class="section" id="validate-config-clusterwide-config-new">
+<span id="cartridge-confapplier-validate-config"></span><h3>validate_config (clusterwide_config_new)<a class="headerlink" href="#validate-config-clusterwide-config-new" title="Permalink to this headline">¶</a></h3>
+<p>Validate configuration by all roles.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>clusterwide_config_new:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+<div class="section" id="restart-replication">
+<span id="cartridge-confapplier-restart-replication"></span><h3>restart_replication ()<a class="headerlink" href="#restart-replication" title="Permalink to this headline">¶</a></h3>
+<p>Restart replication from topology on the current node.</p>
+</div>
+<div class="section" id="apply-config-clusterwide-config">
+<span id="cartridge-confapplier-apply-config"></span><h3>apply_config (clusterwide_config)<a class="headerlink" href="#apply-config-clusterwide-config" title="Permalink to this headline">¶</a></h3>
+<p>Apply the role configuration.</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>clusterwide_config:</em> (<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>boolean</strong>) true</p>
+<p><strong>Or</strong></p>
+<p>(<strong>nil</strong>)</p>
+<p>(<a class="reference external" href="https://www.lua.org/manual/5.1/manual.html#5.5">table</a>) Error description</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.argparse.html">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.upload.html" title="previous chapter">Module <em>cartridge.upload</em></a></li>
+      <li>Next: <a href="cartridge.remote-control.html" title="next chapter">Module <em>cartridge.remote-control</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.confapplier.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

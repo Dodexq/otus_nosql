@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Module cartridge.argparse &#8212; Cartridge 2.1.2 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Module cartridge.twophase" href="cartridge.twophase.html" />
+    <link rel="prev" title="Module cartridge.issues" href="cartridge.issues.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-cartridge-argparse">
+<span id="cartridge-argparse"></span><h1>Module <em>cartridge.argparse</em><a class="headerlink" href="#module-cartridge-argparse" title="Permalink to this headline">¶</a></h1>
+<p>Gather configuration options.</p>
+<p>The module reads configuration options from multiple sources
+and then merges the options together according to source priority:</p>
+<ul class="simple">
+<li><p><cite>–&lt;VARNAME&gt;</cite> command line arguments.</p></li>
+<li><p><cite>TARANTOOL_&lt;VARNAME&gt;</cite> environment variables.</p></li>
+<li><p>Configuration files.</p></li>
+</ul>
+<p>To specify a configuration file, use the <cite>–cfg &lt;CONFIG_FILE&gt;</cite> option
+or the <cite>TARANTOOL_CFG=&lt;CONFIG_FILE&gt;</cite> environment variable.</p>
+<p>Configuration files are  <code class="docutils literal notranslate"><span class="pre">.yaml</span></code>  files, divided into
+sections like the following:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">default</span><span class="p">:</span>
+  <span class="n">memtx_memory</span><span class="p">:</span> <span class="mi">10000000</span>
+  <span class="n">some_option</span><span class="p">:</span> <span class="s2">&quot;default value&quot;</span>
+<span class="n">myapp</span><span class="p">.</span><span class="n">router</span><span class="p">:</span>
+  <span class="n">memtx_memory</span><span class="p">:</span> <span class="mi">1024000000</span>
+  <span class="n">some_option</span><span class="p">:</span> <span class="s2">&quot;router-specific value&quot;</span>
+</pre></div>
+</div>
+<p>Within the configuration file, <cite>argparse</cite> looks for multiple matching sections:</p>
+<ul class="simple">
+<li><p>The section named <cite>&lt;APP_NAME&gt;.&lt;INSTANCE_NAME&gt;</cite> is parsed first.
+The application name is derived automatically from the rockspec filename in the
+project directory. Alternatively, you can specify it manually via the  <code class="docutils literal notranslate"><span class="pre">--app-name</span></code>
+command line argument or the  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_APP_NAME</span></code>  environment variable.
+The instance name can be specified the same way, either as <cite>–instance-name</cite>
+or  <code class="docutils literal notranslate"><span class="pre">TARANTOOL_INSTANCE_NAME</span></code> .</p></li>
+<li><p>The common <cite>&lt;APP_NAME&gt;</cite> section is parsed next.</p></li>
+<li><p>Finally, the section  <code class="docutils literal notranslate"><span class="pre">[default]</span></code>  with the global configuration is parsed
+with the lowest priority.</p></li>
+</ul>
+<p>An instance name may consist of multiple period-separated parts,
+for example,  <code class="docutils literal notranslate"><span class="pre">--app-name</span> <span class="pre">&amp;quot;myapp&amp;quot;</span> <span class="pre">--instance-name</span> <span class="pre">&amp;quot;router.1&amp;quot;</span></code> .
+In this case, sections with names that include these parts are also parsed:
+first  <code class="docutils literal notranslate"><span class="pre">[myapp.router.1]</span></code> , then  <code class="docutils literal notranslate"><span class="pre">[myapp.router]</span></code> , then  <code class="docutils literal notranslate"><span class="pre">[myapp]</span></code> .</p>
+<p>Instead of a single configuration file, you can use a directory.
+In this case, all files in the directory are parsed.
+To avoid conflicts, the same section mustn’t repeat across different files.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parse">
+<span id="cartridge-argparse-parse"></span><h3>parse ()<a class="headerlink" href="#parse" title="Permalink to this headline">¶</a></h3>
+<p>Parse command line arguments, environment variables, and configuration files.</p>
+<p>For example, running an application as follows:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">TARANTOOL_MY_CUSTOM_ARG</span><span class="o">=</span><span class="s1">&#39;value&#39;</span> <span class="p">.</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">lua</span> <span class="c1">--alias router --memtx-memory 33554432</span>
+</pre></div>
+</div>
+<p>results in:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">argparse</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;cartridge.argparse&#39;</span><span class="p">)</span>
+<span class="n">argparse</span><span class="p">.</span><span class="n">parse</span><span class="p">()</span>
+<span class="c1">---</span>
+<span class="o">-</span> <span class="n">memtx_memory</span><span class="p">:</span> <span class="mi">33554432</span>
+  <span class="n">my_custom_arg</span><span class="p">:</span> <span class="n">value</span>
+  <span class="n">alias</span><span class="p">:</span> <span class="n">router</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>{argname=value,…}</strong>)</p>
+</div>
+<div class="section" id="get-opts-filter">
+<span id="cartridge-argparse-get-opts"></span><h3>get_opts (filter)<a class="headerlink" href="#get-opts-filter" title="Permalink to this headline">¶</a></h3>
+<p>Filter the results of parsing and cast variables to a given type.</p>
+<p>From all the configuration options gathered by  <code class="docutils literal notranslate"><span class="pre">parse</span></code> , select only those
+specified in the filter.</p>
+<p>For example, running an application as follows:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="n">TARANTOOL_ARG1</span><span class="o">=</span><span class="s1">&#39;value&#39;</span> <span class="n">tarantool</span> <span class="p">.</span><span class="o">/</span><span class="n">init</span><span class="p">.</span><span class="n">lua</span> <span class="c1">--arg2 100 --arg3 true</span>
+</pre></div>
+</div>
+<p>results in:</p>
+<div class="highlight-lua notranslate"><div class="highlight"><pre><span></span><span class="kd">local</span> <span class="n">opts</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">argparse</span><span class="p">.</span><span class="n">get_opts</span><span class="p">({</span>
+    <span class="n">arg1</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="n">arg2</span> <span class="o">=</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span>
+    <span class="n">arg3</span> <span class="o">=</span> <span class="s1">&#39;boolean&#39;</span>
+    <span class="n">missing_arg</span> <span class="o">=</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="c1">-- no such arg, argparse returns nothing for this arg</span>
+<span class="p">})</span>
+<span class="c1">---</span>
+<span class="o">-</span> <span class="n">arg1</span><span class="p">:</span> <span class="n">value</span>
+  <span class="n">arg2</span><span class="p">:</span> <span class="mi">100</span>
+  <span class="n">arg3</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+<p>Each option have a type: string, boolean, number.
+There is an ability to set multiple types for one option.
+Types are split by separator  <code class="docutils literal notranslate"><span class="pre">|</span></code> ,  e.g.  <code class="docutils literal notranslate"><span class="pre">string|number</span></code> .</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><em>filter:</em> (<strong>{argname=type,…}</strong>)</p></li>
+</ul>
+<p><strong>Returns</strong>:</p>
+<p>(<strong>{argname=value,…}</strong>)</p>
+</div>
+<div class="section" id="get-box-opts">
+<span id="cartridge-argparse-get-box-opts"></span><h3>get_box_opts ()<a class="headerlink" href="#get-box-opts" title="Permalink to this headline">¶</a></h3>
+<p>Shorthand for  <code class="docutils literal notranslate"><span class="pre">get_opts(box_opts)</span></code> .</p>
+</div>
+<div class="section" id="get-cluster-opts">
+<span id="cartridge-argparse-get-cluster-opts"></span><h3>get_cluster_opts ()<a class="headerlink" href="#get-cluster-opts" title="Permalink to this headline">¶</a></h3>
+<p>Shorthand for  <code class="docutils literal notranslate"><span class="pre">get_opts(cluster_opts)</span></code> .</p>
+</div>
+</div>
+<div class="section" id="tables">
+<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cluster-opts">
+<span id="cartridge-argparse-cluster-opts"></span><h3>cluster_opts<a class="headerlink" href="#cluster-opts" title="Permalink to this headline">¶</a></h3>
+<p>Common <a class="reference internal" href="cartridge.html#cartridge-cfg"><span class="std std-ref">cartridge.cfg</span></a> options.</p>
+<p>Any options not listed below (like the  <code class="docutils literal notranslate"><span class="pre">roles</span></code>  option)
+can’t be modified with  <code class="docutils literal notranslate"><span class="pre">argparse</span></code>  and should be configured in code.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>alias:</em>  <strong>string</strong></p></li>
+<li><p><em>workdir:</em>  <strong>string</strong></p></li>
+<li><p><em>http_port:</em>  <strong>number</strong></p></li>
+<li><p><em>http_host:</em>  <strong>string</strong></p></li>
+<li><p><em>http_enabled:</em>  <strong>boolean</strong></p></li>
+<li><p><em>webui_enabled:</em>  <strong>boolean</strong></p></li>
+<li><p><em>webui_prefix:</em>  <strong>string</strong></p></li>
+<li><p><em>webui_enforce_root_redirect:</em>  <strong>boolean</strong></p></li>
+<li><p><em>advertise_uri:</em>  <strong>string</strong></p></li>
+<li><p><em>cluster_cookie:</em>  <strong>string</strong></p></li>
+<li><p><em>console_sock:</em>  <strong>string</strong></p></li>
+<li><p><em>auth_enabled:</em>  <strong>boolean</strong></p></li>
+<li><p><em>bucket_count:</em>  <strong>number</strong></p></li>
+<li><p><em>upgrade_schema:</em>  <strong>boolean</strong></p></li>
+<li><p><em>swim_broadcast:</em>  <strong>boolean</strong></p></li>
+<li><p><em>upload_prefix:</em>  <strong>string</strong></p></li>
+<li><p><em>transport:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_ciphers:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_server_ca_file:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_server_cert_file:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_server_key_file:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_server_password:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_client_ca_file:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_client_cert_file:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_client_key_file:</em>  <strong>string</strong></p></li>
+<li><p><em>ssl_client_password:</em>  <strong>string</strong></p></li>
+<li><p><em>disable_errstack:</em>  <strong>boolean</strong></p></li>
+</ul>
+</div>
+<div class="section" id="box-opts">
+<span id="cartridge-argparse-box-opts"></span><h3>box_opts<a class="headerlink" href="#box-opts" title="Permalink to this headline">¶</a></h3>
+<p>Common <a class="reference external" href="https://www.tarantool.io/en/doc/latest/reference/configuration/">box.cfg</a> tuning options.</p>
+<p><strong>Fields:</strong></p>
+<ul class="simple">
+<li><p><em>listen:</em>  <strong>string|number</strong></p></li>
+<li><p><em>memtx_memory:</em>  <strong>number</strong></p></li>
+<li><p><em>memtx_allocator:</em>  <strong>string</strong></p></li>
+<li><p><em>strip_core:</em>  <strong>boolean</strong></p></li>
+<li><p><em>memtx_min_tuple_size:</em>  <strong>number</strong></p></li>
+<li><p><em>memtx_max_tuple_size:</em>  <strong>number</strong></p></li>
+<li><p><em>memtx_use_mvcc_engine:</em>  <strong>boolean</strong></p></li>
+<li><p><em>txn_isolation:</em>  <strong>string|number</strong></p></li>
+<li><p><em>slab_alloc_factor:</em>  <strong>number</strong></p></li>
+<li><p><em>slab_alloc_granularity:</em>  <strong>number</strong></p></li>
+<li><p><em>work_dir:</em>  <strong>string</strong> (<strong>deprecated</strong>)</p></li>
+<li><p><em>memtx_dir:</em>  <strong>string</strong></p></li>
+<li><p><em>wal_dir:</em>  <strong>string</strong></p></li>
+<li><p><em>vinyl_dir:</em>  <strong>string</strong></p></li>
+<li><p><em>vinyl_memory:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_cache:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_max_tuple_size:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_read_threads:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_write_threads:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_timeout:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_defer_deletes:</em>  <strong>boolean</strong></p></li>
+<li><p><em>vinyl_run_count_per_level:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_run_size_ratio:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_range_size:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_page_size:</em>  <strong>number</strong></p></li>
+<li><p><em>vinyl_bloom_fpr:</em>  <strong>number</strong></p></li>
+<li><p><em>log:</em>  <strong>string</strong></p></li>
+<li><p><em>log_nonblock:</em>  <strong>boolean</strong></p></li>
+<li><p><em>log_level:</em>  <strong>string|number</strong></p></li>
+<li><p><em>log_format:</em>  <strong>string</strong></p></li>
+<li><p><em>audit_log:</em>  <strong>string</strong></p></li>
+<li><p><em>audit_nonblock:</em>  <strong>boolean</strong></p></li>
+<li><p><em>audit_format:</em>  <strong>string</strong></p></li>
+<li><p><em>audit_filter:</em>  <strong>string</strong></p></li>
+<li><p><em>flightrec_enabled:</em>  <strong>boolean</strong></p></li>
+<li><p><em>flightrec_logs_size:</em>  <strong>number</strong></p></li>
+<li><p><em>flightrec_logs_max_msg_size:</em>  <strong>number</strong></p></li>
+<li><p><em>flightrec_logs_log_level:</em>  <strong>number</strong></p></li>
+<li><p><em>flightrec_metrics_interval:</em>  <strong>number</strong></p></li>
+<li><p><em>flightrec_metrics_period:</em>  <strong>number</strong></p></li>
+<li><p><em>flightrec_requests_size:</em>  <strong>number</strong></p></li>
+<li><p><em>flightrec_requests_max_req_size:</em>  <strong>number</strong></p></li>
+<li><p><em>flightrec_requests_max_res_size:</em>  <strong>number</strong></p></li>
+<li><p><em>io_collect_interval:</em>  <strong>number</strong></p></li>
+<li><p><em>readahead:</em>  <strong>number</strong></p></li>
+<li><p><em>snap_io_rate_limit:</em>  <strong>number</strong></p></li>
+<li><p><em>too_long_threshold:</em>  <strong>number</strong></p></li>
+<li><p><em>wal_mode:</em>  <strong>string</strong></p></li>
+<li><p><em>rows_per_wal:</em>  <strong>number</strong>  (<strong>deprecated</strong>)</p></li>
+<li><p><em>wal_max_size:</em>  <strong>number</strong></p></li>
+<li><p><em>wal_queue_max_size:</em>  <strong>number</strong></p></li>
+<li><p><em>wal_dir_rescan_delay:</em>  <strong>number</strong></p></li>
+<li><p><em>wal_cleanup_delay:</em>  <strong>number</strong></p></li>
+<li><p><em>force_recovery:</em>  <strong>boolean</strong></p></li>
+<li><p><em>replication:</em>  <strong>string</strong></p></li>
+<li><p><em>instance_uuid:</em>  <strong>string</strong></p></li>
+<li><p><em>replicaset_uuid:</em>  <strong>string</strong></p></li>
+<li><p><em>custom_proc_title:</em>  <strong>string</strong></p></li>
+<li><p><em>pid_file:</em>  <strong>string</strong></p></li>
+<li><p><em>background:</em>  <strong>boolean</strong></p></li>
+<li><p><em>username:</em>  <strong>string</strong></p></li>
+<li><p><em>coredump:</em>  <strong>boolean</strong></p></li>
+<li><p><em>checkpoint_interval:</em>  <strong>number</strong></p></li>
+<li><p><em>checkpoint_wal_threshold:</em>  <strong>number</strong></p></li>
+<li><p><em>checkpoint_count:</em>  <strong>number</strong></p></li>
+<li><p><em>read_only:</em>  <strong>boolean</strong></p></li>
+<li><p><em>hot_standby:</em>  <strong>boolean</strong></p></li>
+<li><p><em>worker_pool_threads:</em>  <strong>number</strong></p></li>
+<li><p><em>replication_threads:</em>  <strong>number</strong></p></li>
+<li><p><em>replication_timeout:</em>  <strong>number</strong></p></li>
+<li><p><em>replication_sync_lag:</em>  <strong>number</strong></p></li>
+<li><p><em>replication_sync_timeout:</em>  <strong>number</strong></p></li>
+<li><p><em>replication_connect_timeout:</em>  <strong>number</strong></p></li>
+<li><p><em>replication_connect_quorum:</em>  <strong>number</strong></p></li>
+<li><p><em>replication_skip_conflict:</em>  <strong>boolean</strong></p></li>
+<li><p><em>replication_synchro_quorum:</em>  <strong>string|number</strong></p></li>
+<li><p><em>replication_synchro_timeout:</em>  <strong>number</strong></p></li>
+<li><p><em>feedback_enabled:</em>  <strong>boolean</strong></p></li>
+<li><p><em>feedback_host:</em>  <strong>string</strong></p></li>
+<li><p><em>feedback_interval:</em>  <strong>number</strong></p></li>
+<li><p><em>feedback_crashinfo:</em>  <strong>boolean</strong></p></li>
+<li><p><em>net_msg_max:</em>  <strong>number</strong></p></li>
+<li><p><em>iproto_threads:</em>  <strong>number</strong></p></li>
+<li><p><em>sql_cache_size:</em>  <strong>number</strong></p></li>
+<li><p><em>txn_timeout:</em>  <strong>number</strong></p></li>
+<li><p><em>election_mode:</em>  <strong>string</strong></p></li>
+<li><p><em>election_timeout:</em>  <strong>number</strong></p></li>
+<li><p><em>election_fencing_mode:</em>  <strong>string</strong></p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Cartridge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_dev.html">Developer’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cartridge_admin.html">Administrator’s guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Cartridge API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cartridge.html">Module <em>cartridge</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.auth.html">Module <em>cartridge.auth</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.roles.html">Module <em>cartridge.roles</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.issues.html">Module <em>cartridge.issues</em></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Module <em>cartridge.argparse</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.twophase.html">Module <em>cartridge.twophase</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.failover.html">Module <em>cartridge.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.topology.html">Module <em>cartridge.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.clusterwide-config.html">Module <em>cartridge.clusterwide-config</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.rpc.html">Module <em>cartridge.rpc</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.tar.html">Module <em>cartridge.tar</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.pool.html">Module <em>cartridge.pool</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.upload.html">Module <em>cartridge.upload</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.confapplier.html">Module <em>cartridge.confapplier</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.remote-control.html">Module <em>cartridge.remote-control</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.service-registry.html">Module <em>cartridge.service-registry</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom-role.html">Module <em>custom-role</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.stat.html">Module <em>cartridge.lua-api.stat</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.boxinfo.html">Module <em>cartridge.lua-api.boxinfo</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.get-topology.html">Module <em>cartridge.lua-api.get-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.edit-topology.html">Module <em>cartridge.lua-api.edit-topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.topology.html">Module <em>cartridge.lua-api.topology</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.failover.html">Module <em>cartridge.lua-api.failover</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.vshard.html">Module <em>cartridge.lua-api.vshard</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="cartridge.lua-api.deprecated.html">Module <em>cartridge.lua-api.deprecated</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.cluster.html">Class <em>cartridge.test-helpers.cluster</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.server.html">Class <em>cartridge.test-helpers.server</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.etcd.html">Class <em>cartridge.test-helpers.etcd</em></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classes/cartridge.test-helpers.stateboard.html">Class <em>cartridge.test-helpers.stateboard</em></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../CHANGELOG.html">Changelog</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Table of contents</a><ul>
+      <li>Previous: <a href="cartridge.issues.html" title="previous chapter">Module <em>cartridge.issues</em></a></li>
+      <li>Next: <a href="cartridge.twophase.html" title="next chapter">Module <em>cartridge.twophase</em></a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.0.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="../../_sources/cartridge_api/modules/cartridge.argparse.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
