@@ -6,9 +6,9 @@ Vagrant.configure("2") do |config|
     server.vm.hostname = "otus-tarantool-2"
     server.vm.network "public_network", ip: "192.168.0.190", bridge: "wlo1"
     server.vm.provider "virtualbox" do |vb|
-      vb.memory = "8192"
+      vb.memory = "4196"
       vb.name = "otus-tarantool-2"
-      vb.cpus = "8"
+      vb.cpus = "4"
     end
     server.vm.provision "shell", inline: <<-SHELL
     curl -L https://tarantool.io/YxTjzWB/release/2/installer.sh | bash
